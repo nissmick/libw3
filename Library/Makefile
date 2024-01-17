@@ -1,7 +1,7 @@
 # $Id$
 .PHONY: clean install
 
-./libw3.so: ./Core.o ./Util.o
+./libw3.so: ./Core.o ./Util.o ./DNS.o
 	$(CC) $(LDFLAGS) -shared -o $@ $^ $(LIBS)
 
 ./%.o: ./%.c W3%.h

@@ -2,7 +2,7 @@
 include config.mk
 
 CC := cc
-CFLAGS := -g -std=c99 -fPIC
+CFLAGS := -g -std=c99 -fPIC -D_BSD_SOURCE
 LDFLAGS :=
 LIBS :=
 PREFIX := /usr/local

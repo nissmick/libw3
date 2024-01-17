@@ -14,7 +14,7 @@ struct W3 {
 #endif
 };
 
-int W3_Library_Init(void);			/* Initialize the Library */
-struct W3* W3_Create(bool ssl, int port);	/* Create the struct */
+int W3_Library_Init(void);					/* Initialize the Library */
+struct W3* W3_Create(bool ssl, const char* hostname, int port);	/* Create the struct */
 
 #endif

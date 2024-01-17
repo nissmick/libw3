@@ -1,6 +1,7 @@
 /* $Id$ */
 #include "W3Core.h"
 
+#include "W3DNS.h"
 #include "W3Util.h"
 
 #include <stdio.h>
@@ -27,8 +28,9 @@ int W3_Library_Init(void){
 	return 0;
 }
 
-struct W3* W3_Create(bool ssl, int port){
+struct W3* W3_Create(bool ssl, const char* hostname, int port){
 	__W3_Debug("Create", "Creating a struct");
 	struct W3* w3 = malloc(sizeof(*w3));
+	w3->sock = __W3_DNS_Connect(hostname, ssl, port);
 	return w3;
 }

@@ -15,5 +15,5 @@ int main(int argc, char** argv){
 		return 1;
 	}
 	W3_Library_Init();
-	struct W3* w3 = W3_Create(false, 80);
+	struct W3* w3 = W3_Create(false, argv[1], 80);
 }
