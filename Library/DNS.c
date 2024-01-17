@@ -12,7 +12,17 @@
 #include <stdbool.h>
 #include <unistd.h>
 
-int __W3_DNS_Connect(const char* hostname, bool ssl, uint16_t port){
+#ifdef SSL_SUPPORT
+#include <openssl/ssl.h>
+#endif
+
+int __W3_DNS_Connect(const char* hostname, bool ssl, uint16_t port
+#ifdef SSL_SUPPORT
+	,
+	void** o_ssl,
+	void** o_ctx
+#endif
+){
 	__W3_Debug("DNS-Connect", "Resolving");
 	struct addrinfo hints;
 	struct addrinfo* result;
@@ -46,4 +56,25 @@ int __W3_DNS_Connect(const char* hostname, bool ssl, uint16_t port){
 		return -1;	/* Failed to connect */
 	}
 	__W3_Debug("Connect", "Conencted");
+#ifdef SSL_SUPPORT
+	if(ssl){
+		__W3_Debug("SSL", "Initializing");
+		const SSL_METHOD* method = TLSv1_2_client_method();
+		*o_ctx = SSL_CTX_new(method);
+		*o_ssl = SSL_new(*o_ctx);
+		SSL_set_fd(*o_ssl, sock);
+		if(SSL_connect(*o_ssl) != 1){
+			SSL_CTX_free(*o_ctx);
+			SSL_free(*o_ssl);
+			*o_ctx = NULL;
+			*o_ssl = NULL;
+			close(sock);
+			sock = -1;
+
+		}else{
+			__W3_Debug("SSL", "Connected");
+		}
+	}
+#endif
+	return sock;
 }

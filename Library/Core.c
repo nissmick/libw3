@@ -31,6 +31,12 @@ int W3_Library_Init(void){
 struct W3* W3_Create(bool ssl, const char* hostname, int port){
 	__W3_Debug("Create", "Creating a struct");
 	struct W3* w3 = malloc(sizeof(*w3));
-	w3->sock = __W3_DNS_Connect(hostname, ssl, port);
+	w3->sock = __W3_DNS_Connect(hostname, ssl, port
+#ifdef SSL_SUPPORT
+	,
+	&w3->ssl,
+	&w3->ssl_ctx
+#endif
+	);
 	return w3;
 }
