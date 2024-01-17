@@ -2,7 +2,7 @@
 include config.mk
 
 CC := cc
-CFLAGS := -g -std=c99 -fPIC -D_BSD_SOURCE $(DEBUG)
+CFLAGS := -g -std=c99 -fPIC -D_BSD_SOURCE
 LDFLAGS :=
 LIBS :=
 PREFIX := /usr/local
@@ -10,6 +10,10 @@ PREFIX := /usr/local
 ifdef SSL
 CFLAGS += -DSSL_SUPPORT
 LIBS += -lssl -lcrypto
+endif
+
+ifdef DEBUG
+CFLAGS += -g -D__DEBUG__
 endif
 
 .PHONY: all clean ./Library/libw3.so ./Example/fetch
