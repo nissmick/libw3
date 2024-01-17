@@ -1,1 +1,2 @@
 SSL=YES
+DEBUG=YES
