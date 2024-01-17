@@ -53,6 +53,7 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port){
 	w3->method = NULL;
 	w3->path = NULL;
 	w3->protocol = __W3_Strdup(protocol);
+	w3->hostname = __W3_Strdup(hostname);
 	if(ssl) __W3_Debug("Protocol", "Enabled SSL");
 	w3->sock = __W3_DNS_Connect(hostname, ssl, port
 #ifdef SSL_SUPPORT
@@ -85,5 +86,6 @@ void W3_Free(struct W3* w3){
 	if(w3->method != NULL) free(w3->method);
 	if(w3->path != NULL) free(w3->path);
 	if(w3->protocol != NULL) free(w3->protocol);
+	if(w3->hostname != NULL) free(w3->hostname);
 	free(w3);
 }

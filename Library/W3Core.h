@@ -11,6 +11,7 @@ struct W3 {
 	char* protocol;	/* As you can read from its name */
 	char* method;	/* Used in HTTP	*/
 	char* path;	/* As you can read from its name */
+	char* hostname;	/* As you can read from its name */
 #ifdef SSL_SUPPORT
 	void* ssl;	/* Actually SSL*, NULL if no SSL */
 	void* ssl_ctx;	/* Actually SSL_CTX* */

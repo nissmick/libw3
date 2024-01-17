@@ -1,6 +1,8 @@
 /* $Id$ */
 #include "W3Util.h"
 
+#include "W3Core.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -12,6 +14,10 @@
 #include <netdb.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#endif
+
+#ifdef SSL_SUPPORT
+#include <openssl/ssl.h>
 #endif
 
 #define __DEBUG_LEN 12
@@ -44,4 +50,28 @@ char* __W3_Strdup(const char* str){
 	char* result = malloc(strlen(str) + 1);
 	memcpy(result, str, strlen(str) + 1);
 	return result;
+}
+
+unsigned long __W3_Auto_Write(struct W3* w3, char* data, unsigned long length){
+#ifdef SSL_SUPPORT
+	if(w3->ssl != NULL){
+		return SSL_write(w3->ssl, data, length);
+	}else{
+		return send(w3->sock, data, length, 0);
+	}
+#else
+	return send(w3->sock, data, length, 0);
+#endif
+}
+
+unsigned long __W3_Auto_Read(struct W3* w3, char* data, unsigned long length){
+#ifdef SSL_SUPPORT
+	if(w3->ssl != NULL){
+		return SSL_read(w3->ssl, data, length);
+	}else{
+		return recv(w3->sock, data, length, 0);
+	}
+#else
+	return recv(w3->sock, data, length, 0);
+#endif
 }
