@@ -4,5 +4,7 @@
 
 void __W3_Debug(const char* title, const char* message);
 char* __W3_Concat(const char* str1, const char* str2);
+char* __W3_Concat3(const char* str1, const char* str2, const char* str3);
+char* __W3_Strdup(const char* str);
 
 #endif

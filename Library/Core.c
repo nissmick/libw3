@@ -3,6 +3,7 @@
 
 #include "W3DNS.h"
 #include "W3Util.h"
+#include "W3HTTP.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -38,6 +39,9 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port){
 	){
 		ssl = true;
 	}
+	w3->method = NULL;
+	w3->path = NULL;
+	w3->protocol = __W3_Strdup(protocol);
 	if(ssl) __W3_Debug("Protocol", "Enabled SSL");
 	w3->sock = __W3_DNS_Connect(hostname, ssl, port
 #ifdef SSL_SUPPORT
@@ -47,4 +51,28 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port){
 #endif
 	);
 	return w3;
+}
+
+void W3_Set_Method(struct W3* w3, const char* method){
+	if(w3->method != NULL) free(w3->method);
+	w3->method = __W3_Strdup(method);
+}
+
+void W3_Set_Path(struct W3* w3, const char* path){
+	if(w3->path != NULL) free(w3->path);
+	w3->path = __W3_Strdup(path);
+}
+
+void W3_Send_Request(struct W3* w3){
+	if(strcmp(w3->protocol, "http") == 0 || strcmp(w3->protocol, "https") == 0){
+		__W3_HTTP_Request(w3);
+	}
+}
+
+void W3_Free(struct W3* w3){
+	__W3_Debug("LibW3", "Freeing");
+	if(w3->method != NULL) free(w3->method);
+	if(w3->path != NULL) free(w3->path);
+	if(w3->protocol != NULL) free(w3->protocol);
+	free(w3);
 }

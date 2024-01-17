@@ -23,3 +23,16 @@ char* __W3_Concat(const char* str1, const char* str2){
 	str[strlen(str1) + strlen(str2)] = 0;
 	return str;
 }
+
+char* __W3_Concat3(const char* str1, const char* str2, const char* str3){
+	char* tmp = __W3_Concat(str1, str2);
+	char* str = __W3_Concat(tmp, str3);
+	free(tmp);
+	return str;
+}
+
+char* __W3_Strdup(const char* str){
+	char* result = malloc(strlen(str) + 1);
+	memcpy(result, str, strlen(str) + 1);
+	return result;
+}
