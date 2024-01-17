@@ -87,9 +87,13 @@ archive: $(ALL)
 	mkdir -p w3-$(VERSION)/Library
 	mkdir -p w3-$(VERSION)/Example
 	cp $(ALL) ./Library/*.h w3-$(VERSION)/
+ifdef WINDOWS
+	-cp ./Library/*.lib w3-$(VERSION)/
+endif
 	-mv w3-$(VERSION)/*.h w3-$(VERSION)/Library/
 	-mv w3-$(VERSION)/*.so w3-$(VERSION)/Library/
 	-mv w3-$(VERSION)/*.dll w3-$(VERSION)/Library/
+	-mv w3-$(VERSION)/*.lib w3-$(VERSION)/Library/
 	-mv w3-$(VERSION)/fetch.exe w3-$(VERSION)/Example/w3-fetch.exe
 	-mv w3-$(VERSION)/fetch w3-$(VERSION)/Example/w3-fetch
 	-cp LICENSE w3-$(VERSION)/

@@ -3,7 +3,7 @@
 
 ifdef WINDOWS
 ./w3.dll: ./Core.o ./Util.o ./DNS.o ./HTTP.o
-	$(CC) $(LDFLAGS) -shared -o $@ $^ $(LIBS)
+	$(CC) $(LDFLAGS) -shared -Wl,--out-implib,./w3.lib -o $@ $^ $(LIBS)
 else
 ./libw3.so: ./Core.o ./Util.o ./DNS.o ./HTTP.o
 	$(CC) $(LDFLAGS) -shared -o $@ $^ $(LIBS)
@@ -13,7 +13,7 @@ endif
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -f *.o *.so *.core *~ *.dll
+	rm -f *.o *.so *.core *~ *.dll *.lib
 
 install: ./libw3.so
 	mkdir -p $(PREFIX)/lib
