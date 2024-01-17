@@ -5,6 +5,7 @@
 #include "W3Util.h"
 
 #include <string.h>
+#include <stdlib.h>
 
 void __W3_HTTP_Request(struct W3* w3){
 	__W3_Debug("LibW3-HTTP", "Sending the request");
