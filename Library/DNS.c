@@ -5,8 +5,16 @@
 
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef __MINGW32__
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <windows.h>
+#else
 #include <sys/socket.h>
 #include <netdb.h>
+#endif
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -14,6 +22,10 @@
 
 #ifdef SSL_SUPPORT
 #include <openssl/ssl.h>
+#endif
+
+#ifndef __MINGW32__
+#define ADDRINFO struct addrinfo
 #endif
 
 int __W3_DNS_Connect(const char* hostname, bool ssl, uint16_t port
@@ -24,9 +36,9 @@ int __W3_DNS_Connect(const char* hostname, bool ssl, uint16_t port
 #endif
 ){
 	__W3_Debug("DNS-Connect", "Resolving");
-	struct addrinfo hints;
-	struct addrinfo* result;
-	struct addrinfo* rp;
+	ADDRINFO hints;
+	ADDRINFO* result;
+	ADDRINFO* rp;
 	int s;
 
 	memset(&hints, 0, sizeof(hints));

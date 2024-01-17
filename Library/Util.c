@@ -5,6 +5,15 @@
 #include <string.h>
 #include <stdlib.h>
 
+#ifdef __MINGW32__
+#include <windows.h>
+#include <winsock.h>
+#else
+#include <netdb.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#endif
+
 #define __DEBUG_LEN 12
 
 void __W3_Debug(const char* title, const char* message){

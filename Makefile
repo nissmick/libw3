@@ -12,6 +12,10 @@ CFLAGS += -DSSL_SUPPORT
 LIBS += -lssl -lcrypto
 endif
 
+ifdef WINDOWS
+LIBS += -lws2_32
+endif
+
 ifdef DEBUG
 CFLAGS += -g -D__DEBUG__
 endif

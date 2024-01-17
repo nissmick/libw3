@@ -8,6 +8,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdlib.h>
+
+
+#ifdef __MINGW32__
+#include <windows.h>
+#include <winsock.h>
+#endif
 
 #ifdef SSL_SUPPORT
 #include <openssl/ssl.h>
@@ -21,6 +28,10 @@ int W3_Library_Init(void){
 	}else{
 		return 1;
 	}
+#endif
+#ifdef __MINGW32__
+	WSADATA wsa;
+	WSAStartup(MAKEWORD(2, 2), &wsa);
 #endif
 #ifdef SSL_SUPPORT
 	__W3_Debug("LibW3", "This is LibW3, version " LIBW3_VERSION ", using " OPENSSL_VERSION_TEXT);
