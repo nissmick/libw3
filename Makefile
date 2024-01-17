@@ -6,6 +6,7 @@ CFLAGS := -g -std=c99 -fPIC -D_BSD_SOURCE
 LDFLAGS :=
 LIBS :=
 PREFIX := /usr/local
+VERSION := $(shell cat Library/W3Core.h | grep -m 1 LIBW3_VERSION | sed -E "s/.+\"([^\"]+)\"/\1/g")
 
 ifdef SSL
 CFLAGS += -DSSL_SUPPORT
@@ -33,21 +34,31 @@ endif
 ifdef WINDOWS
 .PHONY: all clean ./Library/w3.dll ./Example/fetch
 
-all: ./w3.pc ./Library/w3.dll ./Example/fetch
+ALL := ./Library/w3.dll ./Example/fetch.exe
+
+all: ./w3.pc $(ALL)
 
 ./Library/w3.dll:
 	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" WINDOWS=YES
+
+./Example/fetch.exe:
+	$(MAKE) -C ./Example CC=$(CC) fetch
+
 else
+
 .PHONY: all clean ./Library/libw3.so ./Example/fetch
 
-all: ./w3.pc ./Library/libw3.so ./Example/fetch
+ALL := ./Library/libw3.so ./Example/fetch
+
+all: ./w3.pc $(ALL)
 
 ./Library/libw3.so:
 	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)"
-endif
 
 ./Example/fetch:
 	$(MAKE) -C ./Example CC=$(CC) fetch
+
+endif
 
 ./w3.pc:
 	echo "prefix=$(PREFIX)" > $@
@@ -57,7 +68,7 @@ endif
 	echo >> $@
 	echo "Name: w3" >> $@
 	echo "Description: The WWW Library" >> $@
-	echo "Version: $(shell cat Library/W3Core.h | grep -m 1 LIBW3_VERSION | sed -E "s/.+\"([^\"]+)\"/\1/g")" >> $@
+	echo "Version: $(VERSION)" >> $@
 	echo "Cflags: -I\$${includedir}/W3" >> $@
 	echo "Libs: -I\$${libdir} -lw3" >> $@
 
@@ -71,3 +82,16 @@ install: ./w3.pc
 	$(MAKE) -C ./Example install PREFIX=$(PREFIX)
 	mkdir -p $(PREFIX)/lib/pkgconfig
 	cp ./w3.pc $(PREFIX)/lib/pkgconfig/
+
+archive: $(ALL)
+	mkdir -p w3-$(VERSION)/Library
+	mkdir -p w3-$(VERSION)/Example
+	cp $(ALL) ./Library/*.h w3-$(VERSION)/
+	-mv w3-$(VERSION)/*.h w3-$(VERSION)/Library/
+	-mv w3-$(VERSION)/*.so w3-$(VERSION)/Library/
+	-mv w3-$(VERSION)/*.dll w3-$(VERSION)/Library/
+	-mv w3-$(VERSION)/fetch.exe w3-$(VERSION)/Example/w3-fetch.exe
+	-mv w3-$(VERSION)/fetch w3-$(VERSION)/Example/w3-fetch
+	tar czvf w3-$(VERSION).tar.gz w3-$(VERSION)
+	zip -rv w3-$(VERSION).zip w3-$(VERSION)
+	rm -rf w3-$(VERSION)
