@@ -5,7 +5,7 @@
 	$(CC) -o $@ -I ../Library -L ../Library $< -lw3
 
 clean:
-	rm -f fetch *.o *.so *.core *~
+	rm -f fetch *.o *.so *.core *~ *.exe
 
 install: ./fetch
 	mkdir -p $(PREFIX)/bin
