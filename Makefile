@@ -18,7 +18,7 @@ endif
 
 .PHONY: all clean ./Library/libw3.so ./Example/fetch
 
-all: ./Library/libw3.so ./Example/fetch
+all: ./w3.pc ./Library/libw3.so ./Example/fetch
 
 ./Library/libw3.so:
 	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)"
@@ -26,10 +26,25 @@ all: ./Library/libw3.so ./Example/fetch
 ./Example/fetch:
 	$(MAKE) -C ./Example CC=$(CC) fetch
 
+./w3.pc:
+	echo "prefix=$(PREFIX)" > $@
+	echo "exec_prefix=\$${prefix}" >> $@
+	echo "includedir=\$${prefix}/include" >> $@
+	echo "libdir=\$${exec_prefix}/lib" >> $@
+	echo >> $@
+	echo "Name: w3" >> $@
+	echo "Description: The WWW Library" >> $@
+	echo "Version: $(shell cat Library/W3Core.h | grep LIBW3_VERSION | sed -E "s/.+\"([^\"]+)\"/\1/g")" >> $@
+	echo "Cflags: -I\$${includedir}/W3" >> $@
+	echo "Libs: -I\$${libdir} -lw3" >> $@
+
 clean:
+	rm ./w3.pc
 	$(MAKE) -C ./Library clean
 	$(MAKE) -C ./Example clean
 
-install:
+install: ./w3.pc
 	$(MAKE) -C ./Library install PREFIX=$(PREFIX)
 	$(MAKE) -C ./Example install PREFIX=$(PREFIX)
+	mkdir -p $(PREFIX)/lib/pkgconfig
+	cp ./w3.pc $(PREFIX)/lib/pkgconfig/
