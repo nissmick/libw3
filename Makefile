@@ -12,6 +12,16 @@ CFLAGS += -DSSL_SUPPORT
 LIBS += -lssl -lcrypto
 endif
 
+ifdef WIN32
+CC := i686-w64-mingw32-gcc
+WINDOWS := YES
+endif
+
+ifdef WIN64
+CC := x86_64-w64-mingw32-gcc
+WINDOWS := YES
+endif
+
 ifdef WINDOWS
 LIBS += -lws2_32
 endif
