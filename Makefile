@@ -20,12 +20,21 @@ ifdef DEBUG
 CFLAGS += -g -D__DEBUG__
 endif
 
+ifdef WINDOWS
+.PHONY: all clean ./Library/w3.dll ./Example/fetch
+
+all: ./w3.pc ./Library/w3.dll ./Example/fetch
+
+./Library/w3.dll:
+	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" WINDOWS=YES
+else
 .PHONY: all clean ./Library/libw3.so ./Example/fetch
 
 all: ./w3.pc ./Library/libw3.so ./Example/fetch
 
 ./Library/libw3.so:
 	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)"
+endif
 
 ./Example/fetch:
 	$(MAKE) -C ./Example CC=$(CC) fetch
@@ -38,7 +47,7 @@ all: ./w3.pc ./Library/libw3.so ./Example/fetch
 	echo >> $@
 	echo "Name: w3" >> $@
 	echo "Description: The WWW Library" >> $@
-	echo "Version: $(shell cat Library/W3Core.h | grep LIBW3_VERSION | sed -E "s/.+\"([^\"]+)\"/\1/g")" >> $@
+	echo "Version: $(shell cat Library/W3Core.h | grep -m 1 LIBW3_VERSION | sed -E "s/.+\"([^\"]+)\"/\1/g")" >> $@
 	echo "Cflags: -I\$${includedir}/W3" >> $@
 	echo "Libs: -I\$${libdir} -lw3" >> $@
 
