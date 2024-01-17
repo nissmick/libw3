@@ -73,7 +73,7 @@ endif
 	echo "Libs: -I\$${libdir} -lw3" >> $@
 
 clean:
-	-rm ./w3.pc
+	-rm ./w3.pc *.zip *.tar.gz
 	$(MAKE) -C ./Library clean
 	$(MAKE) -C ./Example clean
 
