@@ -5,6 +5,7 @@
 #include "W3Util.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <stdbool.h>
 
 #ifdef SSL_SUPPORT
@@ -28,9 +29,16 @@ int W3_Library_Init(void){
 	return 0;
 }
 
-struct W3* W3_Create(bool ssl, const char* hostname, int port){
+struct W3* W3_Create(const char* protocol, const char* hostname, int port){
 	__W3_Debug("Create", "Creating a struct");
 	struct W3* w3 = malloc(sizeof(*w3));
+	bool ssl = false;
+	if(
+		strcmp(protocol, "https") == 0
+	){
+		ssl = true;
+	}
+	if(ssl) __W3_Debug("Protocol", "Enabled SSL");
 	w3->sock = __W3_DNS_Connect(hostname, ssl, port
 #ifdef SSL_SUPPORT
 	,

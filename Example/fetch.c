@@ -15,5 +15,5 @@ int main(int argc, char** argv){
 		return 1;
 	}
 	W3_Library_Init();
-	struct W3* w3 = W3_Create(true, argv[1], 443);
+	struct W3* w3 = W3_Create("https", argv[1], 443);
 }
