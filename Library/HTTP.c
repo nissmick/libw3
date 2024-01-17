@@ -28,9 +28,13 @@ void __W3_HTTP_Request(struct W3* w3){
 		__W3_Auto_Write(w3, ")", 1);
 		__W3_Auto_Write(w3, "\r\n", 2);
 	}
+	__W3_Auto_Write(w3, "Connection: ", 12);
+	__W3_Auto_Write(w3, "closed", 6);
+	__W3_Auto_Write(w3, "\r\n", 2);
 	if(w3->headers != NULL){
 		int i;
 		for(i = 0; w3->headers[i] != NULL; i += 2){
+			if(strcmp(w3->headers[i], "connection") == 0) continue;
 			__W3_Auto_Write(w3, w3->headers[i], strlen(w3->headers[i]));
 			__W3_Auto_Write(w3, ": ", 2);
 			__W3_Auto_Write(w3, w3->headers[i + 1], strlen(w3->headers[i + 1]));
