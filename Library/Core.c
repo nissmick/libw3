@@ -9,7 +9,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <stdlib.h>
-
+#include <ctype.h>
 
 #ifdef __MINGW32__
 #include <windows.h>
@@ -52,6 +52,7 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port){
 	}
 	w3->method = NULL;
 	w3->path = NULL;
+	w3->headers = NULL;
 	w3->protocol = __W3_Strdup(protocol);
 	w3->hostname = __W3_Strdup(hostname);
 	if(ssl) __W3_Debug("Protocol", "Enabled SSL");
@@ -81,11 +82,50 @@ void W3_Send_Request(struct W3* w3){
 	}
 }
 
+void W3_Set_Header(struct W3* w3, const char* key, const char* value){
+	char* tmp = __W3_Concat3("Setting the header `", key, "` to `");
+	char* str = __W3_Concat3(tmp, value, "`");
+	free(tmp);
+	__W3_Debug("Header", str);
+	free(str);
+	int len = 0;
+	if(w3->headers == NULL){
+		w3->headers = malloc(sizeof(*w3->headers) * (len + 3));
+		w3->headers[len] = __W3_Strdup(key);
+		w3->headers[len + 1] = __W3_Strdup(value);
+		int i;
+		for(i = 0; w3->headers[len + 1][i] != 0; i++){
+			w3->headers[len + 1][i] = tolower(w3->headers[len + 1][i]);
+		}
+		w3->headers[len + 2] = NULL;
+	}else{
+		for(len = 0; w3->headers[len] != NULL; len++);
+		char** headers = w3->headers;
+		w3->headers = malloc(sizeof(*w3->headers) * (len + 3));
+		for(len = 0; headers[len] != NULL; len++){
+			w3->headers[len] = headers[len];
+		}
+		w3->headers[len] = __W3_Strdup(key);
+		w3->headers[len + 1] = __W3_Strdup(value);
+		w3->headers[len + 2] = NULL;
+		int i;
+		for(i = 0; w3->headers[len + 1][i] != 0; i++){
+			w3->headers[len + 1][i] = tolower(w3->headers[len + 1][i]);
+		}
+		free(headers);
+	}
+}
+
 void W3_Free(struct W3* w3){
 	__W3_Debug("LibW3", "Freeing");
 	if(w3->method != NULL) free(w3->method);
 	if(w3->path != NULL) free(w3->path);
 	if(w3->protocol != NULL) free(w3->protocol);
 	if(w3->hostname != NULL) free(w3->hostname);
+	if(w3->headers != NULL){
+		int i;
+		for(i = 0; w3->headers[i] != 0; i++) free(w3->headers[i]);
+		free(w3->headers);
+	}
 	free(w3);
 }

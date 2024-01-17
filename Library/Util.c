@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #ifdef __MINGW32__
 #include <windows.h>
@@ -14,6 +15,7 @@
 #include <netdb.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <sys/utsname.h>
 #endif
 
 #ifdef SSL_SUPPORT
@@ -73,5 +75,26 @@ unsigned long __W3_Auto_Read(struct W3* w3, char* data, unsigned long length){
 	}
 #else
 	return recv(w3->sock, data, length, 0);
+#endif
+}
+
+bool __W3_Have_Header(struct W3* w3, const char* name){
+	if(w3->headers == NULL) return false;
+	int i;
+	for(i = 0; w3->headers[i] != NULL; i += 2){
+		if(strcmp(w3->headers[i], name) == 0){
+			return true;
+		}
+	}
+	return false;
+}
+
+char* __W3_Get_Platform(void){
+#ifdef __MINGW32__
+	return __W3_Strdup("Windows");
+#else
+	struct utsname un;
+	uname(&un);
+	return __W3_Concat3(un.sysname, "/", un.release);
 #endif
 }

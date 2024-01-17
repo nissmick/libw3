@@ -18,6 +18,7 @@ int main(int argc, char** argv){
 	struct W3* w3 = W3_Create("http", argv[1], 80);
 	W3_Set_Method(w3, "GET");
 	W3_Set_Path(w3, "/sunhttpd");
+	//W3_Set_Header(w3, "User-Agent", "W3-Fetch");
 	W3_Send_Request(w3);
 	W3_Free(w3);
 }
