@@ -2,7 +2,7 @@
 include config.mk
 
 CC := cc
-CFLAGS := -g -std=c99 -fPIC -D_BSD_SOURCE
+CFLAGS := -g -std=c99 -fPIC -D_BSD_SOURCE $(DEBUG)
 LDFLAGS :=
 LIBS :=
 PREFIX := /usr/local
@@ -10,10 +10,6 @@ PREFIX := /usr/local
 ifdef SSL
 CFLAGS += -DSSL_SUPPORT
 LIBS += -lssl -lcrypto
-endif
-
-ifdef DEBUG
-CFLAGS += -D__DEBUG__
 endif
 
 .PHONY: all clean ./Library/libw3.so ./Example/fetch
@@ -39,7 +35,7 @@ all: ./w3.pc ./Library/libw3.so ./Example/fetch
 	echo "Libs: -I\$${libdir} -lw3" >> $@
 
 clean:
-	rm ./w3.pc
+	-rm ./w3.pc
 	$(MAKE) -C ./Library clean
 	$(MAKE) -C ./Example clean
 

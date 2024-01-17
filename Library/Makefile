@@ -8,7 +8,7 @@
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -f *.o *.so *.core
+	rm -f *.o *.so *.core *~
 
 install: ./libw3.so
 	mkdir -p $(PREFIX)/lib

@@ -15,3 +15,11 @@ void __W3_Debug(const char* title, const char* message){
 	fprintf(stderr, "%s%s %s\n", title, periods, message);
 #endif
 }
+
+char* __W3_Concat(const char* str1, const char* str2){
+	char* str = malloc(strlen(str1) + strlen(str2) + 1);
+	strcpy(str, str1);
+	strcpy(str + strlen(str1), str2);
+	str[strlen(str1) + strlen(str2)] = 0;
+	return str;
+}
