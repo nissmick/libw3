@@ -8,8 +8,13 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 
 int main(int argc, char** argv){
+	if(argv[1] != NULL && strcmp(argv[1], "--version") == 0){
+		printf("LibW3 %s\n", LIBW3_VERSION);
+		return 0;
+	}
 	if(argc < 3){
 		fprintf(stderr, "Usage: %s URL Path\n", argv[0]);
 		return 1;
