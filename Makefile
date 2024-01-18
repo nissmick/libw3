@@ -41,7 +41,7 @@ all: ./w3.pc $(ALL)
 ./Library/w3.dll:
 	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" WINDOWS=YES
 
-./Example/fetch.exe:
+./Example/fetch.exe: ./Library/w3.dll
 	$(MAKE) -C ./Example CC=$(CC) fetch
 
 else
@@ -55,7 +55,7 @@ all: ./w3.pc $(ALL)
 ./Library/libw3.so:
 	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)"
 
-./Example/fetch:
+./Example/fetch: ./Library/libw3.so
 	$(MAKE) -C ./Example CC=$(CC) fetch
 
 endif
