@@ -51,6 +51,7 @@ int __W3_DNS_Connect(const char* hostname, bool ssl, uint16_t port
 	sprintf(strport, "%d", port);
 	s = getaddrinfo(hostname, strport, &hints, &result);
 	if(s != 0){
+		free(strport);
 		__W3_Debug("Resolve", "Failed");
 		return -1;	/* Failed to resolve */
 	}

@@ -21,8 +21,14 @@ int main(int argc, char** argv){
 	}
 	W3_Library_Init();
 	struct W3* w3 = W3_Create("http", argv[1], 80);
-	W3_Set_Method(w3, "GET");
-	W3_Set_Path(w3, argv[2]);
-	W3_Send_Request(w3);
-	W3_Free(w3);
+	if(w3 != NULL){
+		W3_Set_Method(w3, "GET");
+		W3_Set_Path(w3, argv[2]);
+		W3_Send_Request(w3);
+		W3_Free(w3);
+	}else{
+		fprintf(stderr, "Failed to fetch\n");
+		return 1;
+	}
+	return 0;
 }

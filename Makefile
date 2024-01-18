@@ -46,7 +46,7 @@ all: ./w3.pc ./Library/W3Version.h $(ALL)
 	$(MAKE) -C ./Example CC=$(CC) fetch
 
 ./Library/W3Version.h:
-	m4 -DSUFFIX=\"/W\" ./W3Version.h.p > $@
+	m4 -DSUFFIX=\"W\" ./W3Version.h.p > $@
 
 else
 
@@ -106,4 +106,5 @@ endif
 	-cp LICENSE w3-$(VERSION)/
 	tar czvf w3-$(VERSION).tar.gz w3-$(VERSION)
 	zip -rv w3-$(VERSION).zip w3-$(VERSION)
+	-/usr/lha/bin/lha a w3-$(VERSION).lzh w3-$(VERSION)
 	rm -rf w3-$(VERSION)

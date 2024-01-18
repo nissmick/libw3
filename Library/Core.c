@@ -63,6 +63,10 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port){
 	&w3->ssl_ctx
 #endif
 	);
+	if(w3->sock == -1){
+		W3_Free(w3);
+		w3 = NULL;
+	}
 	return w3;
 }
 
