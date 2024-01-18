@@ -36,7 +36,7 @@ ifdef WINDOWS
 
 ALL := ./Library/w3.dll ./Example/fetch.exe
 
-all: ./w3.pc $(ALL)
+all: ./w3.pc ./Library/W3Version.h $(ALL)
 
 ./Library/w3.dll:
 	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" WINDOWS=YES
@@ -44,19 +44,25 @@ all: ./w3.pc $(ALL)
 ./Example/fetch.exe: ./Library/w3.dll
 	$(MAKE) -C ./Example CC=$(CC) fetch
 
+./Library/W3Version.h:
+	m4 -DSUFFIX=\"/W\" ./W3Version.h.p > $@
+
 else
 
 .PHONY: all clean ./Library/libw3.so ./Example/fetch
 
 ALL := ./Library/libw3.so ./Example/fetch
 
-all: ./w3.pc $(ALL)
+all: ./w3.pc ./Library/W3Version.h $(ALL)
 
 ./Library/libw3.so:
 	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)"
 
 ./Example/fetch: ./Library/libw3.so
 	$(MAKE) -C ./Example CC=$(CC) fetch
+
+./Library/W3Version.h:
+	m4 -DSUFFIX=\"\" ./W3Version.h.p > $@
 
 endif
 
@@ -73,7 +79,7 @@ endif
 	echo "Libs: -I\$${libdir} -lw3" >> $@
 
 clean:
-	-rm ./w3.pc *.zip *.tar.gz
+	-rm ./w3.pc *.zip *.tar.gz ./Library/W3Version.h
 	$(MAKE) -C ./Library clean
 	$(MAKE) -C ./Example clean
 

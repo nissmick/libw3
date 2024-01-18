@@ -4,7 +4,7 @@
 
 #include <stdbool.h>
 
-#define LIBW3_VERSION "0.0"
+#include "W3Version.h"
 
 struct W3 {
 	int sock;	/* Socket */
