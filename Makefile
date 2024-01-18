@@ -89,7 +89,7 @@ install: ./w3.pc
 	mkdir -p $(PREFIX)/lib/pkgconfig
 	cp ./w3.pc $(PREFIX)/lib/pkgconfig/
 
-archive: $(ALL)
+archive: all
 	mkdir -p w3-$(VERSION)/Library
 	mkdir -p w3-$(VERSION)/Example
 	cp $(ALL) ./Library/*.h w3-$(VERSION)/
