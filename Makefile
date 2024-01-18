@@ -6,7 +6,7 @@ CFLAGS := -g -std=c99 -fPIC -D_BSD_SOURCE
 LDFLAGS :=
 LIBS :=
 PREFIX := /usr/local
-VERSION = $(shell cat Library/W3Version.h | grep -m 1 LIBW3_VERSION | sed -E "s/.+\"([^\"]+)\".+/\1/g")$(shell cat Library/W3Version.h | grep -Eo "\/W" | grep -Eo "W")
+VERSION = $(shell cat Library/W3Version.h | grep -m 1 LIBW3_VERSION | sed -E "s/.+\"([^\"]+)\".+/\1/g")$(shell cat Library/W3Version.h | grep -A 1 -Eo "LIBW3_VERSION" | tail -n1 | grep -Eo "W")
 
 
 ifdef SSL
