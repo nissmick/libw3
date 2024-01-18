@@ -2,6 +2,10 @@
 #ifndef __W3CORE_H__
 #define __W3CORE_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdbool.h>
 
 #include "W3Version.h"
@@ -27,5 +31,9 @@ void W3_Set_Path(struct W3* w3, const char* path);				/* Set the path */
 void W3_Send_Request(struct W3* w3);						/* Send the request */
 void W3_Set_Header(struct W3* w3, const char* key, const char* value);		/* Set the header */
 void W3_Free(struct W3* w3);							/* Free the struct */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

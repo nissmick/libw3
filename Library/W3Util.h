@@ -2,6 +2,10 @@
 #ifndef __W3UTIL_H__
 #define __W3UTIL_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "W3Core.h"
 
 #include <stdbool.h>
@@ -14,5 +18,9 @@ unsigned long __W3_Auto_Write(struct W3* w3, char* data, unsigned long length);
 unsigned long __W3_Auto_Read(struct W3* w3, char* data, unsigned long length);
 bool __W3_Have_Header(struct W3* w3, const char* name);
 char* __W3_Get_Platform(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
