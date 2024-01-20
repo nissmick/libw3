@@ -83,7 +83,6 @@ void __W3_HTTP_Request(struct W3* w3){
 						}
 					}
 					phase++;
-					break;
 				}else{
 					char* oldbuf = statusbuf;
 					statusbuf = malloc(strlen(oldbuf) + 2);
@@ -99,6 +98,36 @@ void __W3_HTTP_Request(struct W3* w3){
 				headerbuf[strlen(oldbuf)] = buf[i];
 				headerbuf[strlen(oldbuf) + 1] = 0;
 				free(oldbuf);
+				int len = strlen(headerbuf);
+				if(len >= 4){
+					if(headerbuf[len - 1] == '\n' && headerbuf[len - 2] == '\r' && headerbuf[len - 3] == '\n' && headerbuf[len - 4] == '\r'){
+						headerbuf[len - 4] = 0;
+						char* headers = malloc(strlen(headerbuf) + 1);
+						int j;
+						int incr = 0;
+						int start = 0;
+						for(j = 1; headerbuf[j] != 0; j++){
+							char c = headerbuf[j];
+							if(c == '\r'){
+								headers[incr] = 0;
+								headers[incr + 1] = 0;
+								char* data = __W3_Strdup(headers + start);
+								int k;
+								for(k = 0; data[k] != 0; k++){
+								}
+								free(data);
+								start = incr + 1;
+								incr++;
+								j++;
+							}else{
+								headers[incr] = c;
+								headers[incr + 1] = 0;
+								incr++;
+							}
+						}
+						free(headers);
+					}
+				}
 			}
 		}
 	}
