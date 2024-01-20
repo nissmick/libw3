@@ -92,6 +92,13 @@ void __W3_HTTP_Request(struct W3* w3){
 					statusbuf[strlen(oldbuf) + 1] = 0;
 					free(oldbuf);
 				}
+			}else if(phase == 1){
+				char* oldbuf = headerbuf;
+				headerbuf = malloc(strlen(oldbuf) + 2);
+				strcpy(headerbuf, oldbuf);
+				headerbuf[strlen(oldbuf)] = buf[i];
+				headerbuf[strlen(oldbuf) + 1] = 0;
+				free(oldbuf);
 			}
 		}
 	}
