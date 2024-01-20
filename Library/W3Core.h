@@ -17,6 +17,8 @@ struct W3 {
 	char* path;	/* As you can read from its name */
 	char* hostname;	/* As you can read from its name */
 	char** headers;	/* As you can read from its name */
+	void** events;	/* As you can read from its name */ 
+	int status;	/* As you can read from its name */ 
 #ifdef SSL_SUPPORT
 	void* ssl;	/* Actually SSL*, NULL if no SSL */
 	void* ssl_ctx;	/* Actually SSL_CTX* */
@@ -31,6 +33,7 @@ void W3_Set_Path(struct W3* w3, const char* path);				/* Set the path */
 void W3_Send_Request(struct W3* w3);						/* Send the request */
 void W3_Set_Header(struct W3* w3, const char* key, const char* value);		/* Set the header */
 void W3_Free(struct W3* w3);							/* Free the struct */
+void W3_On(struct W3* w3, const char* eventname, void* func);			/* Set Handlers */
 
 #ifdef __cplusplus
 }

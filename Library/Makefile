@@ -1,7 +1,7 @@
 # $Id$
 .PHONY: clean install
 
-ifdef WINDOWS
+ifeq ($(WINDOWS),YES)
 ./w3.dll: ./Core.o ./Util.o ./DNS.o ./HTTP.o
 	$(CC) $(LDFLAGS) -shared -Wl,--out-implib,./w3.lib -o $@ $^ $(LIBS)
 else

@@ -78,6 +78,17 @@ unsigned long __W3_Auto_Read(struct W3* w3, char* data, unsigned long length){
 #endif
 }
 
+void* __W3_Get_Event(struct W3* w3, const char* eventname){
+	if(w3->events == NULL) return NULL;
+	int i;
+	for(i = 0; w3->events[i] != NULL; i += 2){
+		if(strcmp(w3->events[i], eventname) == 0){
+			return w3->events[i + 1];
+		}
+	}
+	return NULL;
+}
+
 bool __W3_Have_Header(struct W3* w3, const char* name){
 	if(w3->headers == NULL) return false;
 	int i;

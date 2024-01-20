@@ -7,8 +7,16 @@
 #include <W3Core.h>
 
 #include <stdio.h>
-#include <stdbool.h>
 #include <string.h>
+#include <unistd.h>
+
+void fetch_data(struct W3* w3, size_t size, char* data){
+	write(1, data, size);
+}
+
+void status(struct W3* w3, int status){
+	printf("Response code is %d\n", status);
+}
 
 int main(int argc, char** argv){
 	if(argv[1] != NULL && strcmp(argv[1], "--version") == 0){
@@ -24,6 +32,8 @@ int main(int argc, char** argv){
 	if(w3 != NULL){
 		W3_Set_Method(w3, "GET");
 		W3_Set_Path(w3, argv[2]);
+		W3_On(w3, "status", (void*)status);
+		W3_On(w3, "data", (void*)fetch_data);
 		W3_Send_Request(w3);
 		W3_Free(w3);
 	}else{

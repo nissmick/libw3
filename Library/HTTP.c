@@ -44,4 +44,58 @@ void __W3_HTTP_Request(struct W3* w3){
 	}
 	__W3_Auto_Write(w3, "\r\n", 2);
 	__W3_Auto_Write(w3, "\r\n", 2);
+	char* buf = malloc(512);
+	char* statusbuf = malloc(1);
+	statusbuf[0] = 0;
+	char* headerbuf = malloc(1);
+	headerbuf[0] = 0;
+	int phase = 0;
+	while(1){
+		int l = __W3_Auto_Read(w3, buf, 512);
+		if(l <= 0) break;
+		int i;
+		for(i = 0; i < l; i++){
+			if(phase == 0){
+				if(buf[i] == '\r'){
+					int phase2 = 0;
+					int j = 0;
+					int start_status = 0;
+					for(j = 0; statusbuf[j] != 0; j++){
+						if(phase2 == 0){
+							if(statusbuf[j] == ' '){
+								phase2++;
+								start_status = j + 1;
+							}
+						}else if(phase2 == 1){
+							if(statusbuf[j] == ' '){
+								char* code = malloc(j - start_status + 1);
+								code[j - start_status] = 0;
+								memcpy(code, statusbuf + start_status, j - start_status);
+								w3->status = atoi(code);
+								void* funcptr = __W3_Get_Event(w3, "status");
+								if(funcptr != NULL){
+									void(*func)(struct W3*, int) = (void(*)(struct W3*, int))funcptr;
+									func(w3, w3->status);
+								}
+								free(code);
+								break;
+							}
+						}
+					}
+					phase++;
+					break;
+				}else{
+					char* oldbuf = statusbuf;
+					statusbuf = malloc(strlen(oldbuf) + 2);
+					strcpy(statusbuf, oldbuf);
+					statusbuf[strlen(oldbuf)] = buf[i];
+					statusbuf[strlen(oldbuf) + 1] = 0;
+					free(oldbuf);
+				}
+			}
+		}
+	}
+	free(headerbuf);
+	free(statusbuf);
+	free(buf);
 }

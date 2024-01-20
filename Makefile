@@ -9,30 +9,30 @@ PREFIX := /usr/local
 VERSION = $(shell cat Library/W3Version.h | grep -m 1 LIBW3_VERSION | sed -E "s/.+\"([^\"]+)\".+/\1/g")$(shell cat Library/W3Version.h | grep -A 1 -Eo "LIBW3_VERSION" | tail -n1 | grep -Eo "W")
 
 
-ifdef SSL
+ifeq ($(SSL),YES)
 CFLAGS += -DSSL_SUPPORT
 LIBS += -lssl -lcrypto
 endif
 
-ifdef WIN32
+ifeq ($(WIN32),YES)
 CC := i686-w64-mingw32-gcc
 WINDOWS := YES
 endif
 
-ifdef WIN64
+ifeq ($(WIN64),YES)
 CC := x86_64-w64-mingw32-gcc
 WINDOWS := YES
 endif
 
-ifdef WINDOWS
+ifeq ($(WINDOWS),YES)
 LIBS += -lws2_32
 endif
 
-ifdef DEBUG
+ifeq ($(DEBUG),YES)
 CFLAGS += -g -D__DEBUG__
 endif
 
-ifdef WINDOWS
+ifeq ($(WINDOWS),YES)
 .PHONY: all clean ./Library/w3.dll ./Example/fetch
 
 ALL := ./Library/w3.dll ./Example/fetch.exe

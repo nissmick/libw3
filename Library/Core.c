@@ -52,6 +52,7 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port){
 	}
 	w3->method = NULL;
 	w3->path = NULL;
+	w3->events = NULL;
 	w3->headers = NULL;
 	w3->protocol = __W3_Strdup(protocol);
 	w3->hostname = __W3_Strdup(hostname);
@@ -98,8 +99,8 @@ void W3_Set_Header(struct W3* w3, const char* key, const char* value){
 		w3->headers[len] = __W3_Strdup(key);
 		w3->headers[len + 1] = __W3_Strdup(value);
 		int i;
-		for(i = 0; w3->headers[len + 1][i] != 0; i++){
-			w3->headers[len + 1][i] = tolower(w3->headers[len + 1][i]);
+		for(i = 0; w3->headers[len][i] != 0; i++){
+			w3->headers[len][i] = tolower(w3->headers[len][i]);
 		}
 		w3->headers[len + 2] = NULL;
 	}else{
@@ -113,10 +114,39 @@ void W3_Set_Header(struct W3* w3, const char* key, const char* value){
 		w3->headers[len + 1] = __W3_Strdup(value);
 		w3->headers[len + 2] = NULL;
 		int i;
-		for(i = 0; w3->headers[len + 1][i] != 0; i++){
-			w3->headers[len + 1][i] = tolower(w3->headers[len + 1][i]);
+		for(i = 0; w3->headers[len][i] != 0; i++){
+			w3->headers[len][i] = tolower(w3->headers[len][i]);
 		}
 		free(headers);
+	}
+}
+
+void W3_On(struct W3* w3, const char* eventname, void* func){
+	int len = 0;
+	if(w3->events == NULL){
+		w3->events = malloc(sizeof(*w3->events) * (len + 3));
+		w3->events[len] = __W3_Strdup(eventname);
+		w3->events[len + 1] = func;
+		int i;
+		for(i = 0; ((char*)w3->events[len])[i] != 0; i++){
+			((char*)w3->events[len])[i] = tolower(((char*)w3->events[len])[i]);
+		}
+		w3->events[len + 2] = NULL;
+	}else{
+		for(len = 0; w3->events[len] != NULL; len++);
+		void** events = w3->events;
+		w3->events = malloc(sizeof(*w3->events) * (len + 3));
+		for(len = 0; events[len] != NULL; len++){
+			w3->events[len] = events[len];
+		}
+		w3->events[len] = __W3_Strdup(eventname);
+		w3->events[len + 1] = func;
+		w3->events[len + 2] = NULL;
+		int i;
+		for(i = 0; ((char*)w3->events[len])[i] != 0; i += 2){
+			((char*)w3->events[len])[i] = tolower(((char*)w3->events[len])[i]);
+		}
+		free(events);
 	}
 }
 
@@ -130,6 +160,11 @@ void W3_Free(struct W3* w3){
 		int i;
 		for(i = 0; w3->headers[i] != 0; i++) free(w3->headers[i]);
 		free(w3->headers);
+	}
+	if(w3->events != NULL){
+		int i;
+		for(i = 0; w3->events[i] != 0; i += 2) free(w3->events[i]);
+		free(w3->events);
 	}
 	free(w3);
 }
