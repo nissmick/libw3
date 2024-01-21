@@ -10,7 +10,7 @@
 #include <string.h>
 #include <unistd.h>
 
-void fetch_data(struct W3* w3, size_t size, char* data){
+void fetch_data(struct W3* w3, char* data, size_t size){
 	write(1, data, size);
 }
 

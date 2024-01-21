@@ -126,8 +126,16 @@ void __W3_HTTP_Request(struct W3* w3){
 							}
 						}
 						free(headers);
+						phase++;
 					}
 				}
+			}else if(phase == 2){
+				void* funcptr = __W3_Get_Event(w3, "data");
+				if(funcptr != NULL){
+					void(*func)(struct W3* w3, char*, size_t) = (void(*)(struct W3* w3, char*, size_t))funcptr;
+					func(w3, buf + i, l - i);
+				}
+				break;
 			}
 		}
 	}
