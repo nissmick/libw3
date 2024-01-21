@@ -6,6 +6,7 @@
 extern "C" {
 #endif
 
+#include <stddef.h>
 #include <stdbool.h>
 
 #include "W3Version.h"
@@ -19,6 +20,8 @@ struct W3 {
 	char** headers;	/* As you can read from its name */
 	void** events;	/* As you can read from its name */ 
 	int status;	/* As you can read from its name */ 
+	char* data;	/* As you can read from its name */
+	size_t size;	/* Size of the data */
 #ifdef SSL_SUPPORT
 	void* ssl;	/* Actually SSL*, NULL if no SSL */
 	void* ssl_ctx;	/* Actually SSL_CTX* */
@@ -34,6 +37,7 @@ void W3_Send_Request(struct W3* w3);						/* Send the request */
 void W3_Set_Header(struct W3* w3, const char* key, const char* value);		/* Set the header */
 void W3_Free(struct W3* w3);							/* Free the struct */
 void W3_On(struct W3* w3, const char* eventname, void* func);			/* Set Handlers */
+void W3_Set_Data(struct W3* w3, char* data, size_t size);			/* Send the data - LibW3 won't free the data */
 
 #ifdef __cplusplus
 }

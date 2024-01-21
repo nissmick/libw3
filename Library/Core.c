@@ -56,6 +56,8 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port){
 	w3->headers = NULL;
 	w3->protocol = __W3_Strdup(protocol);
 	w3->hostname = __W3_Strdup(hostname);
+	w3->size = 0;
+	w3->data = NULL;
 	if(ssl) __W3_Debug("Protocol", "Enabled SSL");
 	w3->sock = __W3_DNS_Connect(hostname, ssl, port
 #ifdef SSL_SUPPORT
@@ -85,6 +87,11 @@ void W3_Send_Request(struct W3* w3){
 	if(strcmp(w3->protocol, "http") == 0 || strcmp(w3->protocol, "https") == 0){
 		__W3_HTTP_Request(w3);
 	}
+}
+
+void W3_Set_Data(struct W3* w3, char* data, size_t size){
+	w3->data = data;
+	w3->size = size;
 }
 
 void W3_Set_Header(struct W3* w3, const char* key, const char* value){

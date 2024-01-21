@@ -32,17 +32,20 @@ int main(int argc, char** argv){
 		return 0;
 	}
 	if(argc < 3){
-		fprintf(stderr, "Usage: %s URL Path\n", argv[0]);
+		fprintf(stderr, "Usage: %s URL Path [method [data]]\n", argv[0]);
 		return 1;
 	}
 	W3_Library_Init();
 	struct W3* w3 = W3_Create("http", argv[1], 80);
 	if(w3 != NULL){
-		W3_Set_Method(w3, "GET");
+		W3_Set_Method(w3, argv[3] == NULL ? "GET" : argv[3]);
 		W3_Set_Path(w3, argv[2]);
 		W3_On(w3, "status", (void*)status);
 		W3_On(w3, "data", (void*)fetch_data);
 		W3_On(w3, "header", (void*)header);
+		if(argv[3] != NULL && strcmp(argv[3], "POST") == 0 && argv[4] != NULL){
+			W3_Set_Data(w3, argv[4], strlen(argv[4]));
+		}
 		W3_Send_Request(w3);
 		W3_Free(w3);
 	}else{

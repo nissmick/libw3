@@ -6,6 +6,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 void __W3_HTTP_Request(struct W3* w3){
 	__W3_Debug("LibW3-HTTP", "Sending the request");
@@ -36,14 +37,26 @@ void __W3_HTTP_Request(struct W3* w3){
 		int i;
 		for(i = 0; w3->headers[i] != NULL; i += 2){
 			if(strcmp(w3->headers[i], "connection") == 0) continue;
+			if(strcmp(w3->headers[i], "content-length") == 0) continue;
 			__W3_Auto_Write(w3, w3->headers[i], strlen(w3->headers[i]));
 			__W3_Auto_Write(w3, ": ", 2);
 			__W3_Auto_Write(w3, w3->headers[i + 1], strlen(w3->headers[i + 1]));
 			__W3_Auto_Write(w3, "\r\n", 2);
 		}
 	}
+	if(w3->data != NULL){
+		char* len = malloc(129);
+		memset(len, 0, 129);
+		sprintf(len, "%d", w3->size);
+		__W3_Auto_Write(w3, "content-length: ", 16);
+		__W3_Auto_Write(w3, len, strlen(len));
+		__W3_Auto_Write(w3, "\r\n", 2);
+		free(len);
+	}
 	__W3_Auto_Write(w3, "\r\n", 2);
-	__W3_Auto_Write(w3, "\r\n", 2);
+	if(w3->data != NULL){
+		__W3_Auto_Write(w3, w3->data, w3->size);
+	}
 	char* buf = malloc(512);
 	char* statusbuf = malloc(1);
 	statusbuf[0] = 0;
