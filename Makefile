@@ -50,14 +50,17 @@ all: ./w3.pc ./Library/W3Version.h $(ALL)
 
 else
 
-.PHONY: all clean ./Library/libw3.so ./Example/fetch
+.PHONY: all clean ./Library/libw3.so ./Library/libw3.a ./Example/fetch
 
-ALL := ./Library/libw3.so ./Example/fetch
+ALL := ./Library/libw3.so ./Library/libw3.a ./Example/fetch
 
 all: ./w3.pc ./Library/W3Version.h $(ALL)
 
 ./Library/libw3.so:
-	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)"
+	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" ./libw3.so
+
+./Library/libw3.a:
+	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" ./libw3.a
 
 ./Example/fetch: ./Library/libw3.so
 	$(MAKE) -C ./Example CC=$(CC) fetch

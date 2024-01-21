@@ -7,16 +7,19 @@ ifeq ($(WINDOWS),YES)
 else
 ./libw3.so: ./Core.o ./Util.o ./DNS.o ./HTTP.o
 	$(CC) $(LDFLAGS) -shared -o $@ $^ $(LIBS)
+./libw3.a: ./Core.o ./Util.o ./DNS.o ./HTTP.o
+	ar rcs $@ $^
 endif
 
 ./%.o: ./%.c W3%.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -f *.o *.so *.core *~ *.dll *.lib
+	rm -f *.o *.so *.core *~ *.dll *.lib *.a
 
-install: ./libw3.so
+install: ./libw3.so ./libw3.a
 	mkdir -p $(PREFIX)/lib
 	cp ./libw3.so $(PREFIX)/lib/
+	cp ./libw3.a $(PREFIX)/lib/
 	mkdir -p $(PREFIX)/include/W3
 	cp *.h $(PREFIX)/include/W3/
