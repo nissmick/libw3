@@ -18,6 +18,10 @@ void status(struct W3* w3, int status){
 	printf("Response code is %d\n", status);
 }
 
+void header(struct W3* w3, char* key, char* value){
+	printf("Header: %s is `%s'\n", key, value);
+}
+
 int main(int argc, char** argv){
 	if(argv[1] != NULL && strcmp(argv[1], "--version") == 0){
 		printf("LibW3 %s\n", LIBW3_VERSION);
@@ -34,6 +38,7 @@ int main(int argc, char** argv){
 		W3_Set_Path(w3, argv[2]);
 		W3_On(w3, "status", (void*)status);
 		W3_On(w3, "data", (void*)fetch_data);
+		W3_On(w3, "header", (void*)header);
 		W3_Send_Request(w3);
 		W3_Free(w3);
 	}else{

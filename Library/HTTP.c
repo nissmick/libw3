@@ -114,6 +114,19 @@ void __W3_HTTP_Request(struct W3* w3){
 								char* data = __W3_Strdup(headers + start);
 								int k;
 								for(k = 0; data[k] != 0; k++){
+									if(data[k] == ':'){
+										data[k] = 0;
+										k++;
+										for(; data[k] != 0 && data[k] != ' ' && data[k] != '\t'; k++) data[k] = 0;
+										if(data[k] == ' ' || data[k] == '\t'){
+											void* funcptr = __W3_Get_Event(w3, "header");
+											if(funcptr != NULL){
+												void(*func)(struct W3*, char*, char*) = (void(*)(struct W3*, char*, char*))funcptr;
+												func(w3, data, data + k + 1);
+											}
+										}
+										break;
+									}
 								}
 								free(data);
 								start = incr + 1;
