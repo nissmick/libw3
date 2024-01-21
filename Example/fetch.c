@@ -20,6 +20,10 @@ void status(struct W3* w3, int status){
 
 void header(struct W3* w3, char* key, char* value){
 	printf("Header: %s is `%s'\n", key, value);
+	if(strcasecmp(key, "Server") == 0){
+		/* For the example - We get the server software */
+		printf("Server is using `%s'\n", value);
+	}
 }
 
 int main(int argc, char** argv){
