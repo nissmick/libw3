@@ -17,7 +17,7 @@ endif
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -f *.o *.so *.core *~ *.dll *.lib *.a
+	rm -f *.o *.so *.core *~ *.dll *.lib *.a *.res
 
 install: ./libw3.so ./libw3.a
 	mkdir -p $(PREFIX)/lib
