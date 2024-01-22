@@ -85,7 +85,6 @@ int __W3_DNS_Connect(const char* hostname, bool ssl, uint16_t port
 			*o_ssl = NULL;
 			close(sock);
 			sock = -1;
-
 		}else{
 			__W3_Debug("SSL", "Connected");
 		}

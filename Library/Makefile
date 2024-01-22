@@ -5,7 +5,7 @@ OBJS = ./Core.o ./Util.o ./DNS.o ./HTTP.o ./File.o
 
 ifeq ($(WINDOWS),YES)
 ./w3.dll: $(OBJS)
-	$(CC) $(LDFLAGS) -shared -Wl,--out-implib,./w3.lib -o $@ $^ $(LIBS)
+	$(CC) $(LDFLAGS) -L../openssl/lib/mingw/x64 -shared -Wl,--out-implib,./w3.lib -o $@ $^ $(LIBS)
 else
 ./libw3.so: $(OBJS)
 	$(CC) $(LDFLAGS) -shared -o $@ $^ $(LIBS)
@@ -14,7 +14,7 @@ else
 endif
 
 ./%.o: ./%.c W3%.h
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) -I../openssl/include -c -o $@ $<
 
 clean:
 	rm -f *.o *.so *.core *~ *.dll *.lib *.a *.res
