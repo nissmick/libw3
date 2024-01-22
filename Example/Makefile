@@ -8,7 +8,7 @@
 	$(WINDRES) $< -O coff -o $@
 
 clean:
-	rm -f fetch *.o *.so *.core *~ *.exe
+	rm -f fetch *.o *.so *.core *~ *.exe *.res
 
 install: ./fetch
 	mkdir -p $(PREFIX)/bin
