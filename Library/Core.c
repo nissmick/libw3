@@ -3,7 +3,9 @@
 
 #include "W3DNS.h"
 #include "W3Util.h"
+
 #include "W3HTTP.h"
+#include "W3File.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -54,21 +56,23 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port){
 	w3->path = NULL;
 	w3->events = NULL;
 	w3->headers = NULL;
-	w3->protocol = __W3_Strdup(protocol);
-	w3->hostname = __W3_Strdup(hostname);
 	w3->size = 0;
 	w3->data = NULL;
-	if(ssl) __W3_Debug("Protocol", "Enabled SSL");
-	w3->sock = __W3_DNS_Connect(hostname, ssl, port
+	w3->protocol = __W3_Strdup(protocol);
+	if(strcmp(protocol, "file") != 0){
+		w3->hostname = __W3_Strdup(hostname);
+		if(ssl) __W3_Debug("Protocol", "Enabled SSL");
+		w3->sock = __W3_DNS_Connect(hostname, ssl, port
 #ifdef SSL_SUPPORT
-	,
-	&w3->ssl,
-	&w3->ssl_ctx
+		,
+		&w3->ssl,
+		&w3->ssl_ctx
 #endif
-	);
-	if(w3->sock == -1){
-		W3_Free(w3);
-		w3 = NULL;
+		);
+		if(w3->sock == -1){
+			W3_Free(w3);
+			w3 = NULL;
+		}
 	}
 	return w3;
 }
@@ -86,6 +90,8 @@ void W3_Set_Path(struct W3* w3, const char* path){
 void W3_Send_Request(struct W3* w3){
 	if(strcmp(w3->protocol, "http") == 0 || strcmp(w3->protocol, "https") == 0){
 		__W3_HTTP_Request(w3);
+	}else if(strcmp(w3->protocol, "file") == 0){
+		__W3_File_Request(w3);
 	}
 }
 

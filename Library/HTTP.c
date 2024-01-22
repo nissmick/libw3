@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 void __W3_HTTP_Request(struct W3* w3){
 	__W3_Debug("LibW3-HTTP", "Sending the request");
@@ -63,7 +64,7 @@ void __W3_HTTP_Request(struct W3* w3){
 	char* headerbuf = malloc(1);
 	headerbuf[0] = 0;
 	int phase = 0;
-	while(1){
+	while(true){
 		int l = __W3_Auto_Read(w3, buf, 512);
 		if(l <= 0) break;
 		int i;

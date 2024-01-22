@@ -1,7 +1,7 @@
 # $Id$
 .PHONY: clean install
 
-OBJS = ./Core.o ./Util.o ./DNS.o ./HTTP.o
+OBJS = ./Core.o ./Util.o ./DNS.o ./HTTP.o ./File.o
 
 ifeq ($(WINDOWS),YES)
 ./w3.dll: $(OBJS)
