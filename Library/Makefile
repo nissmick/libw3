@@ -1,13 +1,15 @@
 # $Id$
 .PHONY: clean install
 
+OBJS = ./Core.o ./Util.o ./DNS.o ./HTTP.o
+
 ifeq ($(WINDOWS),YES)
-./w3.dll: ./Core.o ./Util.o ./DNS.o ./HTTP.o
+./w3.dll: $(OBJS)
 	$(CC) $(LDFLAGS) -shared -Wl,--out-implib,./w3.lib -o $@ $^ $(LIBS)
 else
-./libw3.so: ./Core.o ./Util.o ./DNS.o ./HTTP.o
+./libw3.so: $(OBJS)
 	$(CC) $(LDFLAGS) -shared -o $@ $^ $(LIBS)
-./libw3.a: ./Core.o ./Util.o ./DNS.o ./HTTP.o
+./libw3.a: $(OBJS)
 	ar rcs $@ $^
 endif
 

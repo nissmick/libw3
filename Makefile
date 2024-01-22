@@ -45,7 +45,7 @@ all: ./w3.pc ./Library/W3Version.h $(ALL)
 	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" WINDOWS=YES
 
 ./Example/fetch.exe: ./Library/w3.dll
-	$(MAKE) -C ./Example CC=$(CC) fetch RESFILE=./fetch.res WINDRES=$(WINDRES)
+	$(MAKE) -C ./Example CC=$(CC) fetch RESFILE=./libw3.res WINDRES=$(WINDRES)
 
 ./Library/W3Version.h:
 	m4 -DSUFFIX=\"W\" ./W3Version.h.p > $@

@@ -3,9 +3,9 @@ VS_VERSION_INFO VERSIONINFO
 BEGIN
         BLOCK "StringFileInfo"
         BEGIN
-                BLOCK "041104B0"
+                BLOCK "000004b0"
                 BEGIN
-                        VALUE "FileDescription", "LibW3 Fetch"
+                        VALUE "ProductName", "LibW3 Tool\0"
                 END
         END
 END

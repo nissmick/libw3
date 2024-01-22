@@ -4,7 +4,7 @@
 ./fetch: ./fetch.c $(RESFILE)
 	$(CC) -o $@ -I ../Library -L ../Library $^ -lw3
 
-./fetch.res: ./fetch.rc
+./libw3.res: ./libw3.rc
 	$(WINDRES) $< -O coff -o $@
 
 clean:
