@@ -15,14 +15,14 @@ void fetch_data(struct W3* w3, char* data, size_t size){
 }
 
 void status(struct W3* w3, int status){
-	printf("Response code is %d\n", status);
+	fprintf(stderr, "Response code is %d\n", status);
 }
 
 void header(struct W3* w3, char* key, char* value){
 	printf("Header: %s is `%s'\n", key, value);
 	if(strcasecmp(key, "Server") == 0){
 		/* For the example - We get the server software */
-		printf("Server is using `%s'\n", value);
+		fprintf(stderr, "Server is using `%s'\n", value);
 	}
 }
 
