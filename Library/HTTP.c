@@ -160,7 +160,10 @@ void __W3_HTTP_Request(struct W3* w3){
 				void* funcptr = __W3_Get_Event(w3, "data");
 				if(funcptr != NULL){
 					void(*func)(struct W3* w3, char*, size_t) = (void(*)(struct W3* w3, char*, size_t))funcptr;
-					func(w3, buf + i, l - i);
+					char* buffer = malloc(l - i);
+					memcpy(buffer, buf + i, l - i);
+					func(w3, buffer, l - i);
+					free(buffer);
 				}
 				break;
 			}
