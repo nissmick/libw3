@@ -16,11 +16,13 @@ endif
 
 ifeq ($(WIN32),YES)
 CC := i686-w64-mingw32-gcc
+WINDRES := i686-w64-mingw32-windres
 WINDOWS := YES
 endif
 
 ifeq ($(WIN64),YES)
 CC := x86_64-w64-mingw32-gcc
+WINDRES := x86_64-w64-mingw32-windres
 WINDOWS := YES
 endif
 
@@ -43,7 +45,7 @@ all: ./w3.pc ./Library/W3Version.h $(ALL)
 	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" WINDOWS=YES
 
 ./Example/fetch.exe: ./Library/w3.dll
-	$(MAKE) -C ./Example CC=$(CC) fetch
+	$(MAKE) -C ./Example CC=$(CC) fetch RESFILE=./fetch.res WINDRES=$(WINDRES)
 
 ./Library/W3Version.h:
 	m4 -DSUFFIX=\"W\" ./W3Version.h.p > $@

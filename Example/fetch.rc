@@ -1,0 +1,11 @@
+id ICON "../w3.ico"
+VS_VERSION_INFO VERSIONINFO
+BEGIN
+        BLOCK "StringFileInfo"
+        BEGIN
+                BLOCK "041104B0"
+                BEGIN
+                        VALUE "FileDescription", "LibW3 Fetch"
+                END
+        END
+END
