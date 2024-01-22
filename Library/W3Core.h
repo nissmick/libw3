@@ -12,19 +12,20 @@ extern "C" {
 #include "W3Version.h"
 
 struct W3 {
-	int sock;	/* Socket */
-	char* protocol;	/* As you can read from its name */
-	char* method;	/* Used in HTTP	*/
-	char* path;	/* As you can read from its name */
-	char* hostname;	/* As you can read from its name */
-	char** headers;	/* As you can read from its name */
-	void** events;	/* As you can read from its name */ 
-	int status;	/* As you can read from its name */ 
-	char* data;	/* As you can read from its name */
-	size_t size;	/* Size of the data */
+	int sock;		/* Socket */
+	char* protocol;		/* As you can read from its name */
+	char* method;		/* Used in HTTP	*/
+	char* path;		/* As you can read from its name */
+	char* hostname;		/* As you can read from its name */
+	char** headers;		/* As you can read from its name */
+	void** events;		/* As you can read from its name */ 
+	int status;		/* As you can read from its name */ 
+	char* data;		/* As you can read from its name */
+	size_t size;		/* Size of the data */
+	size_t readsize;	/* Read buffer size, default is 512 */
 #ifdef SSL_SUPPORT
-	void* ssl;	/* Actually SSL*, NULL if no SSL */
-	void* ssl_ctx;	/* Actually SSL_CTX* */
+	void* ssl;		/* Actually SSL*, NULL if no SSL */
+	void* ssl_ctx;		/* Actually SSL_CTX* */
 #endif
 };
 
@@ -38,6 +39,7 @@ void W3_Set_Header(struct W3* w3, const char* key, const char* value);		/* Set t
 void W3_Free(struct W3* w3);							/* Free the struct */
 void W3_On(struct W3* w3, const char* eventname, void* func);			/* Set Handlers */
 void W3_Set_Data(struct W3* w3, char* data, size_t size);			/* Send the data - LibW3 won't free the data */
+void W3_Set_Read_Size(struct W3* w3, size_t size);				/* Change the read buffer size */
 
 #ifdef __cplusplus
 }

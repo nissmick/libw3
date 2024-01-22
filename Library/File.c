@@ -23,9 +23,9 @@ void __W3_File_Request(struct W3* w3){
 			void(*func)(struct W3*, int) = (void(*)(struct W3*, int))funcptr;
 			func(w3, LIBW3_FILE_FOUND);
 		}
-		char* buf = malloc(512);
+		char* buf = malloc(w3->readsize);
 		while(true){
-			int len = fread(buf, 1, 512, f);
+			int len = fread(buf, 1, w3->readsize, f);
 			void* funcptr = __W3_Get_Event(w3, "data");
 			if(funcptr != NULL){
 				void(*func)(struct W3*, char*, size_t) = (void(*)(struct W3*, char*, size_t))funcptr;

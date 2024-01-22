@@ -58,14 +58,14 @@ void __W3_HTTP_Request(struct W3* w3){
 	if(w3->data != NULL){
 		__W3_Auto_Write(w3, w3->data, w3->size);
 	}
-	char* buf = malloc(512);
+	char* buf = malloc(w3->readsize);
 	char* statusbuf = malloc(1);
 	statusbuf[0] = 0;
 	char* headerbuf = malloc(1);
 	headerbuf[0] = 0;
 	int phase = 0;
 	while(true){
-		int l = __W3_Auto_Read(w3, buf, 512);
+		int l = __W3_Auto_Read(w3, buf, w3->readsize);
 		if(l <= 0) break;
 		int i;
 		for(i = 0; i < l; i++){

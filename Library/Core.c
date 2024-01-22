@@ -58,6 +58,7 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port){
 	w3->headers = NULL;
 	w3->size = 0;
 	w3->data = NULL;
+	w3->readsize = 512;
 	w3->protocol = __W3_Strdup(protocol);
 	if(strcmp(protocol, "file") != 0){
 		w3->hostname = __W3_Strdup(hostname);
@@ -75,6 +76,10 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port){
 		}
 	}
 	return w3;
+}
+
+void W3_Set_Read_Size(struct W3* w3, size_t size){
+	w3->readsize = size;
 }
 
 void W3_Set_Method(struct W3* w3, const char* method){

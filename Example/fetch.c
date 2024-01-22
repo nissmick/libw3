@@ -38,6 +38,7 @@ int main(int argc, char** argv){
 	W3_Library_Init();
 	struct W3* w3 = W3_Create("http", argv[1], 80);
 	if(w3 != NULL){
+		W3_Set_Read_Size(w3, 1024);
 		W3_Set_Method(w3, argv[3] == NULL ? "GET" : argv[3]);
 		W3_Set_Path(w3, argv[2]);
 		W3_On(w3, "status", (void*)status);
