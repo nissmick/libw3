@@ -19,7 +19,7 @@ void status(struct W3* w3, int status){
 }
 
 void header(struct W3* w3, char* key, char* value){
-	printf("Header: %s is `%s'\n", key, value);
+	fprintf(stderr, "Header: %s is `%s'\n", key, value);
 	if(strcasecmp(key, "Server") == 0){
 		/* For the example - We get the server software */
 		fprintf(stderr, "Server is using `%s'\n", value);
@@ -38,7 +38,7 @@ int main(int argc, char** argv){
 	W3_Library_Init();
 	struct W3* w3 = W3_Create("https", argv[1], 443);
 	if(w3 != NULL){
-		W3_Set_Read_Size(w3, 1024);
+		W3_Set_Read_Size(w3, 1024 * 1024);
 		W3_Set_Method(w3, argv[3] == NULL ? "GET" : argv[3]);
 		W3_Set_Path(w3, argv[2]);
 		W3_On(w3, "status", (void*)status);
