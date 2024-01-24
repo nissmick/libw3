@@ -127,9 +127,9 @@ void __W3_HTTP_Request(struct W3* w3) {
 						int j;
 						int incr = 0;
 						int start = 0;
-						for(j = 1; headerbuf[j] != 0; j++) {
+						for(j = 1;; j++) {
 							char c = headerbuf[j];
-							if(c == '\r') {
+							if(c == '\r' || c == 0) {
 								headers[incr] = 0;
 								headers[incr + 1] = 0;
 								char* data = __W3_Strdup(headers + start);
@@ -156,6 +156,7 @@ void __W3_HTTP_Request(struct W3* w3) {
 								start = incr + 1;
 								incr++;
 								j++;
+								if(c == 0) break;
 							} else {
 								headers[incr] = c;
 								headers[incr + 1] = 0;
