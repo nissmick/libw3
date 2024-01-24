@@ -7,5 +7,6 @@ IndentWidth: 8
 PointerAlignment: Left
 ColumnLimit: 1024
 AllowShortIfStatementsOnASingleLine: Always
+AllowShortBlocksOnASingleLine: Never
 AllowShortLoopsOnASingleLine: True
 SpaceBeforeParens: Never

@@ -12,7 +12,10 @@
 
 FILE* f;
 
-void fetch_data(struct W3* w3, char* data, size_t size) { fwrite(data, size, 1, f); }
+void fetch_data(struct W3* w3, char* data, size_t size) {
+	fwrite(data, size, 1, f);
+	printf("Got data, %d bytes\n", size);
+}
 
 void status(struct W3* w3, int status) { fprintf(stderr, "Response code is %d\n", status); }
 
@@ -34,7 +37,7 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 	W3_Library_Init();
-	struct W3* w3 = W3_Create("http", argv[1], 80);
+	struct W3* w3 = W3_Create("https", argv[1], 443);
 	if(w3 != NULL) {
 		W3_Set_Read_Size(w3, 1024);
 		W3_Set_Method(w3, argv[3] == NULL ? "GET" : argv[3]);

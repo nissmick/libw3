@@ -64,6 +64,13 @@ void __W3_HTTP_Request(struct W3* w3) {
 	char* headerbuf = malloc(1);
 	headerbuf[0] = 0;
 	int phase = 0;
+	bool chunked = false;
+	int chunkphase = 0;
+	char* chunklen = NULL;
+	int chunkincr = 0;
+	char* chunk = NULL;
+	bool breakchunk = false;
+	int chunksize;
 	while(true) {
 		int l = __W3_Auto_Read(w3, buf, w3->readsize);
 		if(l <= 0) break;
@@ -138,6 +145,9 @@ void __W3_HTTP_Request(struct W3* w3) {
 												void (*func)(struct W3*, char*, char*) = (void (*)(struct W3*, char*, char*))funcptr;
 												func(w3, data, data + k + 1);
 											}
+											if(strcasecmp(data, "transfer-encoding") == 0 && strcasecmp(data + k + 1, "chunked") == 0) {
+												chunked = true;
+											}
 										}
 										break;
 									}
@@ -157,19 +167,75 @@ void __W3_HTTP_Request(struct W3* w3) {
 					}
 				}
 			} else if(phase == 2) {
-				void* funcptr = __W3_Get_Event(w3, "data");
-				if(funcptr != NULL) {
-					void (*func)(struct W3*, char*, size_t) = (void (*)(struct W3*, char*, size_t))funcptr;
-					char* buffer = malloc(l - i);
-					memcpy(buffer, buf + i, l - i);
-					func(w3, buffer, l - i);
-					free(buffer);
+				if(chunked) {
+					int j;
+					for(j = i; j < l; j++) {
+						char c = buf[j];
+						if(chunkphase == 0) {
+							if(c == '\n') {
+								if(chunklen != NULL) {
+									chunkphase = 1;
+									chunkincr = strtol(chunklen, NULL, 16);
+									free(chunklen);
+									chunklen = NULL;
+									if(chunkincr == 0) {
+										breakchunk = true;
+										break;
+									} else {
+										chunk = malloc(chunkincr);
+										chunksize = chunkincr;
+									}
+								}
+								continue;
+							} else if(c == '\r')
+								continue;
+							if(chunklen == NULL) {
+								chunklen = malloc(1);
+								chunklen[0] = 0;
+							}
+							char* cbuf = malloc(2);
+							cbuf[0] = c;
+							cbuf[1] = 0;
+							char* tmp = chunklen;
+							chunklen = __W3_Concat(tmp, cbuf);
+							free(tmp);
+							free(cbuf);
+						} else if(chunkphase == 1) {
+							chunkincr--;
+							if(chunkincr >= 0) {
+								chunk[chunksize - chunkincr - 1] = c;
+							}
+							if(chunkincr == -2) {
+								chunkphase = 0;
+								free(chunk);
+								chunk = NULL;
+							} else if(chunkincr == 0) {
+								void* funcptr = __W3_Get_Event(w3, "data");
+								if(funcptr != NULL) {
+									void (*func)(struct W3*, char*, size_t) = (void (*)(struct W3*, char*, size_t))funcptr;
+									func(w3, chunk, chunksize);
+								}
+							}
+						}
+					}
+				} else {
+					void* funcptr = __W3_Get_Event(w3, "data");
+					if(funcptr != NULL) {
+						void (*func)(struct W3*, char*, size_t) = (void (*)(struct W3*, char*, size_t))funcptr;
+						char* buffer = malloc(l - i);
+						memcpy(buffer, buf + i, l - i);
+						func(w3, buffer, l - i);
+						free(buffer);
+					}
 				}
 				break;
 			}
 		}
+		if(breakchunk) break;
 	}
 	free(headerbuf);
 	free(statusbuf);
 	free(buf);
+	if(chunklen != NULL) free(chunklen);
+	if(chunk != NULL) free(chunk);
 }
