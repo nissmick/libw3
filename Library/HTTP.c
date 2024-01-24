@@ -71,6 +71,7 @@ void __W3_HTTP_Request(struct W3* w3) {
 	char* chunk = NULL;
 	bool breakchunk = false;
 	int chunksize;
+	size_t allsize = -1;
 	while(true) {
 		int l = __W3_Auto_Read(w3, buf, w3->readsize);
 		if(l <= 0) break;
@@ -147,6 +148,8 @@ void __W3_HTTP_Request(struct W3* w3) {
 											}
 											if(strcasecmp(data, "transfer-encoding") == 0 && strcasecmp(data + k + 1, "chunked") == 0) {
 												chunked = true;
+											} else if(strcasecmp(data, "content-length") == 0) {
+												allsize = atoi(data + k + 1);
 											}
 										}
 										break;
@@ -227,6 +230,10 @@ void __W3_HTTP_Request(struct W3* w3) {
 						memcpy(buffer, buf + i, l - i);
 						func(w3, buffer, l - i);
 						free(buffer);
+					}
+					allsize -= l - i;
+					if(allsize == 0) {
+						breakchunk = 1;
 					}
 				}
 				break;

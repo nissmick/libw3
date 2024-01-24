@@ -63,11 +63,11 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port) {
 	w3->ssl_ctx = NULL;
 #endif
 	if(strcmp(protocol, "file") != 0) {
-		if(strcmp(protocol, "http") == 0){
+		if(strcmp(protocol, "http") == 0) {
 #ifdef SSL_SUPPORT
-		}else if(strcmp(protocol, "https") == 0){
+		} else if(strcmp(protocol, "https") == 0) {
 #endif
-		}else{
+		} else {
 			__W3_Debug("Protocol", "Not suppported");
 			W3_Free(w3);
 			w3 = NULL;
