@@ -35,7 +35,7 @@ CFLAGS += -g -D__DEBUG__
 endif
 
 ifeq ($(WINDOWS),YES)
-.PHONY: all clean ./Library/w3.dll ./Example/fetch
+.PHONY: all clean ./Library/w3.dll ./Example/fetch format
 
 ALL := ./Library/w3.dll ./Example/fetch.exe
 
@@ -52,7 +52,7 @@ all: ./w3.pc ./Library/W3Version.h $(ALL)
 
 else
 
-.PHONY: all clean ./Library/libw3.so ./Library/libw3.a ./Example/fetch
+.PHONY: all clean ./Library/libw3.so ./Library/libw3.a ./Example/fetch format
 
 ALL := ./Library/libw3.so ./Library/libw3.a ./Example/fetch
 
@@ -113,3 +113,6 @@ endif
 	zip -rv w3-$(VERSION).zip w3-$(VERSION)
 	-/usr/lha/bin/lha a w3-$(VERSION).lzh w3-$(VERSION)
 	rm -rf w3-$(VERSION)
+
+format:
+	clang-format -i `find Library Example -name "*.h" -or -name "*.c"`

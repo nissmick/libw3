@@ -7,17 +7,17 @@
 #include <string.h>
 
 #ifdef __MINGW32__
+#include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
-#include <windows.h>
 #else
-#include <sys/socket.h>
 #include <netdb.h>
+#include <sys/socket.h>
 #endif
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <stdbool.h>
 #include <unistd.h>
 
 #ifdef SSL_SUPPORT
@@ -30,11 +30,10 @@
 
 int __W3_DNS_Connect(const char* hostname, bool ssl, uint16_t port
 #ifdef SSL_SUPPORT
-	,
-	void** o_ssl,
-	void** o_ctx
+		     ,
+		     void** o_ssl, void** o_ctx
 #endif
-){
+) {
 	__W3_Debug("DNS-Connect", "Resolving");
 	ADDRINFO hints;
 	ADDRINFO* result;
@@ -50,13 +49,13 @@ int __W3_DNS_Connect(const char* hostname, bool ssl, uint16_t port
 	memset(strport, 0, 6);
 	sprintf(strport, "%d", port);
 	s = getaddrinfo(hostname, strport, &hints, &result);
-	if(s != 0){
+	if(s != 0) {
 		free(strport);
 		__W3_Debug("Resolve", "Failed");
-		return -1;	/* Failed to resolve */
+		return -1; /* Failed to resolve */
 	}
 	int sock;
-	for(rp = result; rp != NULL; rp = rp->ai_next){
+	for(rp = result; rp != NULL; rp = rp->ai_next) {
 		sock = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
 		if(sock == -1) continue;
 		int nzero = 0;
@@ -66,26 +65,26 @@ int __W3_DNS_Connect(const char* hostname, bool ssl, uint16_t port
 	}
 	freeaddrinfo(result);
 	free(strport);
-	if(rp == NULL){
+	if(rp == NULL) {
 		__W3_Debug("Connect", "Failed to connect");
-		return -1;	/* Failed to connect */
+		return -1; /* Failed to connect */
 	}
 	__W3_Debug("Connect", "Conencted");
 #ifdef SSL_SUPPORT
-	if(ssl){
+	if(ssl) {
 		__W3_Debug("SSL", "Initializing");
 		const SSL_METHOD* method = TLSv1_2_client_method();
 		*o_ctx = SSL_CTX_new(method);
 		*o_ssl = SSL_new(*o_ctx);
 		SSL_set_fd(*o_ssl, sock);
-		if(SSL_connect(*o_ssl) != 1){
+		if(SSL_connect(*o_ssl) != 1) {
 			SSL_CTX_free(*o_ctx);
 			SSL_free(*o_ssl);
 			*o_ctx = NULL;
 			*o_ssl = NULL;
 			close(sock);
 			sock = -1;
-		}else{
+		} else {
 			__W3_Debug("SSL", "Connected");
 		}
 	}
