@@ -60,6 +60,10 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port){
 	w3->data = NULL;
 	w3->readsize = 512;
 	w3->protocol = __W3_Strdup(protocol);
+#ifdef SSL_SUPPORT
+	w3->ssl = NULL;
+	w3->ssl_ctx = NULL;
+#endif
 	if(strcmp(protocol, "file") != 0){
 		w3->hostname = __W3_Strdup(hostname);
 		if(ssl) __W3_Debug("Protocol", "Enabled SSL");

@@ -10,8 +10,10 @@
 #include <string.h>
 #include <unistd.h>
 
+FILE* f;
+
 void fetch_data(struct W3* w3, char* data, size_t size){
-	write(1, data, size);
+	fwrite(data, size, 1, f);
 }
 
 void status(struct W3* w3, int status){
@@ -44,10 +46,12 @@ int main(int argc, char** argv){
 		W3_On(w3, "status", (void*)status);
 		W3_On(w3, "data", (void*)fetch_data);
 		W3_On(w3, "header", (void*)header);
+		f = fopen("example.bin", "wb");
 		if(argv[3] != NULL && strcmp(argv[3], "POST") == 0 && argv[4] != NULL){
 			W3_Set_Data(w3, argv[4], strlen(argv[4]));
 		}
 		W3_Send_Request(w3);
+		fclose(f);
 		W3_Free(w3);
 	}else{
 		fprintf(stderr, "Failed to fetch\n");
