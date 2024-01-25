@@ -7,6 +7,7 @@ ifeq ($(WINDOWS),YES)
 ./w3.dll: $(OBJS)
 	$(CC) $(LDFLAGS) -L../openssl/lib/mingw/x64 -shared -Wl,--out-implib,./w3.lib -o $@ $^ $(LIBS)
 else
+
 ./libw3.so: $(OBJS)
 	$(CC) $(LDFLAGS) -shared -o $@ $^ $(LIBS)
 ./libw3.a: $(OBJS)

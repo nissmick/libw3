@@ -30,6 +30,12 @@ ifeq ($(WINDOWS),YES)
 LIBS += -lws2_32
 endif
 
+ifneq ($(WINDOWS),YES)
+ifeq ($(shell uname -s),SunOS)
+LIBS += -lsocket
+endif
+endif
+
 ifeq ($(DEBUG),YES)
 CFLAGS += -g -D__DEBUG__
 endif
