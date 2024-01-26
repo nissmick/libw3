@@ -2,8 +2,8 @@
 #include "W3HTTP.h"
 
 #include "W3Core.h"
-#include "W3Util.h"
 #include "W3URL.h"
+#include "W3Util.h"
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -254,10 +254,10 @@ void __W3_HTTP_Request(struct W3* w3) {
 	free(buf);
 	if(chunklen != NULL) free(chunklen);
 	if(chunk != NULL) free(chunk);
-	if(redir != NULL && __W3_Have_Prop(w3, "HTTP_REDIRECT")){
+	if(redir != NULL && __W3_Have_Prop(w3, "HTTP_REDIRECT")) {
 		W3_Disconnect(w3);
 		struct W3URL* u = W3_Parse_URL(redir);
-		if(u != NULL){
+		if(u != NULL) {
 			w3->sock = __W3_DNS_Connect(u->host, strcmp(u->protocol, "https") == 0 ? true : false, u->port
 #ifdef SSL_SUPPORT
 						    ,
