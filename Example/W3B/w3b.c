@@ -30,8 +30,12 @@ void access_site(const char* url) {
 			W3_On(w3, "data", (void*)data_handler);
 			W3_Send_Request(w3);
 			W3_Free(w3);
+		}else{
+			fprintf(stderr, "Failed to connect\n");
 		}
 		W3_Free_URL(u);
+	}else{
+		fprintf(stderr, "Failed to parse\n");
 	}
 }
 
