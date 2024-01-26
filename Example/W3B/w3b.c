@@ -50,6 +50,7 @@ void access_site(const char* url) {
 			W3_On(w3, "data", (void*)data_handler);
 			W3_Send_Request(w3);
 			W3_Free(w3);
+			printf("%d bytes\n", datalen);
 		}else{
 			fprintf(stderr, "Failed to connect\n");
 		}
