@@ -51,7 +51,8 @@ all: ./w3.pc ./Library/W3Version.h $(ALL)
 	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" WINDOWS=YES
 
 ./Example: ./Library/w3.dll
-	$(MAKE) -C ./Example CC=$(CC) fetch.exe RESFILE=./libw3.res WINDRES=$(WINDRES) WINDOWS=YES
+	$(MAKE) -C ./Example CC=$(CC) RESFILE=./libw3.res WINDRES=$(WINDRES) WINDOWS=YES
+	$(MAKE) -C ./Example/W3B CC=$(CC) RESFILE=./libw3.res WINDRES=$(WINDRES) WINDOWS=YES
 
 ./Library/W3Version.h:
 	m4 -DSUFFIX=\"W\" ./W3Version.h.p > $@
@@ -71,7 +72,8 @@ all: ./w3.pc ./Library/W3Version.h $(ALL)
 	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" ./libw3.a
 
 ./Example: ./Library/libw3.so
-	$(MAKE) -C ./Example CC=$(CC) fetch
+	$(MAKE) -C ./Example CC=$(CC)
+	$(MAKE) -C ./Example/W3B CC=$(CC) RESFILE=./libw3.res WINDRES=$(WINDRES) WINDOWS=YES
 
 ./Library/W3Version.h:
 	m4 -DSUFFIX=\"\" ./W3Version.h.p > $@

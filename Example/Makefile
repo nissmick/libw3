@@ -1,8 +1,6 @@
 # $Id$:
 .PHONY: clean install
 
-all: ./fetch
-
 ./fetch: ./fetch.c $(RESFILE)
 	$(CC) -o $@ -I ../Library -L ../Library $^ -lw3
 
