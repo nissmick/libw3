@@ -75,6 +75,9 @@ struct W3URL* W3_Parse_URL(const char* _url) {
 			__W3_Debug("URL", str);
 			free(str);
 		}
+	}else{
+		W3_Free_URL(r);
+		r = NULL;
 	}
 	return r;
 }
