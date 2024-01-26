@@ -3,13 +3,13 @@
 
 #include "W3Util.h"
 
-#include <string.h>
-#include <stdio.h>
-#include <stddef.h>
-#include <stdlib.h>
 #include <stdbool.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-struct W3URL* W3_Parse_URL(const char* _url){
+struct W3URL* W3_Parse_URL(const char* _url) {
 	char* url = __W3_Strdup(_url);
 	__W3_Debug("URL", "Parsing URL");
 	struct W3URL* r = malloc(sizeof(*r));
@@ -17,20 +17,20 @@ struct W3URL* W3_Parse_URL(const char* _url){
 	r->host = NULL;
 	r->path = NULL;
 	r->port = -1;
-	if(strlen(url) > 3){
+	if(strlen(url) > 3) {
 		int i;
 		bool found = false;
-		for(i = 0; i < strlen(url) - 3; i++){
-			if(url[i] == ':' && url[i + 1] == '/' && url[i + 2] == '/'){
+		for(i = 0; i < strlen(url) - 3; i++) {
+			if(url[i] == ':' && url[i + 1] == '/' && url[i + 2] == '/') {
 				found = true;
 				break;
 			}
 		}
-		if(!found){
+		if(!found) {
 			__W3_Debug("URL", "Failed to parse");
 			W3_Free_URL(r);
 			r = NULL;
-		}else{
+		} else {
 			url[i] = 0;
 			char* str = malloc(strlen(url) + 64);
 			sprintf(str, "Protocol is %s", url);
@@ -40,23 +40,23 @@ struct W3URL* W3_Parse_URL(const char* _url){
 			i += 3;
 			int start = i;
 			int port_start = -1;
-			for(; url[i] != 0; i++){
-				if(url[i] == '/'){
+			for(; url[i] != 0; i++) {
+				if(url[i] == '/') {
 					r->path = __W3_Strdup(url + i);
 					url[i] = 0;
 					break;
-				}else if(url[i] == ':'){
+				} else if(url[i] == ':') {
 					port_start = i + 1;
 					url[i] = 0;
 				}
 			}
-			if(port_start != -1){
+			if(port_start != -1) {
 				r->port = atoi(url + port_start);
 			}
-			if(r->port == -1){
-				if(strcmp(r->protocol, "http") == 0){
+			if(r->port == -1) {
+				if(strcmp(r->protocol, "http") == 0) {
 					r->port = 80;
-				}else if(strcmp(r->protocol, "https") == 0){
+				} else if(strcmp(r->protocol, "https") == 0) {
 					r->port = 443;
 				}
 			}
@@ -79,7 +79,7 @@ struct W3URL* W3_Parse_URL(const char* _url){
 	return r;
 }
 
-void W3_Free_URL(struct W3URL* url){
+void W3_Free_URL(struct W3URL* url) {
 	if(url == NULL) return;
 	if(url->protocol != NULL) free(url->protocol);
 	if(url->host != NULL) free(url->host);
