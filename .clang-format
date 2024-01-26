@@ -8,5 +8,5 @@ PointerAlignment: Left
 ColumnLimit: 1024
 AllowShortIfStatementsOnASingleLine: Always
 AllowShortBlocksOnASingleLine: Never
-AllowShortLoopsOnASingleLine: True
+AllowShortLoopsOnASingleLine: true
 SpaceBeforeParens: Never

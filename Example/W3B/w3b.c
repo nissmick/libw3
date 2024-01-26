@@ -4,5 +4,4 @@
  * Simple browser
  */
 
-int main(){
-}
+int main() {}
