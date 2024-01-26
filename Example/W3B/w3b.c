@@ -31,6 +31,7 @@ void data_handler(struct W3* w3, char* data, size_t size) {
 		memcpy(databuf, oldbuf, datalen);
 		memcpy(databuf + datalen, data, size);
 		datalen += size;
+		free(oldbuf);
 	}
 }
 
