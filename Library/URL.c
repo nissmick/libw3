@@ -16,6 +16,7 @@ struct W3URL* W3_Parse_URL(const char* _url){
 	r->protocol = NULL;
 	r->host = NULL;
 	r->path = NULL;
+	r->port = -1;
 	if(strlen(url) > 3){
 		int i;
 		bool found = false;
@@ -38,11 +39,25 @@ struct W3URL* W3_Parse_URL(const char* _url){
 			r->protocol = __W3_Strdup(url);
 			i += 3;
 			int start = i;
+			int port_start = -1;
 			for(; url[i] != 0; i++){
 				if(url[i] == '/'){
 					r->path = __W3_Strdup(url + i);
 					url[i] = 0;
 					break;
+				}else if(url[i] == ':'){
+					port_start = i + 1;
+					url[i] = 0;
+				}
+			}
+			if(port_start != -1){
+				r->port = atoi(url + port_start);
+			}
+			if(r->port == -1){
+				if(strcmp(r->protocol, "http") == 0){
+					r->port = 80;
+				}else if(strcmp(r->protocol, "https") == 0){
+					r->port = 443;
 				}
 			}
 			r->host = __W3_Strdup(url + start);
@@ -53,6 +68,10 @@ struct W3URL* W3_Parse_URL(const char* _url){
 			if(r->path == NULL) r->path = __W3_Strdup("/");
 			str = malloc(strlen(r->path) + 64);
 			sprintf(str, "Path is %s", r->path);
+			__W3_Debug("URL", str);
+			free(str);
+			str = malloc(64);
+			sprintf(str, "Port is %d", r->port);
 			__W3_Debug("URL", str);
 			free(str);
 		}
