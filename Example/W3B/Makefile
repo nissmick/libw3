@@ -1,8 +1,11 @@
 # $Id$
 .PHONY: clean install
 
-./w3b: ./w3b.c $(RESFILE)
-	$(CC) -o $@ -I ../../Library -L ../../Library $^ -lw3
+./w3b: ./w3b.o ./url.o $(RESFILE)
+	$(CC) -o $@ -L ../../Library $^ -lw3
+
+./%.o: ./%.c
+	$(CC) -c -o $@ -I ../../Library $<
 
 ../libw3.res:
 	$(MAKE) -C .. ./libw3.res WINDRES=$(WINDRES)

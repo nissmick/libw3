@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
 				printf("(O)pen, (Q)uit? ");
 				fflush(stdout);
 			}
-			scanf("%c", &c);
+			if(scanf("%c", &c) < 0) break;
 			switch(tolower(c)){
 				case 'q':
 					goto exitnow;
@@ -59,5 +59,6 @@ int main(int argc, char** argv) {
 			}
 		}
 	}
+	printf("\n");
 exitnow:;
 }
