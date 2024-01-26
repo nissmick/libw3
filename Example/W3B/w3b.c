@@ -43,6 +43,13 @@ int main(int argc, char** argv) {
 			switch(tolower(c)){
 				case 'q':
 					goto exitnow;
+				case 'o':
+					printf("URL: ");
+					fflush(stdout);
+					char* url = malloc(2049);
+					scanf("%s", url);
+					free(url);
+					break;
 				case '\n':
 				case '\r':
 					break;
