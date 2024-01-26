@@ -13,6 +13,7 @@ extern "C" {
 
 struct W3 {
 	int sock;	 /* Socket */
+	int port;	 /* Port */
 	char* protocol;	 /* As you can read from its name */
 	char* method;	 /* Used in HTTP	*/
 	char* path;	 /* As you can read from its name */

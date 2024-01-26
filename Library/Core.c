@@ -59,6 +59,7 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port) {
 	w3->size = 0;
 	w3->data = NULL;
 	w3->readsize = 512;
+	w3->port = port;
 	w3->protocol = __W3_Strdup(protocol);
 #ifdef SSL_SUPPORT
 	w3->ssl = NULL;

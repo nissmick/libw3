@@ -267,13 +267,21 @@ void __W3_HTTP_Request(struct W3* w3) {
 			);
 			free(w3->protocol);
 			w3->protocol = __W3_Strdup(u->protocol);
-
 			free(w3->hostname);
 			w3->hostname = __W3_Strdup(u->host);
 			W3_Set_Path(w3, u->path);
+			w3->port = u->port;
 			W3_Free_URL(u);
-			W3_Send_Request(w3);
+		}else if(redir[0] == '/'){
+			w3->sock = __W3_DNS_Connect(w3->hostname, strcmp(w3->protocol, "https") == 0 ? true : false, w3->port
+#ifdef SSL_SUPPORT
+						    ,
+						    &w3->ssl, &w3->ssl_ctx
+#endif
+			);
+			W3_Set_Path(w3, redir);
 		}
+		W3_Send_Request(w3);
 	}
 	if(redir != NULL) free(redir);
 }
