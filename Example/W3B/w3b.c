@@ -14,10 +14,6 @@
 #include <stdbool.h>
 
 int main(int argc, char** argv) {
-	W3_Parse_URL("http://nishi.boats");
-	W3_Parse_URL("http://nishi.boats/abc");
-	W3_Parse_URL("nishi.boats");
-	W3_Parse_URL("nishi.boats/abc");
 	int i;
 	char* url = NULL;
 	for(i = 1; i < argc; i++){
