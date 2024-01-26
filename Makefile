@@ -51,8 +51,8 @@ all: ./w3.pc ./Library/W3Version.h $(ALL)
 	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" WINDOWS=YES
 
 ./Example: ./Library/w3.dll
-	$(MAKE) -C ./Example CC=$(CC) RESFILE=./libw3.res WINDRES=$(WINDRES) WINDOWS=YES
-	$(MAKE) -C ./Example/W3B CC=$(CC) RESFILE=./libw3.res WINDRES=$(WINDRES) WINDOWS=YES
+	$(MAKE) -C ./Example/fetch CC=$(CC) RESFILE=../libw3.res WINDRES=$(WINDRES) WINDOWS=YES
+	$(MAKE) -C ./Example/W3B CC=$(CC) RESFILE=../libw3.res WINDRES=$(WINDRES) WINDOWS=YES
 
 ./Library/W3Version.h:
 	m4 -DSUFFIX=\"W\" ./W3Version.h.p > $@
@@ -72,8 +72,8 @@ all: ./w3.pc ./Library/W3Version.h $(ALL)
 	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" ./libw3.a
 
 ./Example: ./Library/libw3.so
-	$(MAKE) -C ./Example CC=$(CC)
-	$(MAKE) -C ./Example/W3B CC=$(CC) RESFILE=./libw3.res WINDRES=$(WINDRES) WINDOWS=YES
+	$(MAKE) -C ./Example/fetch CC=$(CC)
+	$(MAKE) -C ./Example/W3B CC=$(CC)
 
 ./Library/W3Version.h:
 	m4 -DSUFFIX=\"\" ./W3Version.h.p > $@
@@ -96,6 +96,8 @@ clean:
 	-rm ./w3.pc w3-*.zip w3-*.tar.gz w3-*.lzh ./Library/W3Version.h
 	$(MAKE) -C ./Library clean
 	$(MAKE) -C ./Example clean
+	$(MAKE) -C ./Example/fetch clean
+	$(MAKE) -C ./Example/W3B clean
 
 install: ./w3.pc
 	$(MAKE) -C ./Library install PREFIX=$(PREFIX)

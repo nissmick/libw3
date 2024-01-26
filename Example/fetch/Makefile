@@ -2,10 +2,10 @@
 .PHONY: clean install
 
 ./fetch: ./fetch.c $(RESFILE)
-	$(CC) -o $@ -I ../Library -L ../Library $^ -lw3
+	$(CC) -o $@ -I ../../Library -L ../../Library $^ -lw3
 
-./libw3.res: ./libw3.rc
-	$(WINDRES) $< -O coff -o $@
+../libw3.res:
+	$(MAKE) -C .. ./libw3.res WINDRES=$(WINDRES)
 
 clean:
 	rm -f fetch *.o *.so *.core *~ *.exe *.res
