@@ -4,6 +4,7 @@
 #include "W3Core.h"
 #include "W3URL.h"
 #include "W3Util.h"
+#include "W3DNS.h"
 
 #include <stdbool.h>
 #include <stdio.h>
