@@ -1,7 +1,7 @@
 # $Id$
 .PHONY: clean install
 
-./w3b: ./w3b.o $(RESFILE)
+./interactive: ./interactive.o $(RESFILE)
 	$(CC) -g -o $@ -L ../../Library $^ -lw3
 
 ./%.o: ./%.c
@@ -11,8 +11,8 @@
 	$(MAKE) -C .. ./libw3.res WINDRES=$(WINDRES)
 
 clean:
-	rm -f w3b *.o *.so *.core *~ *.exe *.res
+	rm -f interactive *.o *.so *.core *~ *.exe *.res
 
-install: ./w3b
+install: ./interactive
 	mkdir -p $(PREFIX)/bin
-	cp ./w3b $(PREFIX)/bin/w3b
+	cp ./interactive $(PREFIX)/bin/interactive

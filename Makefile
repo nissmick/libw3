@@ -52,7 +52,7 @@ all: ./w3.pc ./Library/W3Version.h $(ALL)
 
 ./Example: ./Library/w3.dll
 	$(MAKE) -C ./Example/fetch CC=$(CC) RESFILE=../libw3.res WINDRES=$(WINDRES) WINDOWS=YES
-	$(MAKE) -C ./Example/W3B CC=$(CC) RESFILE=../libw3.res WINDRES=$(WINDRES) WINDOWS=YES
+	$(MAKE) -C ./Example/interactive CC=$(CC) RESFILE=../libw3.res WINDRES=$(WINDRES) WINDOWS=YES
 
 ./Library/W3Version.h:
 	m4 -DSUFFIX=\"W\" ./W3Version.h.p > $@
@@ -73,7 +73,7 @@ all: ./w3.pc ./Library/W3Version.h $(ALL)
 
 ./Example: ./Library/libw3.so
 	$(MAKE) -C ./Example/fetch CC=$(CC)
-	$(MAKE) -C ./Example/W3B CC=$(CC)
+	$(MAKE) -C ./Example/interactive CC=$(CC)
 
 ./Library/W3Version.h:
 	m4 -DSUFFIX=\"\" ./W3Version.h.p > $@
@@ -97,7 +97,7 @@ clean:
 	$(MAKE) -C ./Library clean
 	$(MAKE) -C ./Example clean
 	$(MAKE) -C ./Example/fetch clean
-	$(MAKE) -C ./Example/W3B clean
+	$(MAKE) -C ./Example/interactive clean
 
 install: ./w3.pc
 	$(MAKE) -C ./Library install PREFIX=$(PREFIX)
@@ -107,18 +107,18 @@ install: ./w3.pc
 
 archive: all
 	mkdir -p w3-$(VERSION)/Library
-	mkdir -p w3-$(VERSION)/Example/W3B
+	mkdir -p w3-$(VERSION)/Example/interactive
 	mkdir -p w3-$(VERSION)/Example/fetch
 	cp -rf ./Library/*.h w3-$(VERSION)/Library/
 ifdef WINDOWS
 	cp ./Library/*.lib w3-$(VERSION)/Library/
 	cp ./Library/*.dll w3-$(VERSION)/Library/
 	cp ./Example/fetch/fetch.exe w3-$(VERSION)/Example/fetch/
-	cp ./Example/W3B/w3b.exe w3-$(VERSION)/Example/W3B/
+	cp ./Example/interactive/interactive.exe w3-$(VERSION)/Example/interactive/
 else
 	cp ./Library/*.so w3-$(VERSION)/Library/
 	cp ./Example/fetch/fetch w3-$(VERSION)/Example/fetch/
-	cp ./Example/W3B/w3b w3-$(VERSION)/Example/W3B/
+	cp ./Example/interactive/interactive w3-$(VERSION)/Example/interactive/
 endif
 	-mv w3-$(VERSION)/*.h w3-$(VERSION)/Library/
 	-mv w3-$(VERSION)/*.so w3-$(VERSION)/Library/
