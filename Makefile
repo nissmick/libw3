@@ -124,8 +124,6 @@ endif
 	-mv w3-$(VERSION)/*.so w3-$(VERSION)/Library/
 	-mv w3-$(VERSION)/*.dll w3-$(VERSION)/Library/
 	-mv w3-$(VERSION)/*.lib w3-$(VERSION)/Library/
-	-mv w3-$(VERSION)/fetch.exe w3-$(VERSION)/Example/w3-fetch.exe
-	-mv w3-$(VERSION)/fetch w3-$(VERSION)/Example/w3-fetch
 	-cp LICENSE w3-$(VERSION)/
 	tar czvf w3-$(VERSION).tar.gz w3-$(VERSION)
 	zip -rv w3-$(VERSION).zip w3-$(VERSION)

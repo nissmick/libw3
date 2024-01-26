@@ -15,4 +15,4 @@ clean:
 
 install: ./interactive
 	mkdir -p $(PREFIX)/bin
-	cp ./interactive $(PREFIX)/bin/interactive
+	cp ./interactive $(PREFIX)/bin/w3-interactive
