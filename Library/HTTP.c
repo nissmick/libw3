@@ -256,6 +256,7 @@ void __W3_HTTP_Request(struct W3* w3) {
 	if(chunklen != NULL) free(chunklen);
 	if(chunk != NULL) free(chunk);
 	if(redir != NULL && __W3_Have_Prop(w3, "HTTP_REDIRECT")) {
+		__W3_Debug("LibW3-HTTP", "Redirecting");
 		W3_Disconnect(w3);
 		struct W3URL* u = W3_Parse_URL(redir);
 		if(u != NULL) {
