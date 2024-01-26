@@ -1,13 +1,10 @@
 # $Id$:
 .PHONY: clean install
 
-ifeq ($(WINDOWS),YES)
-./fetch.exe: ./fetch.c $(RESFILE)
-	$(CC) -o $@ -I ../Library -L ../Library $^ -lw3
-else
+all: ./fetch
+
 ./fetch: ./fetch.c $(RESFILE)
 	$(CC) -o $@ -I ../Library -L ../Library $^ -lw3
-endif
 
 ./libw3.res: ./libw3.rc
 	$(WINDRES) $< -O coff -o $@

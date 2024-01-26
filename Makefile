@@ -43,14 +43,14 @@ endif
 ifeq ($(WINDOWS),YES)
 .PHONY: all clean ./Library/w3.dll ./Example/fetch format
 
-ALL := ./Library/w3.dll ./Example/fetch.exe
+ALL := ./Library/w3.dll ./Example
 
 all: ./w3.pc ./Library/W3Version.h $(ALL)
 
 ./Library/w3.dll:
 	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" WINDOWS=YES
 
-./Example/fetch.exe: ./Library/w3.dll
+./Example: ./Library/w3.dll
 	$(MAKE) -C ./Example CC=$(CC) fetch.exe RESFILE=./libw3.res WINDRES=$(WINDRES) WINDOWS=YES
 
 ./Library/W3Version.h:
@@ -60,7 +60,7 @@ else
 
 .PHONY: all clean ./Library/libw3.so ./Library/libw3.a ./Example/fetch format
 
-ALL := ./Library/libw3.so ./Library/libw3.a ./Example/fetch
+ALL := ./Library/libw3.so ./Library/libw3.a ./Example
 
 all: ./w3.pc ./Library/W3Version.h $(ALL)
 
@@ -70,7 +70,7 @@ all: ./w3.pc ./Library/W3Version.h $(ALL)
 ./Library/libw3.a:
 	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" ./libw3.a
 
-./Example/fetch: ./Library/libw3.so
+./Example: ./Library/libw3.so
 	$(MAKE) -C ./Example CC=$(CC) fetch
 
 ./Library/W3Version.h:
