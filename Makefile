@@ -107,10 +107,18 @@ install: ./w3.pc
 
 archive: all
 	mkdir -p w3-$(VERSION)/Library
-	mkdir -p w3-$(VERSION)/Example
-	cp $(ALL) ./Library/*.h w3-$(VERSION)/
+	mkdir -p w3-$(VERSION)/Example/W3B
+	mkdir -p w3-$(VERSION)/Example/fetch
+	cp -rf ./Library/*.h w3-$(VERSION)/Library/
 ifdef WINDOWS
-	-cp ./Library/*.lib w3-$(VERSION)/
+	cp ./Library/*.lib w3-$(VERSION)/Library/
+	cp ./Library/*.dll w3-$(VERSION)/Library/
+	cp ./Example/fetch/fetch.exe w3-$(VERSION)/Example/fetch/
+	cp ./Example/W3B/w3b.exe w3-$(VERSION)/Example/W3B/
+else
+	cp ./Library/*.so w3-$(VERSION)/Library/
+	cp ./Example/fetch/fetch w3-$(VERSION)/Example/fetch/
+	cp ./Example/W3B/w3b w3-$(VERSION)/Example/W3B/
 endif
 	-mv w3-$(VERSION)/*.h w3-$(VERSION)/Library/
 	-mv w3-$(VERSION)/*.so w3-$(VERSION)/Library/
