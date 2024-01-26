@@ -1,3 +1,4 @@
+# $Id$
 .PHONY: clean install
 
 ./w3b: ./w3b.c $(RESFILE)
