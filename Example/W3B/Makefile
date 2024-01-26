@@ -2,10 +2,10 @@
 .PHONY: clean install
 
 ./w3b: ./w3b.o $(RESFILE)
-	$(CC) -o $@ -L ../../Library $^ -lw3
+	$(CC) -g -o $@ -L ../../Library $^ -lw3
 
 ./%.o: ./%.c
-	$(CC) -c -o $@ -I ../../Library $<
+	$(CC) -g -c -o $@ -I ../../Library $<
 
 ../libw3.res:
 	$(MAKE) -C .. ./libw3.res WINDRES=$(WINDRES)

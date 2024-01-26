@@ -68,7 +68,9 @@ int main(int argc, char** argv) {
 	}
 	while(true) { /* Loop */
 		if(c != '\n' && c != '\r') {
-			printf("(O)pen, (Q)uit? ");
+			printf("(O)pen, (Q)uit");
+			if(acc) printf(", (P)rint all");
+			printf("? ");
 			fflush(stdout);
 		}
 		if(scanf("%c", &c) < 0) break;
@@ -83,6 +85,10 @@ int main(int argc, char** argv) {
 			scanf("%s", url);
 			acc = false;
 			break;
+		case 'p':
+			if(acc){
+			}
+			break;
 		case '\n':
 		case '\r':
 			break;
@@ -90,7 +96,7 @@ int main(int argc, char** argv) {
 			printf("What do you mean?\n");
 			break;
 		}
-		if(!acc) {
+		if(!acc && url != NULL) {
 			access_site(url);
 			acc = true;
 		}

@@ -2,7 +2,7 @@
 .PHONY: clean install
 
 ./fetch: ./fetch.c $(RESFILE)
-	$(CC) -o $@ -I ../../Library -L ../../Library $^ -lw3
+	$(CC) -g -o $@ -I ../../Library -L ../../Library $^ -lw3
 
 ../libw3.res:
 	$(MAKE) -C .. ./libw3.res WINDRES=$(WINDRES)
