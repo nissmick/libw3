@@ -7,5 +7,3 @@
 
 clean:
 	rm -f *.o *.so *.core *~ *.exe *.res
-
-
