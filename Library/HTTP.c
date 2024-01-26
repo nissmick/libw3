@@ -3,6 +3,7 @@
 
 #include "W3Core.h"
 #include "W3Util.h"
+#include "W3URL.h"
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -75,6 +76,7 @@ void __W3_HTTP_Request(struct W3* w3) {
 	bool breakchunk = false;
 	int chunksize;
 	size_t allsize = -1;
+	char* redir = NULL;
 	while(true) {
 		int l = __W3_Auto_Read(w3, buf, w3->readsize);
 		if(l <= 0) break;
@@ -153,6 +155,9 @@ void __W3_HTTP_Request(struct W3* w3) {
 												chunked = true;
 											} else if(strcasecmp(data, "content-length") == 0) {
 												allsize = atoi(data + k + 1);
+											} else if(strcasecmp(data, "location") == 0) {
+												if(redir != NULL) free(redir);
+												redir = __W3_Strdup(data + k + 1);
 											}
 										}
 										break;
@@ -249,4 +254,27 @@ void __W3_HTTP_Request(struct W3* w3) {
 	free(buf);
 	if(chunklen != NULL) free(chunklen);
 	if(chunk != NULL) free(chunk);
+	if(redir != NULL && __W3_Have_Prop(w3, "HTTP_REDIRECT")){
+		W3_Disconnect(w3);
+		struct W3URL* u = W3_Parse_URL(redir);
+		if(u != NULL){
+			w3->sock = __W3_DNS_Connect(u->host, strcmp(u->protocol, "https") == 0 ? true : false, u->port
+#ifdef SSL_SUPPORT
+						    ,
+						    &w3->ssl, &w3->ssl_ctx
+#endif
+			);
+			free(w3->protocol);
+			w3->protocol = __W3_Strdup(u->protocol);
+
+			free(w3->hostname);
+			w3->hostname = __W3_Strdup(u->host);
+			W3_Set_Path(w3, u->path);
+			W3_Free_URL(u);
+			W3_Send_Request(w3);
+		}
+	}
+	if(redir != NULL) free(redir);
 }
+
+void W3_Enable_Redirect(struct W3* w3) { __W3_Add_Prop(w3, "HTTP_REDIRECT"); }

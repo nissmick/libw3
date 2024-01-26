@@ -17,6 +17,8 @@ char* __W3_Strdup(const char* str);
 unsigned long __W3_Auto_Write(struct W3* w3, char* data, unsigned long length);
 unsigned long __W3_Auto_Read(struct W3* w3, char* data, unsigned long length);
 bool __W3_Have_Header(struct W3* w3, const char* name);
+bool __W3_Have_Prop(struct W3* w3, const char* name);
+void __W3_Add_Prop(struct W3* w3, const char* name);
 void* __W3_Get_Event(struct W3* w3, const char* eventname);
 char* __W3_Get_Platform(void);
 

@@ -7,7 +7,9 @@ extern "C" {
 #endif
 
 #include "W3Core.h"
+
 void __W3_HTTP_Request(struct W3* w3);
+void W3_Enable_Redirect(struct W3* w3);
 
 #ifdef __cplusplus
 }

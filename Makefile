@@ -1,12 +1,18 @@
 # $Id$
 include config.mk
 
+ifeq ($(shell uname -s),SunOS)
+GREP = ggrep
+else
+GREP = grep
+endif
+
 CC := cc
 CFLAGS := -g -std=c99 -fPIC -D_BSD_SOURCE
 LDFLAGS :=
 LIBS :=
 PREFIX := /usr/local
-VERSION = $(shell cat Library/W3Version.h | grep -m 1 LIBW3_VERSION | sed -E "s/.+\"([^\"]+)\".+/\1/g")$(shell cat Library/W3Version.h | grep -A 1 -Eo "LIBW3_VERSION" | tail -n1 | grep -Eo "W")
+VERSION = $(shell cat Library/W3Version.h | $(GREP) -m 1 LIBW3_VERSION | sed -E "s/.+\"([^\"]+)\".+/\1/g")$(shell cat Library/W3Version.h | grep -A 1 -Eo "LIBW3_VERSION" | tail -n1 | grep -Eo "W")
 
 
 ifeq ($(SSL),YES)

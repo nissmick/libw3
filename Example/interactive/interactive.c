@@ -5,6 +5,8 @@
  */
 
 #include <W3Core.h>
+#include <W3HTTP.h>
+
 #include <W3URL.h>
 #include <W3Util.h> /* It has some useful functions, you know */
 
@@ -19,13 +21,14 @@ char* databuf;
 int datalen;
 
 void status_handler(struct W3* w3, int status) { printf("Response code: %d\n", status); }
+void header_handler(struct W3* w3, char* key, char* value) { printf("Header: %s: %s\n", key, value); }
 
 void data_handler(struct W3* w3, char* data, size_t size) {
-	if(databuf == NULL){
+	if(databuf == NULL) {
 		databuf = malloc(size);
 		datalen = size;
 		memcpy(databuf, data, size);
-	}else{
+	} else {
 		char* oldbuf = databuf;
 		databuf = malloc(datalen + size);
 		memcpy(databuf, oldbuf, datalen);
@@ -40,23 +43,25 @@ void access_site(const char* url) {
 	if(u != NULL) {
 		struct W3* w3 = W3_Create(u->protocol, u->host, u->port);
 		if(w3 != NULL) {
-			if(databuf != NULL){
+			if(databuf != NULL) {
 				free(databuf);
 			}
 			databuf = NULL;
 			datalen = 0;
 			W3_Set_Method(w3, "GET");
 			W3_Set_Path(w3, u->path);
+			W3_Enable_Redirect(w3);
 			W3_On(w3, "status", (void*)status_handler);
+			W3_On(w3, "header", (void*)header_handler);
 			W3_On(w3, "data", (void*)data_handler);
 			W3_Send_Request(w3);
 			W3_Free(w3);
 			printf("%d bytes\n", datalen);
-		}else{
+		} else {
 			fprintf(stderr, "Failed to connect\n");
 		}
 		W3_Free_URL(u);
-	}else{
+	} else {
 		fprintf(stderr, "Failed to parse\n");
 	}
 }
@@ -110,7 +115,7 @@ int main(int argc, char** argv) {
 			acc = false;
 			break;
 		case 'p':
-			if(acc){
+			if(acc) {
 				write(1, databuf, datalen);
 			}
 			break;

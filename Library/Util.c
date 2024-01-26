@@ -109,3 +109,33 @@ char* __W3_Get_Platform(void) {
 	return __W3_Concat3(un.sysname, "/", un.release);
 #endif
 }
+
+bool __W3_Have_Prop(struct W3* w3, const char* name) {
+	if(w3->props == NULL) return false;
+	int i;
+	for(i = 0; w3->props[i] != NULL; i++) {
+		if(strcmp(w3->props[i], name) == 0) return true;
+	}
+	return false;
+}
+
+void __W3_Add_Prop(struct W3* w3, const char* name) {
+	char* str = __W3_Concat3("Adding a prop `", name, "`");
+	__W3_Debug("Prop", str);
+	free(str);
+	int len = 0;
+	if(w3->props == NULL) {
+		w3->props = malloc(sizeof(*w3->props) * 2);
+	} else {
+		char** oldprops = w3->props;
+		for(len = 0; oldprops[len] != NULL; len++)
+			;
+		w3->props = malloc(sizeof(*w3->props) * (len + 2));
+		for(len = 0; oldprops[len] != NULL; len++) {
+			w3->props[len] = oldprops[len];
+		}
+		free(oldprops);
+	}
+	w3->props[len] = __W3_Strdup(name);
+	w3->props[len + 1] = NULL;
+}

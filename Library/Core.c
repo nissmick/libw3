@@ -50,6 +50,7 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port) {
 	if(strcmp(protocol, "https") == 0) {
 		ssl = true;
 	}
+	w3->props = NULL;
 	w3->method = NULL;
 	w3->path = NULL;
 	w3->events = NULL;
@@ -190,10 +191,28 @@ void W3_Free(struct W3* w3) {
 		for(i = 0; w3->headers[i] != 0; i++) free(w3->headers[i]);
 		free(w3->headers);
 	}
+	if(w3->props != NULL) {
+		int i;
+		for(i = 0; w3->props[i] != 0; i++) free(w3->props[i]);
+		free(w3->props);
+	}
 	if(w3->events != NULL) {
 		int i;
 		for(i = 0; w3->events[i] != 0; i += 2) free(w3->events[i]);
 		free(w3->events);
 	}
+	W3_Disconnect(w3);
 	free(w3);
+}
+
+void W3_Disconnect(struct W3* w3) {
+#ifdef SSL_SUPPORT
+	if(w3->ssl != NULL) {
+		SSL_shutdown(w3->ssl);
+		SSL_CTX_free(w3->ssl_ctx);
+		SSL_free(w3->ssl);
+		w3->ssl = NULL;
+	}
+#endif
+	if(w3->sock != -1) close(w3->sock);
 }

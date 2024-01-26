@@ -23,6 +23,7 @@ struct W3 {
 	char* data;	 /* As you can read from its name */
 	size_t size;	 /* Size of the data */
 	size_t readsize; /* Read buffer size, default is 512 */
+	char** props;	 /* Properties */
 #ifdef SSL_SUPPORT
 	void* ssl;     /* Actually SSL*, NULL if no SSL */
 	void* ssl_ctx; /* Actually SSL_CTX* */
@@ -38,6 +39,7 @@ void W3_Send_Request(struct W3* w3);				       /* Send the request */
 void W3_Set_Header(struct W3* w3, const char* key, const char* value); /* Set the header */
 void W3_Free(struct W3* w3);					       /* Free the struct */
 void W3_On(struct W3* w3, const char* eventname, void* func);	       /* Set Handlers */
+void W3_Disconnect(struct W3* w3);				       /* Disconnect */
 void W3_Set_Data(struct W3* w3, char* data, size_t size);	       /* Send the data - LibW3 won't free the data */
 void W3_Set_Read_Size(struct W3* w3, size_t size);		       /* Change the read buffer size */
 
