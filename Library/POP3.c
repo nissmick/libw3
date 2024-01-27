@@ -48,7 +48,7 @@ void __W3_POP3_Request(struct W3* w3) {
 							login = 3;
 							void* funcptr = __W3_Get_Event(w3, "login");
 							if(funcptr != NULL){
-								void(*func)(struct W3*, const char*) = (void(*)(struct W3*, int))funcptr;
+								void(*func)(struct W3*, int) = (void(*)(struct W3*, int))funcptr;
 								func(w3, 512);
 							}
 							__W3_Debug("LibW3-POP3", "Login successful");
