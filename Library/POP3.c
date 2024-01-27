@@ -40,11 +40,11 @@ void __W3_POP3_Request(struct W3* w3) {
 			char c = buf[i];
 			bool newl = false;
 			if(newl_cond & (1 << 1)) {
-				if(c == '\n' && !(newl_cond & (1 << 4))){
-					if(!(newl_cond & (1 << 2))){
+				if(c == '\n' && !(newl_cond & (1 << 4))) {
+					if(!(newl_cond & (1 << 2))) {
 						newl_cond |= (1 << 2);
 					}
-				}else if(c == '\n' && newl_cond & (1 << 4) && !(newl_cond & (1 << 5))){
+				} else if(c == '\n' && newl_cond & (1 << 4) && !(newl_cond & (1 << 5))) {
 					newl_cond |= (1 << 5);
 					char* oct = __W3_Concat(octets_n, " octets");
 					__W3_Debug("LibW3-POP3", oct);
@@ -53,15 +53,15 @@ void __W3_POP3_Request(struct W3* w3) {
 					free(octets_n);
 					octets_n = malloc(1);
 					octets_n[0] = 0;
-				}else if(!(newl_cond & (1 << 2))){
-					if(c == ' ' & !(newl_cond & (1 << 4))){
-						if(newl_cond & (1 << 3)){
+				} else if(!(newl_cond & (1 << 2))) {
+					if(c == ' ' & !(newl_cond & (1 << 4))) {
+						if(newl_cond & (1 << 3)) {
 							newl_cond |= (1 << 4);
-						}else{
+						} else {
 							newl_cond |= (1 << 3);
 						}
-					}else if(newl_cond & (1 << 3)){
-						if(newl_cond & (1 << 5)){
+					} else if(newl_cond & (1 << 3)) {
+						if(newl_cond & (1 << 5)) {
 							int readlen = (len - i) > octets ? octets : (len - i);
 							octets -= readlen;
 							void* funcptr = __W3_Get_Event(w3, "pop3data");
@@ -73,13 +73,14 @@ void __W3_POP3_Request(struct W3* w3) {
 								func(w3, true, buffer);
 								free(buffer);
 							}
-							if(octets == 0){
+							printf("%d\n", octets);
+							if(octets == 0) {
 								__W3_Debug("LibW3-POP3", "Received all");
 								newl_cond &= ~(1 << 1);
 							}
 							i += readlen;
-						}else if(newl_cond & (1 << 4)){
-						}else{
+						} else if(newl_cond & (1 << 4)) {
+						} else {
 							char* tmp = octets_n;
 							cbuf[0] = c;
 							octets_n = __W3_Concat(tmp, cbuf);
@@ -89,8 +90,8 @@ void __W3_POP3_Request(struct W3* w3) {
 				}
 				newl = true;
 				continue;
-			}else if(newl_cond & 1) {
-				if(c == '\n'){
+			} else if(newl_cond & 1) {
+				if(c == '\n') {
 					newl = true;
 				}
 			} else if(c == '.' && !(newl_cond & 1)) {
