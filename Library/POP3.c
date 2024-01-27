@@ -27,23 +27,78 @@ void __W3_POP3_Request(struct W3* w3) {
 	message[0] = 0;
 	char* cbuf = malloc(2);
 	cbuf[1] = 0;
-	bool newl_cond = true;
+	int newl_cond = 1;
 	w3->generic = &newl_cond;
+	int octets = 0;
+	char* octets_n = malloc(1);
+	octets_n[0] = 0;
 	while(true) {
 		int len = __W3_Auto_Read(w3, buf, w3->readsize);
 		if(len <= 0) break;
 		int i;
 		for(i = 0; i < len; i++) {
 			char c = buf[i];
-			if(c == '\r') continue;
 			bool newl = false;
-			if(c == '\n' && newl_cond) {
+			if(newl_cond & (1 << 1)) {
+				if(c == '\n' && !(newl_cond & (1 << 4))){
+					if(!(newl_cond & (1 << 2))){
+						newl_cond |= (1 << 2);
+					}
+				}else if(c == '\n' && newl_cond & (1 << 4) && !(newl_cond & (1 << 5))){
+					newl_cond |= (1 << 5);
+					char* oct = __W3_Concat(octets_n, " octets");
+					__W3_Debug("LibW3-POP3", oct);
+					free(oct);
+					octets = atoi(octets_n) + 3;
+					free(octets_n);
+					octets_n = malloc(1);
+					octets_n[0] = 0;
+				}else if(!(newl_cond & (1 << 2))){
+					if(c == ' ' & !(newl_cond & (1 << 4))){
+						if(newl_cond & (1 << 3)){
+							newl_cond |= (1 << 4);
+						}else{
+							newl_cond |= (1 << 3);
+						}
+					}else if(newl_cond & (1 << 3)){
+						if(newl_cond & (1 << 5)){
+							int readlen = (len - i) > octets ? octets : (len - i);
+							octets -= readlen;
+							void* funcptr = __W3_Get_Event(w3, "pop3data");
+							if(funcptr != NULL) {
+								void (*func)(struct W3*, bool, char*) = (void (*)(struct W3*, bool, char*))funcptr;
+								char* buffer = malloc(readlen + 1);
+								memcpy(buffer, buf + i, readlen);
+								buffer[readlen] = 0;
+								func(w3, true, buffer);
+								free(buffer);
+							}
+							if(octets == 0){
+								__W3_Debug("LibW3-POP3", "Received all");
+								newl_cond &= ~(1 << 1);
+							}
+							i += readlen;
+						}else if(newl_cond & (1 << 4)){
+						}else{
+							char* tmp = octets_n;
+							cbuf[0] = c;
+							octets_n = __W3_Concat(tmp, cbuf);
+							free(tmp);
+						}
+					}
+				}
 				newl = true;
-			} else if(c == '.' && !newl_cond) {
-				newl_cond = true;
+				continue;
+			}else if(newl_cond & 1) {
+				if(c == '\n'){
+					newl = true;
+				}
+			} else if(c == '.' && !(newl_cond & 1)) {
+				newl_cond |= 1;
 			}
+			if(c == '\r') continue;
 			if(newl) {
-				newl_cond = true;
+				newl_cond |= 1;
 				if(login == 0) {
 					char* str = __W3_Concat3("USER ", __W3_Get_Prop(w3, "POP3_USERNAME"), "\r\n");
 					__W3_Auto_Write(w3, str, strlen(str));
@@ -116,6 +171,7 @@ void __W3_POP3_Request(struct W3* w3) {
 			}
 		}
 	}
+	free(octets_n);
 	free(message);
 	free(cbuf);
 	free(buf);
@@ -131,14 +187,18 @@ void W3_POP3_Send_Request(struct W3* w3) {
 		if(w3->path != NULL && strlen(w3->path) != 0) {
 			__W3_Auto_Write(w3, w3->path, strlen(w3->path));
 		} else {
-			*((bool*)w3->generic) = false;
+			*((int*)w3->generic) &= ~1;
 		}
 		__W3_Auto_Write(w3, "\r\n", 2);
 	} else if(strcasecmp(w3->method, "RETR") == 0) {
 		__W3_Auto_Write(w3, "RETR ", 5);
 		if(w3->path != NULL && strlen(w3->path) != 0) {
 			__W3_Auto_Write(w3, w3->path, strlen(w3->path));
-			*((bool*)w3->generic) = false;
+			*((int*)w3->generic) |= (1 << 1);
+			*((int*)w3->generic) &= ~(1 << 2);
+			*((int*)w3->generic) &= ~(1 << 3);
+			*((int*)w3->generic) &= ~(1 << 4);
+			*((int*)w3->generic) &= ~(1 << 5);
 		}
 		__W3_Auto_Write(w3, "\r\n", 2);
 	}
