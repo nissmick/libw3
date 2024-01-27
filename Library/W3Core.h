@@ -25,6 +25,7 @@ struct W3 {
 	size_t size;	 /* Size of the data */
 	size_t readsize; /* Read buffer size, default is 512 */
 	char** props;	 /* Properties */
+	void* generic;	 /* Depends on the protocol */
 #ifdef SSL_SUPPORT
 	void* ssl;     /* Actually SSL*, NULL if no SSL */
 	void* ssl_ctx; /* Actually SSL_CTX* */

@@ -27,6 +27,8 @@ void __W3_POP3_Request(struct W3* w3) {
 	message[0] = 0;
 	char* cbuf = malloc(2);
 	cbuf[1] = 0;
+	bool newl_cond = true;
+	w3->generic = &newl_cond;
 	while(true) {
 		int len = __W3_Auto_Read(w3, buf, w3->readsize);
 		if(len <= 0) break;
@@ -34,7 +36,14 @@ void __W3_POP3_Request(struct W3* w3) {
 		for(i = 0; i < len; i++) {
 			char c = buf[i];
 			if(c == '\r') continue;
-			if(c == '\n') {
+			bool newl = false;
+			if(c == '\n' && newl_cond){
+				newl = true;
+			}else if(c == '.' && !newl_cond){
+				newl_cond = true;
+			}
+			if(newl) {
+				newl_cond = true;
 				if(login == 0) {
 					char* str = __W3_Concat3("USER ", __W3_Get_Prop(w3, "POP3_USERNAME"), "\r\n");
 					__W3_Auto_Write(w3, str, strlen(str));
@@ -58,6 +67,11 @@ void __W3_POP3_Request(struct W3* w3) {
 							}
 							__W3_Debug("LibW3-POP3", "Login successful");
 						} else {
+							void* funcptr = __W3_Get_Event(w3, "pop3data");
+							if(funcptr != NULL) {
+								void (*func)(struct W3*, bool, char*) = (void (*)(struct W3*, bool, char*))funcptr;
+								func(w3, true, message);
+							}
 						}
 					} else if(phase == 4) {
 						/* ERR */
@@ -71,6 +85,11 @@ void __W3_POP3_Request(struct W3* w3) {
 							login = 0;
 							return;
 						} else {
+							void* funcptr = __W3_Get_Event(w3, "pop3data");
+							if(funcptr != NULL) {
+								void (*func)(struct W3*, bool, char*) = (void (*)(struct W3*, bool, char*))funcptr;
+								func(w3, false, message);
+							}
 						}
 					}
 				}
@@ -105,4 +124,13 @@ void W3_POP3_Set_Username(struct W3* w3, const char* username) { __W3_Add_Prop(w
 
 void W3_POP3_Set_Password(struct W3* w3, const char* password) { __W3_Add_Prop(w3, "POP3_PASSWORD", password); }
 
-void W3_POP3_Send_Request(struct W3* w3) {}
+void W3_POP3_Send_Request(struct W3* w3) {
+	if(strcasecmp(w3->method, "LIST") == 0){
+		*((bool*)w3->generic) = false;
+		__W3_Auto_Write(w3, "LIST\r\n", 6);
+	}
+}
+
+void W3_POP3_Disconnect(struct W3* w3){
+	__W3_Auto_Write(w3, "QUIT\r\n", 6);
+}
