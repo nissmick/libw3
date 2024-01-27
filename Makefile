@@ -98,7 +98,7 @@ endif
 	echo "Libs: -I\$${libdir} -lw3" >> $@
 
 clean:
-	-rm ./w3.pc w3-*.zip w3-*.tar.gz w3-*.lzh ./Library/W3Version.h
+	-rm ./w3.pc w3-*.zip w3-*.tar.gz w3-*.lzh ./Library/W3Version.h *~
 	$(MAKE) -C ./Library clean
 	$(MAKE) -C ./Example clean
 
