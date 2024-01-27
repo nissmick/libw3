@@ -60,7 +60,7 @@ void __W3_POP3_Request(struct W3* w3) {
 						if(login == 2) {
 							/* Login success */
 							login = 3;
-							void* funcptr = __W3_Get_Event(w3, "login");
+							void* funcptr = __W3_Get_Event(w3, "pop3login");
 							if(funcptr != NULL) {
 								void (*func)(struct W3*, int) = (void (*)(struct W3*, int))funcptr;
 								func(w3, 512);

@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 	struct W3* w3 = W3_Create("pop3", argv[1], 110);
 	W3_POP3_Set_Username(w3, argv[2]);
 	W3_POP3_Set_Password(w3, argv[3]);
-	W3_On(w3, "login", login_handler);
+	W3_On(w3, "pop3login", login_handler);
 	W3_On(w3, "pop3data", list_handler);
 	W3_Send_Request(w3);
 }
