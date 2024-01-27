@@ -17,10 +17,9 @@
 #include <string.h>
 #include <unistd.h>
 
-void list_handler(struct W3* w3, bool ok, char* data) {
-	printf("[%s] %s\n", ok ? "  OK  " : " FAIL ", data);
-	W3_POP3_Disconnect(w3);
-}
+void list_handler(struct W3* w3, bool ok, char* data) { printf("[%s] %s\n", ok ? "  OK  " : " FAIL ", data); }
+
+void finish_handler(struct W3* w3) { W3_POP3_Disconnect(w3); }
 
 void login_handler(struct W3* w3) {
 	printf("Logged in\n");
@@ -40,5 +39,6 @@ int main(int argc, char** argv) {
 	W3_POP3_Set_Password(w3, argv[3]);
 	W3_On(w3, "pop3login", login_handler);
 	W3_On(w3, "pop3data", list_handler);
+	W3_On(w3, "pop3finish", finish_handler);
 	W3_Send_Request(w3);
 }

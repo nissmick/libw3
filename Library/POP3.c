@@ -73,10 +73,14 @@ void __W3_POP3_Request(struct W3* w3) {
 								func(w3, true, buffer);
 								free(buffer);
 							}
-							printf("%d\n", octets);
 							if(octets == 0) {
 								__W3_Debug("LibW3-POP3", "Received all");
 								newl_cond &= ~(1 << 1);
+								funcptr = __W3_Get_Event(w3, "pop3finish");
+								if(funcptr != NULL) {
+									void (*func)(struct W3*) = (void (*)(struct W3*))funcptr;
+									func(w3);
+								}
 							}
 							i += readlen;
 						} else if(newl_cond & (1 << 4)) {
