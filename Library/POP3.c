@@ -59,13 +59,13 @@ void __W3_POP3_Request(struct W3* w3) {
 						/* OK */
 						if(login == 2) {
 							/* Login success */
+							__W3_Debug("LibW3-POP3", "Login successful");
 							login = 3;
 							void* funcptr = __W3_Get_Event(w3, "pop3login");
 							if(funcptr != NULL) {
 								void (*func)(struct W3*, int) = (void (*)(struct W3*, int))funcptr;
 								func(w3, 512);
 							}
-							__W3_Debug("LibW3-POP3", "Login successful");
 						} else {
 							void* funcptr = __W3_Get_Event(w3, "pop3data");
 							if(funcptr != NULL) {
@@ -77,6 +77,7 @@ void __W3_POP3_Request(struct W3* w3) {
 						/* ERR */
 						if(login == 2) {
 							/* Login failed */
+							__W3_Debug("LibW3-POP3", "Login failed");
 							void* funcptr = __W3_Get_Event(w3, "error");
 							if(funcptr != NULL) {
 								void (*func)(struct W3*, const char*) = (void (*)(struct W3*, const char*))funcptr;
@@ -110,7 +111,7 @@ void __W3_POP3_Request(struct W3* w3) {
 				} else if(c == '-') {
 					phase = 2;
 				}
-			} else if(phase == 1) {
+			} else if(phase == 1 || phase == 2) {
 				if(c == ' ') phase += 2;
 			}
 		}
@@ -126,8 +127,20 @@ void W3_POP3_Set_Password(struct W3* w3, const char* password) { __W3_Add_Prop(w
 
 void W3_POP3_Send_Request(struct W3* w3) {
 	if(strcasecmp(w3->method, "LIST") == 0) {
-		*((bool*)w3->generic) = false;
-		__W3_Auto_Write(w3, "LIST\r\n", 6);
+		__W3_Auto_Write(w3, "LIST ", 5);
+		if(w3->path != NULL && strlen(w3->path) != 0){
+			__W3_Auto_Write(w3, w3->path, strlen(w3->path));
+		}else{
+			*((bool*)w3->generic) = false;
+		}
+		__W3_Auto_Write(w3, "\r\n", 2);
+	}else if(strcasecmp(w3->method, "RETR") == 0) {
+		__W3_Auto_Write(w3, "RETR ", 5);
+		if(w3->path != NULL && strlen(w3->path) != 0){
+			__W3_Auto_Write(w3, w3->path, strlen(w3->path));
+			*((bool*)w3->generic) = false;
+		}
+		__W3_Auto_Write(w3, "\r\n", 2);
 	}
 }
 

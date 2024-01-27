@@ -101,12 +101,20 @@ void W3_Set_Read_Size(struct W3* w3, size_t size) { w3->readsize = size; }
 
 void W3_Set_Method(struct W3* w3, const char* method) {
 	if(w3->method != NULL) free(w3->method);
-	w3->method = __W3_Strdup(method);
+	if(method == NULL){
+		w3->method = NULL;
+	}else{
+		w3->method = __W3_Strdup(method);
+	}
 }
 
 void W3_Set_Path(struct W3* w3, const char* path) {
 	if(w3->path != NULL) free(w3->path);
-	w3->path = __W3_Strdup(path);
+	if(path == NULL){
+		w3->path = NULL;
+	}else{
+		w3->path = __W3_Strdup(path);
+	}
 }
 
 void W3_Send_Request(struct W3* w3) {
