@@ -58,7 +58,10 @@ struct W3URL* W3_Parse_URL(const char* _url) {
 					r->port = 80;
 				} else if(strcmp(r->protocol, "https") == 0) {
 					r->port = 443;
+				}else if(strcmp(r->protocol, "gopher") == 0) {
+					r->port = 70;
 				}
+
 			}
 			r->host = __W3_Strdup(url + start);
 			str = malloc(strlen(r->host) + 64);
