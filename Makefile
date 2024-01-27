@@ -8,7 +8,7 @@ GREP = grep
 endif
 
 CC := cc
-CFLAGS := -g -std=c99 -fPIC -D_BSD_SOURCE
+CFLAGS := -g -std=c99 -fPIC -D_XOPEN_SOURCE=600
 LDFLAGS :=
 LIBS :=
 PREFIX := /usr/local
