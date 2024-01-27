@@ -50,7 +50,7 @@ void access_site(const char* url) {
 			datalen = 0;
 			W3_Set_Method(w3, "GET");
 			W3_Set_Path(w3, u->path);
-			W3_Enable_Redirect(w3);
+			W3_HTTP_Enable_Redirect(w3);
 			W3_On(w3, "status", (void*)status_handler);
 			W3_On(w3, "header", (void*)header_handler);
 			W3_On(w3, "data", (void*)data_handler);

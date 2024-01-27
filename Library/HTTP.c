@@ -287,4 +287,4 @@ void __W3_HTTP_Request(struct W3* w3) {
 	if(redir != NULL) free(redir);
 }
 
-void W3_Enable_Redirect(struct W3* w3) { __W3_Add_Prop(w3, "HTTP_REDIRECT", "YES"); }
+void W3_HTTP_Enable_Redirect(struct W3* w3) { __W3_Add_Prop(w3, "HTTP_REDIRECT", "YES"); }
