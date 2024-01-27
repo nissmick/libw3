@@ -37,9 +37,9 @@ void __W3_POP3_Request(struct W3* w3) {
 			char c = buf[i];
 			if(c == '\r') continue;
 			bool newl = false;
-			if(c == '\n' && newl_cond){
+			if(c == '\n' && newl_cond) {
 				newl = true;
-			}else if(c == '.' && !newl_cond){
+			} else if(c == '.' && !newl_cond) {
 				newl_cond = true;
 			}
 			if(newl) {
@@ -125,12 +125,10 @@ void W3_POP3_Set_Username(struct W3* w3, const char* username) { __W3_Add_Prop(w
 void W3_POP3_Set_Password(struct W3* w3, const char* password) { __W3_Add_Prop(w3, "POP3_PASSWORD", password); }
 
 void W3_POP3_Send_Request(struct W3* w3) {
-	if(strcasecmp(w3->method, "LIST") == 0){
+	if(strcasecmp(w3->method, "LIST") == 0) {
 		*((bool*)w3->generic) = false;
 		__W3_Auto_Write(w3, "LIST\r\n", 6);
 	}
 }
 
-void W3_POP3_Disconnect(struct W3* w3){
-	__W3_Auto_Write(w3, "QUIT\r\n", 6);
-}
+void W3_POP3_Disconnect(struct W3* w3) { __W3_Auto_Write(w3, "QUIT\r\n", 6); }
