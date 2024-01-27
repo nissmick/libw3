@@ -7,6 +7,7 @@
 #include "W3File.h"
 #include "W3Gopher.h"
 #include "W3HTTP.h"
+#include "W3POP3.h"
 
 #include <ctype.h>
 #include <stdbool.h>
@@ -70,8 +71,10 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port) {
 		if(strcmp(protocol, "http") == 0) {
 #ifdef SSL_SUPPORT
 		} else if(strcmp(protocol, "https") == 0) {
+		} else if(strcmp(protocol, "pop3s") == 0){
 #endif
 		} else if(strcmp(protocol, "gopher") == 0) {
+		} else if(strcmp(protocol, "pop3") == 0) {
 		} else {
 			__W3_Debug("Protocol", "Not suppported");
 			W3_Free(w3);
@@ -109,12 +112,18 @@ void W3_Set_Path(struct W3* w3, const char* path) {
 void W3_Send_Request(struct W3* w3) {
 	if(strcmp(w3->protocol, "http") == 0
 #ifdef SSL_SUPPORT
-	   || strcmp(w3->protocol, "https") == 0
+		|| strcmp(w3->protocol, "https") == 0
 #endif
 	) {
 		__W3_HTTP_Request(w3);
 	} else if(strcmp(w3->protocol, "gopher") == 0) {
 		__W3_Gopher_Request(w3);
+	} else if(strcmp(w3->protocol, "pop3") == 0
+#ifdef SSL_SUPPORT
+		|| strcmp(w3->protocol, "pop3s") == 0
+#endif
+	){
+		__W3_POP3_Request(w3);
 	} else if(strcmp(w3->protocol, "file") == 0) {
 		__W3_File_Request(w3);
 	}
