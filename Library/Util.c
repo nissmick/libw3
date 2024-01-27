@@ -113,29 +113,41 @@ char* __W3_Get_Platform(void) {
 bool __W3_Have_Prop(struct W3* w3, const char* name) {
 	if(w3->props == NULL) return false;
 	int i;
-	for(i = 0; w3->props[i] != NULL; i++) {
+	for(i = 0; w3->props[i] != NULL; i += 2) {
 		if(strcmp(w3->props[i], name) == 0) return true;
 	}
 	return false;
 }
 
-void __W3_Add_Prop(struct W3* w3, const char* name) {
+
+char* __W3_Get_Prop(struct W3* w3, const char* name){
+	if(w3->props == NULL) return NULL;
+	int i;
+	for(i = 0; w3->props[i] != NULL; i += 2) {
+		if(strcmp(w3->props[i], name) == 0) return w3->props[i + 1];
+	}
+	return NULL;
+
+}
+
+void __W3_Add_Prop(struct W3* w3, const char* name, const char* value) {
 	char* str = __W3_Concat3("Adding a prop `", name, "`");
 	__W3_Debug("Prop", str);
 	free(str);
 	int len = 0;
 	if(w3->props == NULL) {
-		w3->props = malloc(sizeof(*w3->props) * 2);
+		w3->props = malloc(sizeof(*w3->props) * 3);
 	} else {
 		char** oldprops = w3->props;
 		for(len = 0; oldprops[len] != NULL; len++)
 			;
-		w3->props = malloc(sizeof(*w3->props) * (len + 2));
+		w3->props = malloc(sizeof(*w3->props) * (len + 3));
 		for(len = 0; oldprops[len] != NULL; len++) {
 			w3->props[len] = oldprops[len];
 		}
 		free(oldprops);
 	}
 	w3->props[len] = __W3_Strdup(name);
-	w3->props[len + 1] = NULL;
+	w3->props[len + 1] = __W3_Strdup(value);
+	w3->props[len + 2] = NULL;
 }
