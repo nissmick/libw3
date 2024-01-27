@@ -17,11 +17,10 @@
 #include <string.h>
 #include <unistd.h>
 
-void list_handler(struct W3* w3, char* data, size_t size) {
-}
+void list_handler(struct W3* w3, char* data, size_t size) {}
 
 int main(int argc, char** argv) {
-	if(argc < 4){
+	if(argc < 4) {
 		return 1;
 	}
 	W3_Library_Init();

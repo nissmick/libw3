@@ -119,15 +119,13 @@ bool __W3_Have_Prop(struct W3* w3, const char* name) {
 	return false;
 }
 
-
-char* __W3_Get_Prop(struct W3* w3, const char* name){
+char* __W3_Get_Prop(struct W3* w3, const char* name) {
 	if(w3->props == NULL) return NULL;
 	int i;
 	for(i = 0; w3->props[i] != NULL; i += 2) {
 		if(strcmp(w3->props[i], name) == 0) return w3->props[i + 1];
 	}
 	return NULL;
-
 }
 
 void __W3_Add_Prop(struct W3* w3, const char* name, const char* value) {
