@@ -11,6 +11,11 @@
 void __W3_POP3_Request(struct W3* w3) {
 	if(__W3_Get_Prop(w3, "POP3_USERNAME") == NULL || __W3_Get_Prop(w3, "POP3_PASSWORD") == NULL){
 		__W3_Debug("LibW3-POP3", "Set the username/password");
+		void* funcptr = __W3_Get_Event(w3, "error");
+		if(funcptr != NULL){
+			void(*func)(struct W3*, const char*) = (void(*)(struct W3*, const char*))funcptr;
+			func(w3, "did-not-auth");
+		}
 		return;
 	}
 	char* buf = malloc(w3->readsize);
@@ -41,6 +46,7 @@ void __W3_POP3_Request(struct W3* w3) {
 						if(login == 2){
 							/* Login success */
 							login = 3;
+							__W3_Debug("LibW3-POP3", "Login successful");
 						}else{
 						}
 					}else if(phase == 4){
