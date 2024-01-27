@@ -24,8 +24,7 @@ void list_handler(struct W3* w3, bool ok, char* data) {
 
 void login_handler(struct W3* w3) {
 	printf("Logged in\n");
-	W3_Set_Method(w3, "RETR");
-	W3_Set_Path(w3, "1");
+	W3_Set_Method(w3, "LIST");
 	W3_POP3_Send_Request(w3);
 }
 
