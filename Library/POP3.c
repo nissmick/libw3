@@ -128,15 +128,15 @@ void W3_POP3_Set_Password(struct W3* w3, const char* password) { __W3_Add_Prop(w
 void W3_POP3_Send_Request(struct W3* w3) {
 	if(strcasecmp(w3->method, "LIST") == 0) {
 		__W3_Auto_Write(w3, "LIST ", 5);
-		if(w3->path != NULL && strlen(w3->path) != 0){
+		if(w3->path != NULL && strlen(w3->path) != 0) {
 			__W3_Auto_Write(w3, w3->path, strlen(w3->path));
-		}else{
+		} else {
 			*((bool*)w3->generic) = false;
 		}
 		__W3_Auto_Write(w3, "\r\n", 2);
-	}else if(strcasecmp(w3->method, "RETR") == 0) {
+	} else if(strcasecmp(w3->method, "RETR") == 0) {
 		__W3_Auto_Write(w3, "RETR ", 5);
-		if(w3->path != NULL && strlen(w3->path) != 0){
+		if(w3->path != NULL && strlen(w3->path) != 0) {
 			__W3_Auto_Write(w3, w3->path, strlen(w3->path));
 			*((bool*)w3->generic) = false;
 		}
