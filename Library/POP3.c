@@ -132,6 +132,11 @@ void __W3_POP3_Request(struct W3* w3) {
 								void (*func)(struct W3*, bool, char*) = (void (*)(struct W3*, bool, char*))funcptr;
 								func(w3, true, message);
 							}
+							funcptr = __W3_Get_Event(w3, "pop3finish");
+							if(funcptr != NULL) {
+								void (*func)(struct W3*) = (void (*)(struct W3*))funcptr;
+								func(w3);
+							}
 						}
 					} else if(phase == 4) {
 						/* ERR */
@@ -150,6 +155,11 @@ void __W3_POP3_Request(struct W3* w3) {
 							if(funcptr != NULL) {
 								void (*func)(struct W3*, bool, char*) = (void (*)(struct W3*, bool, char*))funcptr;
 								func(w3, false, message);
+							}
+							funcptr = __W3_Get_Event(w3, "pop3finish");
+							if(funcptr != NULL) {
+								void (*func)(struct W3*) = (void (*)(struct W3*))funcptr;
+								func(w3);
 							}
 						}
 					}
