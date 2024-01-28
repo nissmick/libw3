@@ -60,6 +60,7 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port) {
 	w3->headers = NULL;
 	w3->size = 0;
 	w3->data = NULL;
+	w3->sock = -1;
 	w3->readsize = 512;
 	w3->port = port;
 	w3->protocol = __W3_Strdup(protocol);
