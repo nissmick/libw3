@@ -112,6 +112,7 @@ install: ./w3.pc
 
 archive: all
 	mkdir -p w3-$(VERSION)/Library
+	mkdir -p w3-$(VERSION)/Example/w3b
 	mkdir -p w3-$(VERSION)/Example/pop3-list
 	mkdir -p w3-$(VERSION)/Example/interactive
 	mkdir -p w3-$(VERSION)/Example/fetch
@@ -122,11 +123,13 @@ ifdef WINDOWS
 	cp ./Example/fetch/fetch.exe w3-$(VERSION)/Example/fetch/
 	cp ./Example/interactive/interactive.exe w3-$(VERSION)/Example/interactive/
 	cp ./Example/pop3-list/pop3-list.exe w3-$(VERSION)/Example/pop3-list/
+	cp ./Example/w3b/w3b.exe w3-$(VERSION)/Example/w3b/
 else
 	cp ./Library/*.so w3-$(VERSION)/Library/
 	cp ./Example/fetch/fetch w3-$(VERSION)/Example/fetch/
 	cp ./Example/interactive/interactive w3-$(VERSION)/Example/interactive/
 	cp ./Example/pop3-list/pop3-list w3-$(VERSION)/Example/pop3-list/
+	cp ./Example/w3b/w3b w3-$(VERSION)/Example/w3b/
 endif
 	-mv w3-$(VERSION)/*.h w3-$(VERSION)/Library/
 	-mv w3-$(VERSION)/*.so w3-$(VERSION)/Library/
