@@ -119,7 +119,7 @@ int nl;
 int start = 0;
 
 void html_handler(char* tagname, char* attr) {
-	if(nl - start > termh - 1) return;
+	if(nl - start > termh - 3) return;
 	if(strcasecmp(tagname, "title") == 0) {
 		title = true;
 	} else if(strcasecmp(tagname, "/title") == 0) {
@@ -143,8 +143,7 @@ void html_handler(char* tagname, char* attr) {
 		if(nl >= start) printf("\n");
 		nl++;
 	} else if(strcasecmp(tagname, "/h1") == 0) {
-		if(nl >= start)
-			if(nl >= start) printf("\n");
+		if(nl >= start) printf("\n");
 		nl++;
 	} else if(strcasecmp(tagname, "h2") == 0) {
 		if(nl >= start) printf("\n");
@@ -201,7 +200,7 @@ void text_handler(char* data) {
 		titlebuf = __W3_Concat(tmp, data);
 		free(tmp);
 	} else {
-		if(nl - start > termh - 1) return;
+		if(nl - start > termh - 3) return;
 		char* text = malloc(strlen(data) + 64);
 		int i;
 		char* fmt_data = malloc(strlen(data) * 2);
@@ -276,8 +275,8 @@ void render_site() {
 
 int main(int argc, char** argv) {
 	int i;
-	databuf = NULL;
-	datalen = 0;
+	databuf = __W3_Strdup("<html><head><title>Welcome to W3B</title></head><body><h1>Welcome to W3B</h1><hr>W3B is a test application for the LibW3, which works as a basic browser.</body></html>");
+	datalen = strlen(databuf);
 	char* url = NULL;
 	for(i = 1; i < argc; i++) {
 		if(strcmp(argv[i], "--version") == 0) {
