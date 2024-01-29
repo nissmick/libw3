@@ -44,8 +44,8 @@ void get_terminal_size(int* width, int* height) {
 #ifdef __MINGW32__
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
 	GetConsoleScreenBufferInfo(winstdout, &csbi);
-	*width = csbi.dwSize.X;
-	*height = csbi.dwSize.Y;
+	*width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+	*height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
 #else
 	struct winsize ws;
 	ioctl(0, TIOCGWINSZ, &ws);
@@ -261,6 +261,7 @@ void render_site() {
 		char* seq = malloc(1024);
 		sprintf(seq, "\x1b[1;%dH", termw - strlen(titlebuf != NULL ? titlebuf : "No title") - 1);
 #ifdef __MINGW32__
+		DWORD written = 0;
 		WriteConsole(winstdout, seq, strlen(seq), &written, NULL);
 #else
 		printf("%s\x1b[7m %s \x1b[m", seq, titlebuf != NULL ? titlebuf : "No title");
