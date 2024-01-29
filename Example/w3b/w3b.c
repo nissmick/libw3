@@ -93,6 +93,9 @@ void access_site(const char* url) {
 	}
 }
 
+void render_site(){
+}
+
 int main(int argc, char** argv) {
 	int i;
 	databuf = NULL;
@@ -130,8 +133,14 @@ int main(int argc, char** argv) {
 	mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
 	SetConsoleMode(winstdout, mode);
 #endif
+	bool rendered = false;
 	clear_console();
 	while(true) { /* Loop */
+		if(!rendered){
+			clear_console();
+			render_site();
+			rendered = true;
+		}
 		if(c != '\n' && c != '\r') {
 			printf("(O)pen, (Q)uit");
 			printf("? ");
@@ -159,6 +168,7 @@ int main(int argc, char** argv) {
 		if(!acc && url != NULL) {
 			access_site(url);
 			acc = true;
+			rendered = false;
 		}
 	}
 	printf("\n");
