@@ -17,11 +17,40 @@
 #include <string.h>
 #include <unistd.h>
 
+#ifdef __MINGW32__
+#include <windows.h>
+HANDLE winstdout;
+#else
+#include <sys/ioctl.h>
+#endif
+
+void clear_console(){
+#ifdef __MINGW32__
+	DWORD written = 0;
+	const char* seq = "\x1b[2J\x1b[1;1H";
+	WriteConsole(winstdout, seq, strlen(seq), &written, NULL);
+#else
+	printf("\x1b[2J\x1b[1;1H");
+	fflush(stdout);
+#endif
+}
+
+void get_terminal_size(int* width, int* height){
+#ifdef __MINGW32__
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	GetConsoleScreenBufferInfo(winstdout, &csbi);
+	*width = csbi.dwSize.X;
+	*height = csbi.dwSize.Y;
+#else
+	struct winsize ws;
+	ioctl(0, TIOCGWINSZ, &ws);
+	*width = ws.ws_col;
+	*height = ws.ws_row;
+#endif
+}
+
 char* databuf;
 int datalen;
-
-void status_handler(struct W3* w3, int status) { printf("Response code: %d\n", status); }
-void header_handler(struct W3* w3, char* key, char* value) { printf("Header: %s: %s\n", key, value); }
 
 void data_handler(struct W3* w3, char* data, size_t size) {
 	if(databuf == NULL) {
@@ -51,8 +80,6 @@ void access_site(const char* url) {
 			W3_Set_Method(w3, "GET");
 			W3_Set_Path(w3, u->path);
 			W3_HTTP_Enable_Redirect(w3);
-			W3_On(w3, "status", (void*)status_handler);
-			W3_On(w3, "header", (void*)header_handler);
 			W3_On(w3, "data", (void*)data_handler);
 			W3_Send_Request(w3);
 			W3_Free(w3);
@@ -95,10 +122,18 @@ int main(int argc, char** argv) {
 		access_site(url);
 		acc = true;
 	}
+#ifdef __MINGW32__
+	winstdout = GetStdHandle(STD_OUTPUT_HANDLE);
+	DWORD mode = 0;
+	GetConsoleMode(winstdout, &mode);
+	const DWORD origmode = mode;
+	mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+	SetConsoleMode(winstdout, mode);
+#endif
+	clear_console();
 	while(true) { /* Loop */
 		if(c != '\n' && c != '\r') {
 			printf("(O)pen, (Q)uit");
-			if(acc) printf(", (P)rint all");
 			printf("? ");
 			fflush(stdout);
 		}
@@ -114,11 +149,6 @@ int main(int argc, char** argv) {
 			scanf("%s", url);
 			acc = false;
 			break;
-		case 'p':
-			if(acc) {
-				write(1, databuf, datalen);
-			}
-			break;
 		case '\n':
 		case '\r':
 			break;
@@ -133,4 +163,7 @@ int main(int argc, char** argv) {
 	}
 	printf("\n");
 exitnow:;
+#ifdef __MINGW32__
+	SetConsoleMode(winstdout, origmode);
+#endif
 }
