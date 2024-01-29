@@ -6,6 +6,7 @@
 
 #include <W3Core.h>
 #include <W3HTTP.h>
+#include <W3Tag.h>
 
 #include <W3URL.h>
 #include <W3Util.h> /* It has some useful functions, you know */
@@ -93,7 +94,13 @@ void access_site(const char* url) {
 	}
 }
 
+void html_handler(char* tagname, char** attr){
+}
+
 void render_site(){
+	if(databuf != NULL){
+		W3_Tag_Parse(databuf, datalen, html_handler);
+	}
 }
 
 int main(int argc, char** argv) {
