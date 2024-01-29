@@ -25,7 +25,11 @@ HANDLE winstdout;
 #include <sys/ioctl.h>
 #endif
 
-void clear_console(){
+int termw, termh;
+
+extern int strcasecmp(const char* s1, const char* s2);
+
+void clear_console() {
 #ifdef __MINGW32__
 	DWORD written = 0;
 	const char* seq = "\x1b[2J\x1b[1;1H";
@@ -36,7 +40,7 @@ void clear_console(){
 #endif
 }
 
-void get_terminal_size(int* width, int* height){
+void get_terminal_size(int* width, int* height) {
 #ifdef __MINGW32__
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
 	GetConsoleScreenBufferInfo(winstdout, &csbi);
@@ -52,8 +56,18 @@ void get_terminal_size(int* width, int* height){
 
 char* databuf;
 int datalen;
+bool isredir;
+
+void status_handler(struct W3* w3, int st) {
+	if(st >= 300 && st < 400) {
+		isredir = true;
+	} else {
+		isredir = false;
+	}
+}
 
 void data_handler(struct W3* w3, char* data, size_t size) {
+	if(isredir) return;
 	if(databuf == NULL) {
 		databuf = malloc(size);
 		datalen = size;
@@ -81,6 +95,7 @@ void access_site(const char* url) {
 			W3_Set_Method(w3, "GET");
 			W3_Set_Path(w3, u->path);
 			W3_HTTP_Enable_Redirect(w3);
+			W3_On(w3, "status", (void*)status_handler);
 			W3_On(w3, "data", (void*)data_handler);
 			W3_Send_Request(w3);
 			W3_Free(w3);
@@ -94,17 +109,164 @@ void access_site(const char* url) {
 	}
 }
 
-void html_handler(char* tagname, char* attr){
-	printf("<%s> %s\n", tagname, attr != NULL ? attr : "NULL");
+bool title;
+bool italic;
+bool bold;
+bool pre;
+char* titlebuf = NULL;
+
+int nl;
+int start = 0;
+
+void html_handler(char* tagname, char* attr) {
+	if(nl - start > termh - 1) return;
+	if(strcasecmp(tagname, "title") == 0) {
+		title = true;
+	} else if(strcasecmp(tagname, "/title") == 0) {
+		title = false;
+	} else if(strcasecmp(tagname, "i") == 0) {
+		italic = true;
+	} else if(strcasecmp(tagname, "/i") == 0) {
+		italic = false;
+	} else if(strcasecmp(tagname, "pre") == 0) {
+		pre = true;
+		if(nl >= start) printf("\n");
+		nl++;
+	} else if(strcasecmp(tagname, "/pre") == 0) {
+		pre = false;
+		if(nl >= start) printf("\n");
+		nl++;
+	} else if(strcasecmp(tagname, "br") == 0) {
+		if(nl >= start) printf("\n");
+		nl++;
+	} else if(strcasecmp(tagname, "h1") == 0) {
+		if(nl >= start) printf("\n");
+		nl++;
+	} else if(strcasecmp(tagname, "/h1") == 0) {
+		if(nl >= start)
+			if(nl >= start) printf("\n");
+		nl++;
+	} else if(strcasecmp(tagname, "h2") == 0) {
+		if(nl >= start) printf("\n");
+		nl++;
+	} else if(strcasecmp(tagname, "/h2") == 0) {
+		if(nl >= start) printf("\n");
+		nl++;
+	} else if(strcasecmp(tagname, "h3") == 0) {
+		if(nl >= start) printf("\n");
+		nl++;
+	} else if(strcasecmp(tagname, "/h3") == 0) {
+		if(nl >= start) printf("\n");
+		nl++;
+	} else if(strcasecmp(tagname, "h4") == 0) {
+		if(nl >= start) printf("\n");
+		nl++;
+	} else if(strcasecmp(tagname, "/h4") == 0) {
+		if(nl >= start) printf("\n");
+		nl++;
+	} else if(strcasecmp(tagname, "h5") == 0) {
+		if(nl >= start) printf("\n");
+		nl++;
+	} else if(strcasecmp(tagname, "/h5") == 0) {
+		if(nl >= start) printf("\n");
+		nl++;
+	} else if(strcasecmp(tagname, "h6") == 0) {
+		if(nl >= start) printf("\n");
+		nl++;
+	} else if(strcasecmp(tagname, "/h6") == 0) {
+		if(nl >= start) printf("\n");
+		nl++;
+	} else if(strcasecmp(tagname, "img") == 0) {
+		if(nl >= start) printf("[IMG]");
+	} else if(strcasecmp(tagname, "hr") == 0) {
+		int i;
+		if(nl >= start) printf("\n ");
+		nl++;
+		for(i = 0; i < termw - 2; i++) {
+			if(nl >= start) printf("-");
+		}
+		if(nl >= start) printf("\n");
+		nl++;
+	}
+	fflush(stdout);
 }
 
-void text_handler(char* data){
-	printf("<TEXT> %s\n", data);
+void text_handler(char* data) {
+	if(title) {
+		if(titlebuf == NULL) {
+			titlebuf = malloc(1);
+			titlebuf[0] = 0;
+		}
+		char* tmp = titlebuf;
+		titlebuf = __W3_Concat(tmp, data);
+		free(tmp);
+	} else {
+		if(nl - start > termh - 1) return;
+		char* text = malloc(strlen(data) + 64);
+		int i;
+		char* fmt_data = malloc(strlen(data) * 2);
+		if(pre) {
+			free(fmt_data);
+			fmt_data = __W3_Strdup(data);
+			for(i = 0; i < strlen(data); i++) {
+				if(data[i] == '\n') {
+					nl++;
+				}
+			}
+		} else {
+			fmt_data[0] = 0;
+			char* cbuf = malloc(2);
+			cbuf[1] = 0;
+			bool spc = false;
+			bool firstspc = true;
+			for(i = 0; i < strlen(data); i++) {
+				cbuf[0] = data[i];
+				if(data[i] == '\n' || data[i] == '\t') {
+					if(!spc && !firstspc) {
+						spc = true;
+						char* tmp = fmt_data;
+						fmt_data = __W3_Concat(tmp, " ");
+						free(tmp);
+					}
+				} else {
+					firstspc = false;
+					spc = false;
+					char* tmp = fmt_data;
+					fmt_data = __W3_Concat(tmp, cbuf);
+					free(tmp);
+				}
+			}
+			free(cbuf);
+		}
+		sprintf(text, "%s%s%s\x1b[m", italic ? "\x1b[3m" : "", bold ? "\x1b[1m" : "", fmt_data);
+		if(nl >= start) printf("%s", text);
+		fflush(stdout);
+		free(text);
+		free(fmt_data);
+	}
 }
 
-void render_site(){
-	if(databuf != NULL){
+void render_site() {
+	if(databuf != NULL) {
+		if(titlebuf != NULL) {
+			free(titlebuf);
+		}
+		title = false;
+		italic = false;
+		bold = false;
+		pre = false;
+		titlebuf = NULL;
+		nl = 0;
 		W3_Tag_Parse(databuf, datalen, html_handler, text_handler);
+		char* seq = malloc(1024);
+		sprintf(seq, "\x1b[1;%dH", termw - strlen(titlebuf != NULL ? titlebuf : "No title") - 1);
+#ifdef __MINGW32__
+		WriteConsole(winstdout, seq, strlen(seq), &written, NULL);
+#else
+		printf("%s\x1b[7m %s \x1b[m", seq, titlebuf != NULL ? titlebuf : "No title");
+		fflush(stdout);
+#endif
+		free(seq);
 	}
 }
 
@@ -147,14 +309,16 @@ int main(int argc, char** argv) {
 #endif
 	bool rendered = false;
 	clear_console();
+	start = 0;
+	get_terminal_size(&termw, &termh);
 	while(true) { /* Loop */
-		if(!rendered){
+		if(!rendered) {
 			clear_console();
 			render_site();
 			rendered = true;
 		}
 		if(c != '\n' && c != '\r') {
-			printf("(O)pen, (Q)uit");
+			printf("\x1b[%d;1H(O)pen, (Q)uit", termh);
 			printf("? ");
 			fflush(stdout);
 		}
@@ -170,6 +334,10 @@ int main(int argc, char** argv) {
 			scanf("%s", url);
 			acc = false;
 			break;
+		case 'd':
+			rendered = false;
+			start++;
+			break;
 		case '\n':
 		case '\r':
 			break;
@@ -178,6 +346,7 @@ int main(int argc, char** argv) {
 			break;
 		}
 		if(!acc && url != NULL) {
+			start = 0;
 			access_site(url);
 			acc = true;
 			rendered = false;

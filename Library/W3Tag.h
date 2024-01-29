@@ -4,6 +4,6 @@
 
 #include <stddef.h>
 
-void W3_Tag_Parse(char* data, size_t size, void(*tagfunc)(char* tagname, char* attr), void(*textfunc)(char* data));
+void W3_Tag_Parse(char* data, size_t size, void (*tagfunc)(char* tagname, char* attr), void (*textfunc)(char* data));
 
 #endif
