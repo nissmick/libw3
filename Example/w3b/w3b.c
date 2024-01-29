@@ -94,17 +94,17 @@ void access_site(const char* url) {
 	}
 }
 
-void html_handler(char* tagname, char** attr){
-	printf("<%s>\n", tagname);
-	if(attr != NULL){
-		int i;
-		for(i = 0; attr[i] != NULL; i++) printf("%s\n", attr[i]);
-	}
+void html_handler(char* tagname, char* attr){
+	printf("<%s> %s\n", tagname, attr != NULL ? attr : "NULL");
+}
+
+void text_handler(char* data){
+	printf("<TEXT> %s\n", data);
 }
 
 void render_site(){
 	if(databuf != NULL){
-		W3_Tag_Parse(databuf, datalen, html_handler);
+		W3_Tag_Parse(databuf, datalen, html_handler, text_handler);
 	}
 }
 
