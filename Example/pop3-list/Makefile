@@ -1,7 +1,7 @@
 # $Id$
 .PHONY: clean install
 
-./pop3-list: ./pop3-list.o $(RESFILE)
+./pop3-list$(SUFFIX): ./pop3-list.o $(RESFILE)
 	$(CC) -g -o $@ -L ../../Library $^ -lw3
 
 ./%.o: ./%.c

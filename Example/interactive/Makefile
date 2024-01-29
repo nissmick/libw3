@@ -1,7 +1,7 @@
 # $Id$
 .PHONY: clean install
 
-./interactive: ./interactive.o $(RESFILE)
+./interactive$(SUFFIX): ./interactive.o $(RESFILE)
 	$(CC) -g -o $@ -L ../../Library $^ -lw3
 
 ./%.o: ./%.c

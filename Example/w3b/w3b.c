@@ -262,7 +262,10 @@ void render_site() {
 		sprintf(seq, "\x1b[1;%dH", termw - strlen(titlebuf != NULL ? titlebuf : "No title") - 1);
 #ifdef __MINGW32__
 		DWORD written = 0;
-		WriteConsole(winstdout, seq, strlen(seq), &written, NULL);
+		char* str = malloc(strlen(seq) + 512);
+		sprintf(str, "%s\x1b[7m %s \x1b[m", seq, titlebuf != NULL ? titlebuf : "No title");
+		WriteConsole(winstdout, str, strlen(str), &written, NULL);
+		free(str);
 #else
 		printf("%s\x1b[7m %s \x1b[m", seq, titlebuf != NULL ? titlebuf : "No title");
 		fflush(stdout);

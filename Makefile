@@ -60,7 +60,7 @@ all: ./w3.pc ./Library/W3Version.h $(ALL)
 	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" WINDOWS=YES
 
 ./Example: ./Library/w3.dll
-	$(MAKE) -C ./Example CC=$(CC) examples
+	$(MAKE) -C ./Example CC=$(CC) examples SUFFIX=.exe
 
 ./Library/W3Version.h:
 	m4 -DSUFFIX=\"W\" ./W3Version.h.p > $@

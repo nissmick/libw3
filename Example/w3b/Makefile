@@ -1,7 +1,7 @@
 # $Id$
 .PHONY: clean install
 
-./w3b: ./w3b.o $(RESFILE)
+./w3b$(SUFFIX): ./w3b.o $(RESFILE)
 	$(CC) -g -o $@ -L ../../Library $^ -lw3
 
 ./%.o: ./%.c
