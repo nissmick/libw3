@@ -95,6 +95,11 @@ void access_site(const char* url) {
 }
 
 void html_handler(char* tagname, char** attr){
+	printf("<%s>\n", tagname);
+	if(attr != NULL){
+		int i;
+		for(i = 0; attr[i] != NULL; i++) printf("%s\n", attr[i]);
+	}
 }
 
 void render_site(){
