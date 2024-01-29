@@ -32,10 +32,10 @@ extern int strcasecmp(const char* s1, const char* s2);
 void clear_console() {
 #ifdef __MINGW32__
 	DWORD written = 0;
-	const char* seq = "\x1b[2J\x1b[1;1H";
+	const char* seq = "\x1b[m\x1b[2J\x1b[1;1H";
 	WriteConsole(winstdout, seq, strlen(seq), &written, NULL);
 #else
-	printf("\x1b[2J\x1b[1;1H");
+	printf("\x1b[m\x1b[2J\x1b[1;1H");
 	fflush(stdout);
 #endif
 }
