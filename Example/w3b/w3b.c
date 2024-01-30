@@ -176,7 +176,15 @@ void html_handler(char* tagname, char* attr) {
 		if(nl >= start) printf("\n");
 		nl++;
 	} else if(strcasecmp(tagname, "img") == 0) {
-		if(nl >= start) printf("[IMG]");
+		if(nl >= start){
+			char* alt = W3_Tag_Attr(attr, "alt");
+			if(alt != NULL){
+				printf("[%s]", alt);
+				free(alt);
+			}else{
+				printf("[IMG]");
+			}
+		}
 	} else if(strcasecmp(tagname, "hr") == 0) {
 		int i;
 		if(nl >= start) printf("\n ");
@@ -325,7 +333,7 @@ int main(int argc, char** argv) {
 			printf("? ");
 			fflush(stdout);
 		}
-		if(scanf("%c", &c) < 0) break;
+		if((c = getchar()) == EOF) break;
 		switch(tolower(c)) {
 		case 'q':
 			goto exitnow;
@@ -339,7 +347,7 @@ int main(int argc, char** argv) {
 			break;
 		case 'd':
 			rendered = false;
-			start++;
+			start += termh;
 			break;
 		case '\n':
 		case '\r':
