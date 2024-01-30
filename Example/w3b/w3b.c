@@ -65,6 +65,13 @@ void header_handler(struct W3* w3, char* key, char* value) {
 	if(strcasecmp(key, "content-type") == 0) {
 		if(ctype != NULL) free(ctype);
 		ctype = __W3_Strdup(value);
+		int i;
+		for(i = 0; ctype[i] != 0; i++) {
+			if(ctype[i] == ';') {
+				ctype[i] = 0;
+				break;
+			}
+		}
 	}
 }
 
