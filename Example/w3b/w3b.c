@@ -57,8 +57,16 @@ void get_terminal_size(int* width, int* height) {
 char* databuf;
 int datalen;
 bool isredir;
+char* ctype;
 
 int x = 0;
+
+void header_handler(struct W3* w3, char* key, char* value) {
+	if(strcasecmp(key, "content-type") == 0) {
+		if(ctype != NULL) free(ctype);
+		ctype = __W3_Strdup(value);
+	}
+}
 
 void status_handler(struct W3* w3, int st) {
 	if(st >= 300 && st < 400) {
@@ -99,7 +107,10 @@ void access_site(const char* url) {
 			W3_Set_Header(w3, "User-Agent", "LibW3/" LIBW3_VERSION " W3B/");
 			W3_HTTP_Enable_Redirect(w3);
 			W3_On(w3, "status", (void*)status_handler);
+			W3_On(w3, "header", (void*)header_handler);
 			W3_On(w3, "data", (void*)data_handler);
+			if(ctype != NULL) free(ctype);
+			ctype = NULL;
 			W3_Send_Request(w3);
 			W3_Free(w3);
 			printf("%d bytes\n", datalen);
@@ -284,7 +295,9 @@ void render_site() {
 		pre = false;
 		titlebuf = NULL;
 		nl = 0;
-		W3_Tag_Parse(databuf, datalen, html_handler, text_handler);
+		if(ctype != NULL && strcasecmp(ctype, "text/html") == 0) {
+			W3_Tag_Parse(databuf, datalen, html_handler, text_handler);
+		}
 		char* seq = malloc(1024);
 		sprintf(seq, "\x1b[1;%dH", termw - strlen(titlebuf != NULL ? titlebuf : "No title") - 1);
 #ifdef __MINGW32__
@@ -304,6 +317,7 @@ void render_site() {
 int main(int argc, char** argv) {
 	int i;
 	databuf = __W3_Strdup("<html><head><title>Welcome to W3B</title></head><body><h1>Welcome to W3B</h1><hr>W3B is a test application for the LibW3, which works as a basic browser.</body></html>");
+	ctype = __W3_Strdup("text/html");
 	datalen = strlen(databuf);
 	char* url = NULL;
 	for(i = 1; i < argc; i++) {
