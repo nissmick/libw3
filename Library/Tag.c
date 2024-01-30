@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+extern int strcasecmp(const char* s1, const char* s2);
+
 void W3_Tag_Parse(char* data, size_t size, void (*tagfunc)(char* tagname, char* attr), void (*textfunc)(char* data)) {
 	int i;
 	int phase = 0;
