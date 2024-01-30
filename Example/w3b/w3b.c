@@ -58,6 +58,8 @@ char* databuf;
 int datalen;
 bool isredir;
 
+int x = 0;
+
 void status_handler(struct W3* w3, int st) {
 	if(st >= 300 && st < 400) {
 		isredir = true;
@@ -94,6 +96,7 @@ void access_site(const char* url) {
 			datalen = 0;
 			W3_Set_Method(w3, "GET");
 			W3_Set_Path(w3, u->path);
+			W3_Set_Header(w3, "User-Agent", "LibW3/" LIBW3_VERSION " W3B/");
 			W3_HTTP_Enable_Redirect(w3);
 			W3_On(w3, "status", (void*)status_handler);
 			W3_On(w3, "data", (void*)data_handler);
@@ -120,6 +123,7 @@ int start = 0;
 
 void html_handler(char* tagname, char* attr) {
 	if(nl - start > termh - 3) return;
+	int oldnl = nl;
 	if(strcasecmp(tagname, "title") == 0) {
 		title = true;
 	} else if(strcasecmp(tagname, "/title") == 0) {
@@ -181,8 +185,10 @@ void html_handler(char* tagname, char* attr) {
 			if(alt != NULL) {
 				printf("[%s]", alt);
 				free(alt);
+				x += 2 + strlen(alt);
 			} else {
 				printf("[IMG]");
+				x += 5;
 			}
 		}
 	} else if(strcasecmp(tagname, "hr") == 0) {
@@ -196,6 +202,13 @@ void html_handler(char* tagname, char* attr) {
 		nl++;
 	}
 	fflush(stdout);
+	if(x >= termw) {
+		if(nl >= start) {
+			nl++;
+			x = x % termw;
+		}
+	}
+	if(oldnl != nl) x = 0;
 }
 
 void text_handler(char* data) {
@@ -247,6 +260,13 @@ void text_handler(char* data) {
 		}
 		sprintf(text, "%s%s%s\x1b[m", italic ? "\x1b[3m" : "", bold ? "\x1b[1m" : "", fmt_data);
 		if(nl >= start) printf("%s", text);
+		x += strlen(text);
+		if(x >= termw) {
+			if(nl >= start) {
+				nl++;
+				x = x % termw;
+			}
+		}
 		fflush(stdout);
 		free(text);
 		free(fmt_data);
