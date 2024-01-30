@@ -204,7 +204,7 @@ void html_handler(char* tagname, char* attr) {
 	fflush(stdout);
 	if(x >= termw) {
 		if(nl >= start) {
-			nl++;
+			nl += x / termw;
 			x = x % termw;
 		}
 	}
@@ -263,7 +263,7 @@ void text_handler(char* data) {
 		x += strlen(text);
 		if(x >= termw) {
 			if(nl >= start) {
-				nl++;
+				nl += x / termw;
 				x = x % termw;
 			}
 		}
