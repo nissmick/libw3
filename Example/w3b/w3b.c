@@ -176,12 +176,12 @@ void html_handler(char* tagname, char* attr) {
 		if(nl >= start) printf("\n");
 		nl++;
 	} else if(strcasecmp(tagname, "img") == 0) {
-		if(nl >= start){
+		if(nl >= start) {
 			char* alt = W3_Tag_Attr(attr, "alt");
-			if(alt != NULL){
+			if(alt != NULL) {
 				printf("[%s]", alt);
 				free(alt);
-			}else{
+			} else {
 				printf("[IMG]");
 			}
 		}
