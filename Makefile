@@ -12,7 +12,7 @@ CFLAGS := -g -std=c99 -fPIC -D_XOPEN_SOURCE=600
 LDFLAGS :=
 LIBS :=
 PREFIX := /usr/local
-VERSION = $(shell cat Library/W3Version.h | $(GREP) -m 1 LIBW3_VERSION | sed -E "s/.+\"([^\"]+)\".+/\1/g")$(shell cat Library/W3Version.h | grep -A 1 -Eo "LIBW3_VERSION" | tail -n1 | grep -Eo "W")
+VERSION = $(shell cat Library/W3Version.h | $(GREP) -m 1 LIBW3_VERSION | sed -E "s/.+\"([^\"]+)\".+/\1/g")$(shell cat Library/W3Version.h | grep -A 1 -Eo "LIBW3_VERSION" | sed "s/LIBW3_VERSION//g" | tail -n1 | grep -Eo "W")
 
 
 ifeq ($(SSL),YES)
@@ -54,7 +54,7 @@ ifeq ($(WINDOWS),YES)
 
 ALL := ./Library/w3.dll ./Example
 
-all: ./w3.pc ./Library/W3Version.h $(ALL)
+all: ./Library/W3Version.h ./w3.pc $(ALL)
 
 ./Library/w3.dll:
 	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" WINDOWS=YES
@@ -71,7 +71,7 @@ else
 
 ALL := ./Library/libw3.so ./Library/libw3.a ./Example
 
-all: ./w3.pc ./Library/W3Version.h $(ALL)
+all: ./Library/W3Version.h ./w3.pc $(ALL)
 
 ./Library/libw3.so:
 	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" ./libw3.so
@@ -117,7 +117,7 @@ archive: all
 	mkdir -p w3-$(VERSION)/Example/interactive
 	mkdir -p w3-$(VERSION)/Example/fetch
 	cp -rf ./Library/*.h w3-$(VERSION)/Library/
-ifdef WINDOWS
+ifeq ($(WINDOWS),YES)
 	cp ./Library/*.lib w3-$(VERSION)/Library/
 	cp ./Library/*.dll w3-$(VERSION)/Library/
 	cp ./Example/fetch/fetch.exe w3-$(VERSION)/Example/fetch/
