@@ -23,12 +23,14 @@ ifeq ($(WIN32),YES)
 CC := i686-w64-mingw32-gcc
 WINDRES := i686-w64-mingw32-windres
 WINDOWS := YES
+WINARCH := x86
 endif
 
 ifeq ($(WIN64),YES)
 CC := x86_64-w64-mingw32-gcc
 WINDRES := x86_64-w64-mingw32-windres
 WINDOWS := YES
+WINARCH := x64
 endif
 
 ifeq ($(WINDOWS),YES)
@@ -56,7 +58,7 @@ ALL := ./Library/w3.dll ./Example
 all: ./Library/W3Version.h ./w3.pc $(ALL)
 
 ./Library/w3.dll:
-	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" WINDOWS=YES
+	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" WINDOWS=YES WINARCH=$(WINARCH)
 
 ./Example: ./Library/w3.dll
 	$(MAKE) -C ./Example CC=$(CC) examples SUFFIX=.exe
