@@ -25,6 +25,10 @@ HANDLE winstdout;
 #include <sys/ioctl.h>
 #endif
 
+#ifdef __sun__
+#include <sys/termios.h>
+#endif
+
 int termw, termh;
 
 extern int strcasecmp(const char* s1, const char* s2);
