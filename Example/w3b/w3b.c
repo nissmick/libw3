@@ -139,8 +139,14 @@ char* titlebuf = NULL;
 int nl;
 int start = 0;
 
+bool style = false;
+
 void html_handler(char* tagname, char* attr) {
 	if(nl - start > termh - 3) return;
+	if(style){
+		if(strcasecmp(tagname, "/style") == 0) style = false;
+		return;
+	}
 	int oldnl = nl;
 	if(strcasecmp(tagname, "title") == 0) {
 		title = true;
@@ -197,6 +203,8 @@ void html_handler(char* tagname, char* attr) {
 	} else if(strcasecmp(tagname, "/h6") == 0) {
 		if(nl >= start) printf("\n");
 		nl++;
+	}else if(strcasecmp(tagname, "style") == 0){
+		style = true;
 	} else if(strcasecmp(tagname, "img") == 0) {
 		if(nl >= start) {
 			char* alt = W3_Tag_Attr(attr, "alt");
@@ -230,6 +238,7 @@ void html_handler(char* tagname, char* attr) {
 }
 
 void text_handler(char* data) {
+	if(style) return;
 	if(title) {
 		if(titlebuf == NULL) {
 			titlebuf = malloc(1);
@@ -302,6 +311,7 @@ void render_site() {
 		pre = false;
 		titlebuf = NULL;
 		nl = 0;
+		style = false;
 		if(ctype != NULL && strcasecmp(ctype, "text/html") == 0) {
 			W3_Tag_Parse(databuf, datalen, html_handler, text_handler);
 		}
