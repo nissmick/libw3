@@ -390,6 +390,11 @@ int main(int argc, char** argv) {
 			rendered = false;
 			start += termh;
 			break;
+		case 'u':
+			rendered = false;
+			start -= termh;
+			if(start < 0) start = 0;
+			break;
 		case '\n':
 		case '\r':
 			break;
