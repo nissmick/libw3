@@ -147,7 +147,7 @@ bool style = false;
 
 void html_handler(char* tagname, char* attr) {
 	if(nl - start > termh - 3) return;
-	if(style){
+	if(style) {
 		if(strcasecmp(tagname, "/style") == 0) style = false;
 		return;
 	}
@@ -207,7 +207,7 @@ void html_handler(char* tagname, char* attr) {
 	} else if(strcasecmp(tagname, "/h6") == 0) {
 		if(nl >= start) printf("\n");
 		nl++;
-	}else if(strcasecmp(tagname, "style") == 0){
+	} else if(strcasecmp(tagname, "style") == 0) {
 		style = true;
 	} else if(strcasecmp(tagname, "img") == 0) {
 		if(nl >= start) {
