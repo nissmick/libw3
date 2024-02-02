@@ -424,6 +424,9 @@ int main(int argc, char** argv) {
 		}
 		if(c != '\n' && c != '\r') {
 			printf("\x1b[%d;1H(O)pen, (Q)uit", termh);
+			if(acc){
+				printf(", Go (u)p, Go (d)own");
+			}
 			printf("? ");
 			fflush(stdout);
 		}
