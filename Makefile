@@ -51,7 +51,7 @@ CFLAGS += -g -D__DEBUG__
 endif
 
 ifeq ($(WINDOWS),YES)
-.PHONY: all clean ./Library/w3.dll ./Example format
+.PHONY: all clean ./Library/w3.dll ./Example format src-archive archive
 
 ALL := ./Library/w3.dll ./Example
 
@@ -68,7 +68,7 @@ all: ./Library/W3Version.h ./w3.pc $(ALL)
 
 else
 
-.PHONY: all clean ./Library/libw3.so ./Library/libw3.a ./Example format
+.PHONY: all clean ./Library/libw3.so ./Library/libw3.a ./Example format src-archive archive
 
 ALL := ./Library/libw3.so ./Library/libw3.a ./Example
 
@@ -141,6 +141,15 @@ endif
 	zip -rv w3-$(VERSION).zip w3-$(VERSION)
 	-/usr/lha/bin/lha a w3-$(VERSION).lzh w3-$(VERSION)
 	rm -rf w3-$(VERSION)
+
+src-archive: clean ./Library/W3Version.h
+	rm -rf /tmp/w3-$(VERSION)
+	mkdir /tmp/w3-$(VERSION)
+	cp -rf * /tmp/w3-$(VERSION)/
+	cd /tmp && tar czvf /tmp/w3-$(VERSION).tar.gz w3-$(VERSION)
+	mv /tmp/w3-$(VERSION).tar.gz ./
+	cd /tmp && zip -rv /tmp/w3-$(VERSION).zip w3-$(VERSION)
+	mv /tmp/w3-$(VERSION).zip ./
 
 format:
 	clang-format -i `find Library Example -name "*.h" -or -name "*.c"`
