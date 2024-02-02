@@ -29,6 +29,7 @@ HANDLE winstdout;
 #include <sys/termios.h>
 #endif
 
+char* allurl = NULL;
 int termw, termh;
 
 extern int strcasecmp(const char* s1, const char* s2);
@@ -354,6 +355,7 @@ void render_site() {
 					write(1, databuf + i, 1);
 				}
 			}
+			titlebuf = __W3_Concat("Raw: ", allurl);
 		}
 		char* seq = malloc(1024);
 		sprintf(seq, "\x1b[1;%dH", termw - strlen(titlebuf != NULL ? titlebuf : "No title") - 1);
@@ -398,6 +400,7 @@ int main(int argc, char** argv) {
 	char c = 0;
 	bool acc = false;
 	if(url != NULL) {
+		allurl = url;
 		access_site(url);
 		acc = true;
 	}
@@ -434,6 +437,7 @@ int main(int argc, char** argv) {
 			if(url != NULL) free(url);
 			url = malloc(2049);
 			scanf("%s", url);
+			allurl = url;
 			acc = false;
 			break;
 		case 'd':
