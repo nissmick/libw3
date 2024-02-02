@@ -3,6 +3,7 @@
 
 #include "W3DNS.h"
 #include "W3Util.h"
+#include "W3Version.h"
 
 #include "W3File.h"
 #include "W3Gopher.h"
@@ -24,6 +25,8 @@
 #ifdef SSL_SUPPORT
 #include <openssl/ssl.h>
 #endif
+
+const char* W3_Version = LIBW3_VERSION;
 
 int W3_Library_Init(void) {
 	__W3_Debug("LibW3", "Initializing");
