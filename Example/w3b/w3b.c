@@ -207,6 +207,32 @@ void html_handler(char* tagname, char* attr) {
 	} else if(strcasecmp(tagname, "/h6") == 0) {
 		if(nl >= start) printf("\n");
 		nl++;
+	} else if(strcasecmp(tagname, "p") == 0) {
+		if(nl >= start) printf("\n");
+		nl++;
+	} else if(strcasecmp(tagname, "/p") == 0) {
+		if(nl >= start) printf("\n");
+		nl++;
+	} else if(strcasecmp(tagname, "dl") == 0) {
+		if(nl >= start) printf("\n");
+		nl++;
+	} else if(strcasecmp(tagname, "/dl") == 0) {
+		if(nl >= start) printf("\n");
+		nl++;
+	} else if(strcasecmp(tagname, "dt") == 0) {
+		if(nl >= start) printf("\n");
+		nl++;
+	} else if(strcasecmp(tagname, "/dt") == 0) {
+		if(nl >= start) printf("\n");
+		nl++;
+	} else if(strcasecmp(tagname, "dd") == 0) {
+		if(nl >= start) printf("\n");
+		nl++;
+		printf("    ");
+		x += 4;
+	} else if(strcasecmp(tagname, "/dd") == 0) {
+		if(nl >= start) printf("\n");
+		nl++;
 	} else if(strcasecmp(tagname, "style") == 0) {
 		style = true;
 	} else if(strcasecmp(tagname, "img") == 0) {
