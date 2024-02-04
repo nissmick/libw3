@@ -28,7 +28,7 @@ void W3_Tag_Parse(char* data, size_t size, void (*tagfunc)(char* tagname, char* 
 	bool comm_on = false;
 	int abc = 0;
 	for(i = 0; i < size; i++) {
-		if(phase == 1 && data[i] != ' ' && data[i] != '>') {
+		if(phase == 1 && data[i] != '\n' && data[i] != '\t' && data[i] != ' ' && data[i] != '>') {
 			if(comm) {
 				if(incr == 0 && data[i] != '!') comm = false;
 				if(incr == 1 && data[i] != '-') comm = false;
@@ -67,8 +67,8 @@ void W3_Tag_Parse(char* data, size_t size, void (*tagfunc)(char* tagname, char* 
 			char* tmp = text;
 			text = __W3_Concat(tmp, cbuf);
 			free(tmp);
-		} else if(phase == 1 && (data[i] == ' ' || data[i] == '>')) {
-			if(data[i] == ' ') {
+		} else if(phase == 1 && (data[i] == ' ' || data[i] == '\t' || data[i] == '\n' || data[i] == '>')) {
+			if(data[i] != '>') {
 				phase = 2;
 				free(attr);
 				attr = malloc(1);
