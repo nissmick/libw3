@@ -147,6 +147,7 @@ src-archive: clean ./Library/W3Version.h
 	mkdir /tmp/w3-$(VERSION)
 	cp -rf * /tmp/w3-$(VERSION)/
 	rm -rf `find /tmp/w3-$(VERSION) -name ".svn"`
+	rm -rf `find /tmp/w3-$(VERSION) -name "openssl"`
 	cd /tmp && tar czvf /tmp/w3-$(VERSION).tar.gz w3-$(VERSION)
 	mv /tmp/w3-$(VERSION).tar.gz ./
 	cd /tmp && zip -rv /tmp/w3-$(VERSION).zip w3-$(VERSION)
