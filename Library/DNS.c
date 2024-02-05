@@ -10,9 +10,11 @@
 #include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <ws2def.h>
 #else
 #include <netdb.h>
 #include <sys/socket.h>
+#include <netinet/tcp.h>
 #endif
 
 #include <stdbool.h>
