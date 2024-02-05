@@ -60,6 +60,8 @@ int __W3_DNS_Connect(const char* hostname, bool ssl, uint16_t port
 		if(sock == -1) continue;
 		int nzero = 0;
 		setsockopt(sock, SOL_SOCKET, SO_SNDBUF, (char*)&nzero, sizeof(nzero));
+		int yes = 1;
+		setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (char*)&yes, sizeof(yes));
 		if(connect(sock, rp->ai_addr, rp->ai_addrlen) != -1) break;
 		close(sock);
 	}
