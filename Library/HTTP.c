@@ -282,6 +282,11 @@ void __W3_HTTP_Request(struct W3* w3) {
 			);
 			W3_Set_Path(w3, redir);
 		}
+		void* funcptr = __W3_Get_Event(w3, "redirect");
+		if(funcptr != NULL) {
+			void (*func)(struct W3*) = (void (*)(struct W3*))funcptr;
+			func(w3);
+		}
 		W3_Send_Request(w3);
 	}
 	if(redir != NULL) free(redir);
