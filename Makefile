@@ -33,6 +33,13 @@ WINDOWS := YES
 WINARCH := x64
 endif
 
+PKGCONF := pkg-config
+
+ifeq ($(TCL),YES)
+CFLAGS += $(shell $(PKGCONF) --cflags tcl) -DTCL_BINDING
+LIBS += $(shell $(PKGCONF) --libs tcl)
+endif
+
 ifeq ($(WINDOWS),YES)
 LIBS += -lws2_32
 endif
@@ -58,7 +65,7 @@ ALL := ./Library/w3.dll ./Example
 all: ./Library/W3Version.h ./w3.pc $(ALL)
 
 ./Library/w3.dll:
-	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" WINDOWS=YES WINARCH=$(WINARCH)
+	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" WINDOWS=YES WINARCH=$(WINARCH) TCL=$(TCL)
 
 ./Example: ./Library/w3.dll
 	$(MAKE) -C ./Example CC=$(CC) examples SUFFIX=.exe
@@ -75,10 +82,10 @@ ALL := ./Library/libw3.so ./Library/libw3.a ./Example
 all: ./Library/W3Version.h ./w3.pc $(ALL)
 
 ./Library/libw3.so:
-	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" ./libw3.so
+	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" TCL=$(TCL) ./libw3.so
 
 ./Library/libw3.a:
-	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" ./libw3.a
+	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" TCL=$(TCL) ./libw3.a
 
 ./Example: ./Library/libw3.so
 	$(MAKE) -C ./Example CC=$(CC) examples

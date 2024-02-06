@@ -3,6 +3,10 @@
 
 OBJS = ./Core.o ./Util.o ./DNS.o ./HTTP.o ./Gopher.o ./POP3.o ./File.o ./URL.o ./Tag.o
 
+ifeq ($(TCL),YES)
+OBJS += ./Tcl.o
+endif
+
 ifeq ($(WINDOWS),YES)
 ./w3.dll: $(OBJS)
 	$(CC) $(LDFLAGS) -fstack-protector -L../openssl/lib/mingw/$(WINARCH) -shared -Wl,--out-implib,./w3.lib -o $@ $^ $(LIBS)
