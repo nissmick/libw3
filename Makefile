@@ -7,10 +7,21 @@ else
 GREP = grep
 endif
 
+PKGCONF := pkg-config
+
+ifeq ($(TCL),YES)
+ifneq ($(TCL_PKGCONF),NO)
+TCL_CFLAGS += $(shell $(PKGCONF) --cflags tcl) -DTCL_BINDING
+TCL_LIBS += $(shell $(PKGCONF) --libs tcl)
+else
+TCL_LIBS += -ltcl
+endif
+endif
+
 CC := cc
-CFLAGS := -g -std=c99 -fPIC -D_XOPEN_SOURCE=600
+CFLAGS := -g -std=c99 -fPIC -D_XOPEN_SOURCE=600 $(TCL_CFLAGS)
 LDFLAGS :=
-LIBS :=
+LIBS := $(TCL_LIBS)
 PREFIX := /usr/local
 VERSION = $(shell cat Library/W3Version.h | $(GREP) -m 1 LIBW3_VERSION | sed -E "s/.+\"([^\"]+)\".+/\1/g")$(shell cat Library/W3Version.h | grep -A 1 -E "LIBW3_VERSION" | sed "s/LIBW3_VERSION//g" | tail -n1 | grep -Eo "W")
 
@@ -24,6 +35,7 @@ CC := i686-w64-mingw32-gcc
 WINDRES := i686-w64-mingw32-windres
 WINDOWS := YES
 WINARCH := x86
+MINGW := i686-w64-mingw32
 endif
 
 ifeq ($(WIN64),YES)
@@ -31,13 +43,7 @@ CC := x86_64-w64-mingw32-gcc
 WINDRES := x86_64-w64-mingw32-windres
 WINDOWS := YES
 WINARCH := x64
-endif
-
-PKGCONF := pkg-config
-
-ifeq ($(TCL),YES)
-CFLAGS += $(shell $(PKGCONF) --cflags tcl) -DTCL_BINDING
-LIBS += $(shell $(PKGCONF) --libs tcl)
+MINGW := x86_64-w64-mingw32
 endif
 
 ifeq ($(WINDOWS),YES)
@@ -68,7 +74,7 @@ all: ./Library/W3Version.h ./w3.pc $(ALL)
 	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" WINDOWS=YES WINARCH=$(WINARCH) TCL=$(TCL)
 
 ./Example: ./Library/w3.dll
-	$(MAKE) -C ./Example CC=$(CC) examples SUFFIX=.exe
+	$(MAKE) -C ./Example CC=$(CC) TCL=$(TCL) TCL_LIBS="$(TCL_LIBS)" TCL_CFLAGS="$(TCL_CFLAGS)" examples SUFFIX=.exe
 
 ./Library/W3Version.h:
 	m4 -DSUFFIX=\"W\" ./W3Version.h.p > $@
@@ -88,7 +94,7 @@ all: ./Library/W3Version.h ./w3.pc $(ALL)
 	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" TCL=$(TCL) ./libw3.a
 
 ./Example: ./Library/libw3.so
-	$(MAKE) -C ./Example CC=$(CC) examples
+	$(MAKE) -C ./Example CC=$(CC) TCL_LIBS="$(TCL_LIBS)" TCL_CFLAGS="$(TCL_CFLAGS)" TCL=$(TCL) examples
 
 ./Library/W3Version.h:
 	m4 -DSUFFIX=\"\" ./W3Version.h.p > $@
@@ -121,6 +127,10 @@ install: ./w3.pc
 archive: all
 	mkdir -p w3-$(VERSION)/Library
 	mkdir -p w3-$(VERSION)/Example/w3b
+ifeq ($(TCL),YES)
+	mkdir -p w3-$(VERSION)/Example/tclw3/bin
+	mkdir -p w3-$(VERSION)/Example/tclw3/lib
+endif
 	mkdir -p w3-$(VERSION)/Example/pop3-list
 	mkdir -p w3-$(VERSION)/Example/interactive
 	mkdir -p w3-$(VERSION)/Example/fetch
@@ -132,12 +142,23 @@ ifeq ($(WINDOWS),YES)
 	cp ./Example/interactive/interactive.exe w3-$(VERSION)/Example/interactive/
 	cp ./Example/pop3-list/pop3-list.exe w3-$(VERSION)/Example/pop3-list/
 	cp ./Example/w3b/w3b.exe w3-$(VERSION)/Example/w3b/
+ifeq ($(TCL),YES)
+	cp ./Example/tclw3/tclw3.exe w3-$(VERSION)/Example/tclw3/bin/
+	cp /usr/$(MINGW)/sys-root/mingw/bin/tcl86.dll w3-$(VERSION)/Example/tclw3/bin/
+	cp /usr/$(MINGW)/sys-root/mingw/bin/tk86.dll w3-$(VERSION)/Example/tclw3/bin/
+	cp /usr/$(MINGW)/sys-root/mingw/bin/libssp-0.dll w3-$(VERSION)/Example/tclw3/bin/
+	cp /usr/$(MINGW)/sys-root/mingw/bin/zlib1.dll w3-$(VERSION)/Example/tclw3/bin/
+	cp -rf /usr/$(MINGW)/sys-root/mingw/share/tcl8.6 w3-$(VERSION)/Example/tclw3/tcl8.6
+endif
 else
 	cp ./Library/*.so w3-$(VERSION)/Library/
 	cp ./Example/fetch/fetch w3-$(VERSION)/Example/fetch/
 	cp ./Example/interactive/interactive w3-$(VERSION)/Example/interactive/
 	cp ./Example/pop3-list/pop3-list w3-$(VERSION)/Example/pop3-list/
 	cp ./Example/w3b/w3b w3-$(VERSION)/Example/w3b/
+ifeq ($(TCL),YES)
+	cp ./Example/tclw3/tclw3 w3-$(VERSION)/Example/tclw3/bin/
+endif
 endif
 	-mv w3-$(VERSION)/*.h w3-$(VERSION)/Library/
 	-mv w3-$(VERSION)/*.so w3-$(VERSION)/Library/
