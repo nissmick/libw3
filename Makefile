@@ -98,7 +98,7 @@ endif
 	echo "Description: The WWW Library" >> $@
 	echo "Version: $(VERSION)" >> $@
 	echo "Cflags: -I\$${includedir}/W3" >> $@
-	echo "Libs: -I\$${libdir} -lw3" >> $@
+	echo "Libs: -L\$${libdir} -lw3" >> $@
 
 clean:
 	-rm -f ./w3.pc w3-*.zip w3-*.tar.gz w3-*.lzh ./Library/W3Version.h *~
