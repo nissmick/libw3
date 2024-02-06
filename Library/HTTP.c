@@ -63,6 +63,7 @@ void __W3_HTTP_Request(struct W3* w3) {
 	if(w3->data != NULL) {
 		__W3_Auto_Write(w3, w3->data, w3->size);
 	}
+	__W3_Debug("LibW3-HTTP", "Sent the HTTP request");
 	char* buf = malloc(w3->readsize);
 	char* statusbuf = malloc(1);
 	statusbuf[0] = 0;
