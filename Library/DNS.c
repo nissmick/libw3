@@ -15,6 +15,7 @@
 #include <netdb.h>
 #include <sys/socket.h>
 #include <netinet/tcp.h>
+#include <arpa/inet.h>
 #endif
 
 #include <stdbool.h>

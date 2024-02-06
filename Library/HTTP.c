@@ -37,7 +37,7 @@ void __W3_HTTP_Request(struct W3* w3) {
 		__W3_Auto_Write(w3, "\r\n", 2);
 	}
 	__W3_Auto_Write(w3, "Connection: ", 12);
-	__W3_Auto_Write(w3, "closed", 6);
+	__W3_Auto_Write(w3, "close", 5);
 	__W3_Auto_Write(w3, "\r\n", 2);
 	if(w3->headers != NULL) {
 		int i;
