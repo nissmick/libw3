@@ -148,7 +148,7 @@ ifeq ($(TCL),YES)
 	cp /usr/$(MINGW)/sys-root/mingw/bin/tk86.dll w3-$(VERSION)/Example/tclw3/bin/
 	cp /usr/$(MINGW)/sys-root/mingw/bin/libssp-0.dll w3-$(VERSION)/Example/tclw3/bin/
 	cp /usr/$(MINGW)/sys-root/mingw/bin/zlib1.dll w3-$(VERSION)/Example/tclw3/bin/
-	cp -rf /usr/$(MINGW)/sys-root/mingw/share/tcl8.6 w3-$(VERSION)/Example/tclw3/tcl8.6
+	cp -rf /usr/$(MINGW)/sys-root/mingw/share/tcl8.6 w3-$(VERSION)/Example/tclw3/lib/tcl8.6
 endif
 else
 	cp ./Library/*.so w3-$(VERSION)/Library/
