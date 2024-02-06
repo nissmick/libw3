@@ -299,7 +299,7 @@ void text_handler(char* data) {
 			bool firstspc = true;
 			for(i = 0; i < strlen(data); i++) {
 				cbuf[0] = data[i];
-				if(data[i] == '\n' || data[i] == '\t') {
+				if(data[i] == '\n' || data[i] == '\t' || data[i] == ' ') {
 					if(!spc && !firstspc) {
 						spc = true;
 						char* tmp = fmt_data;
