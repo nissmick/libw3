@@ -20,8 +20,8 @@ void tcl_w3_data_handler(struct W3* w3, char* data, size_t size) {
 	for(i = 0; __dictionary[i] != NULL; i += 2) {
 		if(__dictionary[i + 1] == w3) {
 			if(w3->tcl_data != NULL) {
+				write(1, data, size);
 				Tcl_ObjSetVar2(w3->tcl_in, Tcl_NewStringObj("event_size", 10), NULL, Tcl_NewLongObj(size), 0);
-				Tcl_ObjSetVar2(w3->tcl_in, Tcl_NewStringObj("event_data", 10), NULL, Tcl_NewStringObj(data, size), 0);
 				char* data1 = malloc(size + 1);
 				memcpy(data1, data, size);
 				data1[size] = 0;
@@ -33,7 +33,6 @@ void tcl_w3_data_handler(struct W3* w3, char* data, size_t size) {
 				free(data1);
 				Tcl_UnsetVar(w3->tcl_in, "event_data_nulend", 0);
 				Tcl_UnsetVar(w3->tcl_in, "event_size", 0);
-				Tcl_UnsetVar(w3->tcl_in, "event_data", 0);
 			}
 		}
 	}
@@ -180,9 +179,9 @@ int Tcl_W3FIOCmd(ClientData dummy, Tcl_Interp* interp, int objc, Tcl_Obj* CONST 
 					__files[incr] = oldfiles[incr];
 					__files[incr + 1] = oldfiles[incr + 1];
 					incr += 2;
-					printf("woo");
 				}
-				oldfiles[incr] = NULL;
+				__files[incr] = NULL;
+				free(oldfiles);
 				Tcl_SetObjResult(interp, Tcl_NewIntObj(0));
 				return TCL_OK;
 			}
@@ -211,6 +210,16 @@ int Tcl_W3Cmd(ClientData dummy, Tcl_Interp* interp, int objc, Tcl_Obj* CONST obj
 			return TCL_ERROR;
 		}
 		char* name = Tcl_GetString(objv[2]);
+		if(__dictionary != NULL){
+			int i;
+			for(i = 0; __dictionary[i] != NULL; i += 2){
+				if(strcasecmp(__dictionary[i], name) == 0){
+					const char* errmsg = "argument error: a client named that already exists";
+					Tcl_SetObjResult(interp, Tcl_NewStringObj(errmsg, strlen(errmsg)));
+					return TCL_ERROR;
+				}
+			}
+		}
 		char* protocol = Tcl_GetString(objv[3]);
 		char* hostname = Tcl_GetString(objv[4]);
 		int port = atoi(Tcl_GetString(objv[5]));
@@ -335,6 +344,48 @@ int Tcl_W3Cmd(ClientData dummy, Tcl_Interp* interp, int objc, Tcl_Obj* CONST obj
 					Tcl_SetObjResult(interp, Tcl_NewIntObj(0));
 					return TCL_OK;
 				}
+			}
+			const char* errmsg = "argument error: a client named that does not exist";
+			Tcl_SetObjResult(interp, Tcl_NewStringObj(errmsg, strlen(errmsg)));
+		}
+	} else if(strcasecmp(subcommand, "destroy") == 0) {
+		if(objc != 3) {
+			const char* errmsg = "argument error: arguments should be \"w3 destroy name\"";
+			Tcl_SetObjResult(interp, Tcl_NewStringObj(errmsg, strlen(errmsg)));
+			return TCL_ERROR;
+		}
+		char* name = Tcl_GetString(objv[2]);
+		if(__dictionary == NULL) {
+			const char* errmsg = "argument error: a client named that does not exist";
+			Tcl_SetObjResult(interp, Tcl_NewStringObj(errmsg, strlen(errmsg)));
+		} else {
+			int i;
+			int except = -1;
+			int len = 0;
+			for(i = 0; __dictionary[i] != NULL; i += 2) {
+				if(strcasecmp((char*)__dictionary[i], name) == 0) {
+					W3_Free(__dictionary[i + 1]);
+					free(__dictionary[i]);
+					except = i;
+					break;
+				}
+			}
+			for(len = 0; __dictionary[len] != NULL; len++)
+				;
+			if(except != -1) {
+				void** olddict = __dictionary;
+				__dictionary = malloc(sizeof(*__dictionary) * (len - 1));
+				int incr = 0;
+				for(i = 0; olddict[i] != NULL; i += 2) {
+					if(except == i) continue;
+					__dictionary[incr] = olddict[incr];
+					__dictionary[incr + 1] = olddict[incr + 1];
+					incr += 2;
+				}
+				__dictionary[incr] = NULL;
+				free(olddict);
+				Tcl_SetObjResult(interp, Tcl_NewIntObj(0));
+				return TCL_OK;
 			}
 			const char* errmsg = "argument error: a client named that does not exist";
 			Tcl_SetObjResult(interp, Tcl_NewStringObj(errmsg, strlen(errmsg)));
