@@ -10,7 +10,7 @@
 
 #ifdef __MINGW32__
 #include <windows.h>
-#include <winsock.h>
+#include <winsock2.h>
 #else
 #include <netdb.h>
 #include <netinet/in.h>
@@ -59,10 +59,28 @@ unsigned long __W3_Auto_Write(struct W3* w3, char* data, unsigned long length) {
 	if(w3->ssl != NULL) {
 		return SSL_write(w3->ssl, data, length);
 	} else {
-		return send(w3->sock, data, length, 0);
+#ifdef __MINGW32__
+		int sent_bytes;
+		WSABUF buf;
+		buf.len = length;
+		buf.buf = data;
+		int r = WSASend(w3->sock, &buf, 1, &sent_bytes, 0, NULL, NULL);
+		return r == SOCKET_ERROR ? -1 : sent_bytes;
+#else
+		return send(w3->sock, data, length, 0)+
+#endif
 	}
 #else
+#ifdef __MINGW32__
+	int sent_bytes;
+	WSABUF buf;
+	buf.len = length;
+	buf.buf = data;
+	int r = WSASend(w3->sock, &buf, 1, &sent_bytes, 0, NULL, NULL);
+	return r == SOCKET_ERROR ? -1 : sent_bytes;
+#else
 	return send(w3->sock, data, length, 0);
+#endif
 #endif
 }
 
