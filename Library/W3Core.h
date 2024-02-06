@@ -12,24 +12,26 @@ extern "C" {
 #include "W3Version.h"
 
 struct W3 {
-	int sock;	 /* Socket */
-	int port;	 /* Port */
-	char* protocol;	 /* As you can read from its name */
-	char* method;	 /* Used in HTTP	*/
-	char* path;	 /* As you can read from its name */
-	char* hostname;	 /* As you can read from its name */
-	char** headers;	 /* As you can read from its name */
-	void** events;	 /* As you can read from its name */
-	int status;	 /* As you can read from its name */
-	char* data;	 /* As you can read from its name */
-	size_t size;	 /* Size of the data */
-	size_t readsize; /* Read buffer size, default is 512 */
-	char** props;	 /* Properties */
-	void* generic;	 /* Depends on the protocol */
-#ifdef SSL_SUPPORT
-	void* ssl;     /* Actually SSL*, NULL if no SSL */
-	void* ssl_ctx; /* Actually SSL_CTX* */
-#endif
+	int sock;	  /* Socket */
+	int port;	  /* Port */
+	char* protocol;	  /* As you can read from its name */
+	char* method;	  /* Used in HTTP	*/
+	char* path;	  /* As you can read from its name */
+	char* hostname;	  /* As you can read from its name */
+	char** headers;	  /* As you can read from its name */
+	void** events;	  /* As you can read from its name */
+	int status;	  /* As you can read from its name */
+	char* data;	  /* As you can read from its name */
+	size_t size;	  /* Size of the data */
+	size_t readsize;  /* Read buffer size, default is 512 */
+	char** props;	  /* Properties */
+	void* generic;	  /* Depends on the protocol */
+	char* tcl_header; /* Used in Tcl */
+	char* tcl_data;	  /* Used in Tcl */
+	char* tcl_status; /* Used in Tcl */
+	void* tcl_in;	  /* Used in Tcl */
+	void* ssl;	  /* Actually SSL*, NULL if no SSL */
+	void* ssl_ctx;	  /* Actually SSL_CTX* */
 };
 
 int W3_Library_Init(void);						    /* Initialize the Library */

@@ -9,13 +9,13 @@
 #ifdef __MINGW32__
 #include <windows.h>
 #include <winsock2.h>
-#include <ws2tcpip.h>
 #include <ws2def.h>
+#include <ws2tcpip.h>
 #else
-#include <netdb.h>
-#include <sys/socket.h>
-#include <netinet/tcp.h>
 #include <arpa/inet.h>
+#include <netdb.h>
+#include <netinet/tcp.h>
+#include <sys/socket.h>
 #endif
 
 #include <stdbool.h>

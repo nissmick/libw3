@@ -345,13 +345,13 @@ void render_site() {
 		style = false;
 		if(ctype != NULL && strcasecmp(ctype, "text/html") == 0) {
 			W3_Tag_Parse(databuf, datalen, html_handler, text_handler);
-		}else{
+		} else {
 			int i;
-			for(i = 0; i < datalen; i++){
-				if(databuf[i] == '\n'){
+			for(i = 0; i < datalen; i++) {
+				if(databuf[i] == '\n') {
 					if(nl >= start && (nl - start) <= termh - 1) write(1, databuf + i, 1);
 					nl++;
-				}else if(nl >= start && (nl - start) <= termh - 1){
+				} else if(nl >= start && (nl - start) <= termh - 1) {
 					write(1, databuf + i, 1);
 				}
 			}
@@ -424,7 +424,7 @@ int main(int argc, char** argv) {
 		}
 		if(c != '\n' && c != '\r') {
 			printf("\x1b[%d;1H(O)pen, (Q)uit", termh);
-			if(acc){
+			if(acc) {
 				printf(", Go (u)p, Go (d)own");
 			}
 			printf("? ");
