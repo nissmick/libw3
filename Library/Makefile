@@ -9,7 +9,7 @@ endif
 
 ifeq ($(WINDOWS),YES)
 ./w3.dll: $(OBJS)
-	$(CC) $(LDFLAGS) -fstack-protector -L../openssl/lib/mingw/$(WINARCH) -shared -Wl,--out-implib,./w3.lib -o $@ $^ $(LIBS)
+	$(CC) $(LDFLAGS) -fstack-protector -L../openssl/lib/mingw/$(WINARCH) -L . -shared -Wl,--out-implib,./w3.lib -o $@ $^ $(LIBS)
 else
 
 ./libw3.so: $(OBJS)
