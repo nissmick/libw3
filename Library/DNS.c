@@ -61,8 +61,10 @@ int __W3_DNS_Connect(const char* hostname, bool ssl, uint16_t port
 	for(rp = result; rp != NULL; rp = rp->ai_next) {
 		sock = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
 		if(sock == -1) continue;
-		int nzero = 0;
-		setsockopt(sock, SOL_SOCKET, SO_SNDBUF, (char*)&nzero, sizeof(nzero));
+		int nbyt = 65535;
+		setsockopt(sock, SOL_SOCKET, SO_RCVBUF, (char*)&nbyt, sizeof(nbyt));
+		nbyt = 65535;
+		setsockopt(sock, SOL_SOCKET, SO_SNDBUF, (char*)&nbyt, sizeof(nbyt));
 		int yes = 1;
 		setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (char*)&yes, sizeof(yes));
 		if(connect(sock, rp->ai_addr, rp->ai_addrlen) != -1) break;
