@@ -20,7 +20,6 @@ void tcl_w3_data_handler(struct W3* w3, char* data, size_t size) {
 	for(i = 0; __dictionary[i] != NULL; i += 2) {
 		if(__dictionary[i + 1] == w3) {
 			if(w3->tcl_data != NULL) {
-				write(1, data, size);
 				Tcl_ObjSetVar2(w3->tcl_in, Tcl_NewStringObj("event_size", 10), NULL, Tcl_NewLongObj(size), 0);
 				char* data1 = malloc(size + 1);
 				memcpy(data1, data, size);
