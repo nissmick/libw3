@@ -395,7 +395,7 @@ int Tcl_W3Cmd(ClientData dummy, Tcl_Interp* interp, int objc, Tcl_Obj* CONST obj
 			Tcl_SetObjResult(interp, Tcl_NewStringObj(errmsg, strlen(errmsg)));
 			return TCL_ERROR;
 		}
-		W3_Do_Debug(atoi(Tcl_GetString(argv[2]));
+		W3_Do_Debug(atoi(Tcl_GetString(objv[2])));
 		Tcl_SetObjResult(interp, Tcl_NewIntObj(0));
 		return TCL_OK;
 	} else {
