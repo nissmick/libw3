@@ -209,10 +209,10 @@ int Tcl_W3Cmd(ClientData dummy, Tcl_Interp* interp, int objc, Tcl_Obj* CONST obj
 			return TCL_ERROR;
 		}
 		char* name = Tcl_GetString(objv[2]);
-		if(__dictionary != NULL){
+		if(__dictionary != NULL) {
 			int i;
-			for(i = 0; __dictionary[i] != NULL; i += 2){
-				if(strcasecmp(__dictionary[i], name) == 0){
+			for(i = 0; __dictionary[i] != NULL; i += 2) {
+				if(strcasecmp(__dictionary[i], name) == 0) {
 					const char* errmsg = "argument error: a client named that already exists";
 					Tcl_SetObjResult(interp, Tcl_NewStringObj(errmsg, strlen(errmsg)));
 					return TCL_ERROR;
