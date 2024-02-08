@@ -24,13 +24,17 @@
 
 #define __DEBUG_LEN 12
 
+bool debug_flag = true;
+
+void W3_Do_Debug(bool do_debug) { debug_flag = do_debug; }
+
 void __W3_Debug(const char* title, const char* message) {
-#ifdef __DEBUG__
-	char* periods = malloc(__DEBUG_LEN - strlen(title) + 1);
-	periods[__DEBUG_LEN - strlen(title)] = 0;
-	memset(periods, '.', __DEBUG_LEN - strlen(title));
-	fprintf(stderr, "%s%s %s\n", title, periods, message);
-#endif
+	if(debug_flag) {
+		char* periods = malloc(__DEBUG_LEN - strlen(title) + 1);
+		periods[__DEBUG_LEN - strlen(title)] = 0;
+		memset(periods, '.', __DEBUG_LEN - strlen(title));
+		fprintf(stderr, "%s%s %s\n", title, periods, message);
+	}
 }
 
 char* __W3_Concat(const char* str1, const char* str2) {

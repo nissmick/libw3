@@ -75,7 +75,7 @@ endif
 endif
 
 ifeq ($(DEBUG),YES)
-CFLAGS += -g -D__DEBUG__
+CFLAGS += -g
 endif
 
 ifeq ($(WINDOWS),YES)
