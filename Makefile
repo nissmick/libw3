@@ -1,13 +1,23 @@
 # $Id$
 include config.mk
 
+PREFIX := /usr/local
+PKGCONF := pkg-config
+
+ifeq ("$(wildcard cache.mk)","")
+$(info Creating cache.mk)
+IGNORE := $(shell echo "PREFIX=$(PREFIX)" > cache.mk)
+IGNORE := $(shell echo "TCL_PKGCONF=$(TCL_PKGCONF)" >> cache.mk)
+include cache.mk
+else
+include cache.mk
+endif
+
 ifeq ($(shell uname -s),SunOS)
 GREP = ggrep
 else
 GREP = grep
 endif
-
-PKGCONF := pkg-config
 
 ifeq ($(TCL),YES)
 ifneq ($(TCL_PKGCONF),NO)
@@ -22,7 +32,6 @@ CC := cc
 CFLAGS := -g -std=c99 -fPIC -D_XOPEN_SOURCE=600 $(TCL_CFLAGS)
 LDFLAGS :=
 LIBS := $(TCL_LIBS)
-PREFIX := /usr/local
 VERSION = $(shell cat Library/W3Version.h | $(GREP) -m 1 LIBW3_VERSION | sed -E "s/.+\"([^\"]+)\".+/\1/g")$(shell cat Library/W3Version.h | grep -A 1 -E "LIBW3_VERSION" | sed "s/LIBW3_VERSION//g" | tail -n1 | grep -Eo "W")
 
 ifeq ($(SSL),YES)
@@ -114,7 +123,7 @@ endif
 	echo "Libs: -L\$${libdir} -lw3" >> $@
 
 clean:
-	-rm -f ./w3.pc w3-*.zip w3-*.tar.gz w3-*.lzh ./Library/W3Version.h *~
+	-rm -f ./w3.pc w3-*.zip w3-*.tar.gz w3-*.lzh ./Library/W3Version.h *~ cache.mk
 	$(MAKE) -C ./Library clean
 	$(MAKE) -C ./Example clean
 
