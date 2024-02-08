@@ -80,7 +80,7 @@ int __W3_DNS_Connect(const char* hostname, bool ssl, uint16_t port
 #ifdef SSL_SUPPORT
 	if(ssl) {
 		__W3_Debug("SSL", "Initializing");
-		const SSL_METHOD* method = TLSv1_2_client_method();
+		const SSL_METHOD* method = TLS_client_method();
 		*o_ctx = SSL_CTX_new(method);
 		*o_ssl = SSL_new(*o_ctx);
 		SSL_set_fd(*o_ssl, sock);
