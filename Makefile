@@ -1,13 +1,19 @@
 # $Id$
-include config.mk
+PKGCONF := pkg-config
 
 PREFIX := /usr/local
-PKGCONF := pkg-config
+SSL := YES
+TCL := NO
+TCL_PKGCONF := YES
+DEBUG := NO
 
 ifeq ("$(wildcard cache.mk)","")
 $(info Creating cache.mk)
 IGNORE := $(shell echo "PREFIX=$(PREFIX)" > cache.mk)
 IGNORE := $(shell echo "TCL_PKGCONF=$(TCL_PKGCONF)" >> cache.mk)
+IGNORE := $(shell echo "TCL=$(TCL)" >> cache.mk)
+IGNORE := $(shell echo "SSL=$(SSL)" >> cache.mk)
+IGNORE := $(shell echo "DEBUG=$(DEBUG)" >> cache.mk)
 include cache.mk
 else
 include cache.mk

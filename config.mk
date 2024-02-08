@@ -1,2 +1,0 @@
-SSL=YES
-DEBUG=YES
