@@ -43,16 +43,33 @@ def global_data_handler(cli, data, size):
 			if i._data_handler:
 				i._data_handler(i, ba, size)
 
+@ctypes.CFUNCTYPE(None, ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p)
+def global_header_handler(cli, key, value):
+	for i in w3_list:
+		if cli == i._client:
+			if i._header_handler:
+				i._header_handler(i, key.decode("utf-8"), value.decode("utf-8"))
+
+@ctypes.CFUNCTYPE(None, ctypes.c_void_p, ctypes.c_int)
+def global_status_handler(cli, status):
+	for i in w3_list:
+		if cli == i._client:
+			if i._status_handler:
+				i._status_handler(i, status)
 
 class w3:
 	def __init__(self, protocol, hostname, port):
 		self._client = libw3_loaded.W3_Create(protocol.encode("utf-8"), hostname.encode("utf-8"), port);
 		self._data_handler = None
+		self._header_handler = None
+		self._status_handler = None
 		if not(self._client):
 			raise Exception("Failed to conenct")
 		else:
 			w3_list.append(self)
 			libw3_loaded.W3_On(self._client, b"data", global_data_handler);
+			libw3_loaded.W3_On(self._client, b"header", global_header_handler);
+			libw3_loaded.W3_On(self._client, b"status", global_status_handler);
 		return
 	def set_path(self, path):
 		libw3_loaded.W3_Set_Path(self._client, path.encode("utf-8"))
@@ -60,6 +77,10 @@ class w3:
 		libw3_loaded.W3_Set_Method(self._client, method.encode("utf-8"))
 	def set_data_handler(self, handler):
 		self._data_handler = handler
+	def set_header_handler(self, handler):
+		self._header_handler = handler
+	def set_status_handler(self, handler):
+		self._status_handler = handler
 	def send_request(self):
 		libw3_loaded.W3_Send_Request(self._client)
 
