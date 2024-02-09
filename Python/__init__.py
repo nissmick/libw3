@@ -4,11 +4,7 @@ import ctypes.util
 
 __all__ = ["w3", "libw3"]
 
-libpath = ctypes.util.find_library("w3")
-if not(libpath):
-	raise Exception("LibW3 not found")
-
-libw3_loaded = ctypes.CDLL(libpath)
+libw3_loaded = ctypes.CDLL("libw3.so")
 
 libw3_loaded.W3_Do_Debug.argtypes = [ctypes.c_bool]
 libw3_loaded.W3_Do_Debug = None
@@ -103,8 +99,12 @@ class w3:
 	def send_request(self):
 		libw3_loaded.W3_Send_Request(self._client)
 	def destroy(self):
-		new_list = list(filter(lambda x: x._client != self._client, w3_list))
-		w3_list = list()
+		global w3_list
+		new_list = list()
+		for i in w3_list:
+			if i._client != self._client:
+				new_list.append(i)
+		w3_list = new_list
 		libw3_loaded.W3_Free(self._client)
 
 class libw3:
