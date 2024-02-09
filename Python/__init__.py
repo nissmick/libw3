@@ -31,6 +31,19 @@ libw3_loaded.W3_Set_Path.restype = None
 libw3_loaded.W3_On.argtypes = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_void_p]
 libw3_loaded.W3_On.restype = None
 
+libw3_loaded.W3_Set_Read_Size.argtypes = [ctypes.c_void_p, ctypes.c_int]
+libw3_loaded.W3_Set_Read_Size.restype = None
+
+libw3_loaded.W3_Set_Header.argtypes = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p]
+libw3_loaded.W3_Set_Header.restype = None
+
+libw3_loaded.W3_Disconnect.argtypes = [ctypes.c_void_p]
+libw3_loaded.W3_Disconnect.restype = None
+
+libw3_loaded.W3_Free.argtypes = [ctypes.c_void_p]
+libw3_loaded.W3_Free.restype = None
+
+
 w3_list = []
 
 @ctypes.CFUNCTYPE(None, ctypes.c_void_p, ctypes.c_char_p, ctypes.c_size_t)
@@ -81,8 +94,18 @@ class w3:
 		self._header_handler = handler
 	def set_status_handler(self, handler):
 		self._status_handler = handler
+	def set_read_size(self, size):
+		libw3_loaded.W3_Set_Read_Size(self._client, size)
+	def set_header(self, key, value):
+		libw3_loaded.W3_Set_Header(self._client, key.encode("utf-8"), value.encode("utf-8"))
+	def disconnect(self):
+		libw3_loaded.W3_Disconnect(self._client)
 	def send_request(self):
 		libw3_loaded.W3_Send_Request(self._client)
+	def destroy(self):
+		new_list = list(filter(lambda x: x._client != self._client, w3_list))
+		w3_list = list()
+		libw3_loaded.W3_Free(self._client)
 
 class libw3:
 	@staticmethod
