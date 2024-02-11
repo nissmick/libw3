@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 
-#define LIBW3_VERSION "2.4B" \
+#define LIBW3_VERSION "2.4C" \
 SUFFIX
 
 #ifdef __cplusplus
