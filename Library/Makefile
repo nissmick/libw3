@@ -6,6 +6,9 @@ OBJS = ./Core.o ./Util.o ./DNS.o ./HTTP.o ./Gopher.o ./POP3.o ./File.o ./URL.o .
 ifeq ($(TCL),YES)
 OBJS += ./Tcl.o
 endif
+ifeq ($(SSL),YES)
+OBJS += ./Gemini.o
+endif
 
 ifeq ($(WINDOWS),YES)
 ./w3.dll: $(OBJS)

@@ -86,7 +86,7 @@ ALL := ./Library/w3.dll ./Example
 all: ./Library/W3Version.h ./w3.pc $(ALL)
 
 ./Library/w3.dll:
-	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" WINDOWS=YES WINARCH=$(WINARCH) TCL=$(TCL)
+	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" WINDOWS=YES WINARCH=$(WINARCH) TCL=$(TCL) SSL=$(SSL)
 
 ./Example: ./Library/w3.dll
 	$(MAKE) -C ./Example CC=$(CC) TCL=$(TCL) TCL_LIBS="$(TCL_LIBS)" TCL_CFLAGS="$(TCL_CFLAGS)" examples SUFFIX=.exe
@@ -103,10 +103,10 @@ ALL := ./Library/libw3.so ./Library/libw3.a ./Example
 all: ./Library/W3Version.h ./w3.pc $(ALL)
 
 ./Library/libw3.so:
-	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" TCL=$(TCL) ./libw3.so
+	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" TCL=$(TCL) SSL=$(SSL) ./libw3.so
 
 ./Library/libw3.a:
-	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" TCL=$(TCL) ./libw3.a
+	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" TCL=$(TCL) SSL=$(SSL) ./libw3.a
 
 ./Example: ./Library/libw3.so
 	$(MAKE) -C ./Example CC=$(CC) TCL_LIBS="$(TCL_LIBS)" TCL_CFLAGS="$(TCL_CFLAGS)" TCL=$(TCL) examples
