@@ -7,6 +7,8 @@ struct W3URL {
 	char* host;
 	int port;
 	char* path;
+	char* username;
+	char* password;
 };
 
 struct W3URL* W3_Parse_URL(const char* url);

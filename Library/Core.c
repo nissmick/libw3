@@ -6,10 +6,10 @@
 #include "W3Version.h"
 
 #include "W3File.h"
+#include "W3Finger.h"
 #include "W3Gopher.h"
 #include "W3HTTP.h"
 #include "W3POP3.h"
-#include "W3Finger.h"
 #ifdef SSL_SUPPORT
 #include "W3Gemini.h"
 #endif
