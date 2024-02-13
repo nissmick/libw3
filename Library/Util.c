@@ -22,7 +22,7 @@
 #include <openssl/ssl.h>
 #endif
 
-#define __DEBUG_LEN 12
+#define __DEBUG_LEN 16
 
 bool debug_flag = true;
 
