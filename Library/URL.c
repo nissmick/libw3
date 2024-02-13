@@ -62,7 +62,10 @@ struct W3URL* W3_Parse_URL(const char* _url) {
 					r->port = 70;
 				} else if(strcmp(r->protocol, "gemini") == 0) {
 					r->port = 1965;
+				} else if(strcmp(r->protocol, "finger") == 0) {
+					r->port = 79;
 				}
+
 			}
 			r->host = __W3_Strdup(url + start);
 			str = malloc(strlen(r->host) + 64);
