@@ -60,6 +60,8 @@ struct W3URL* W3_Parse_URL(const char* _url) {
 					r->port = 443;
 				} else if(strcmp(r->protocol, "gopher") == 0) {
 					r->port = 70;
+				} else if(strcmp(r->protocol, "gemini") == 0) {
+					r->port = 1965;
 				}
 			}
 			r->host = __W3_Strdup(url + start);

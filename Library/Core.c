@@ -9,6 +9,9 @@
 #include "W3Gopher.h"
 #include "W3HTTP.h"
 #include "W3POP3.h"
+#ifdef SSL_SUPPORT
+#include "W3Gemini.h"
+#endif
 
 #include <ctype.h>
 #include <stdbool.h>
@@ -55,6 +58,8 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port) {
 	bool ssl = false;
 	if(strcmp(protocol, "https") == 0) {
 		ssl = true;
+	}else if(strcmp(protocol, "gemini") == 0) {
+		ssl = true;
 	}
 	w3->props = NULL;
 	w3->method = NULL;
@@ -76,6 +81,7 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port) {
 #ifdef SSL_SUPPORT
 		} else if(strcmp(protocol, "https") == 0) {
 		} else if(strcmp(protocol, "pop3s") == 0) {
+		} else if(strcmp(protocol, "gemini") == 0) {
 #endif
 		} else if(strcmp(protocol, "gopher") == 0) {
 		} else if(strcmp(protocol, "pop3") == 0) {
@@ -136,6 +142,10 @@ void W3_Send_Request(struct W3* w3) {
 #endif
 	) {
 		__W3_POP3_Request(w3);
+#ifdef SSL_SUPPORT
+	} else if(strcmp(w3->protocol, "gemini") == 0) {
+		__W3_Gemini_Request(w3);
+#endif
 	} else if(strcmp(w3->protocol, "file") == 0) {
 		__W3_File_Request(w3);
 	}
