@@ -42,6 +42,12 @@ void __W3_Gemini_Request(struct W3* w3) {
 								void (*func)(struct W3*, char*, char*) = (void (*)(struct W3*, char*, char*))funcptr;
 								func(w3, "Content-Type", meta);
 							}
+						}else if(atoi(code) >= 30 && atoi(code) < 40){
+							void* funcptr = __W3_Get_Event(w3, "header");
+							if(funcptr != NULL) {
+								void (*func)(struct W3*, char*, char*) = (void (*)(struct W3*, char*, char*))funcptr;
+								func(w3, "Location", meta);
+							}
 						}
 					}
 				}else if(!bcode){
