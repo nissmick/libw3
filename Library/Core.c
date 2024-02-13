@@ -10,6 +10,7 @@
 #include "W3Gopher.h"
 #include "W3HTTP.h"
 #include "W3POP3.h"
+#include "W3Nex.h"
 #ifdef SSL_SUPPORT
 #include "W3Gemini.h"
 #endif
@@ -87,6 +88,7 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port) {
 		} else if(strcmp(protocol, "gemini") == 0) {
 		} else if(strcmp(protocol, "gophers") == 0) {
 #endif
+		} else if(strcmp(protocol, "nex") == 0) {
 		} else if(strcmp(protocol, "finger") == 0) {
 		} else if(strcmp(protocol, "gopher") == 0) {
 		} else if(strcmp(protocol, "pop3") == 0) {
@@ -157,6 +159,8 @@ void W3_Send_Request(struct W3* w3) {
 #endif
 	} else if(strcmp(w3->protocol, "finger") == 0) {
 		__W3_Finger_Request(w3);
+	} else if(strcmp(w3->protocol, "nex") == 0) {
+		__W3_Nex_Request(w3);
 	} else if(strcmp(w3->protocol, "file") == 0) {
 		__W3_File_Request(w3);
 	}

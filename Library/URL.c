@@ -124,7 +124,10 @@ struct W3URL* W3_Parse_URL(const char* _url) {
 					r->port = 1965;
 				} else if(strcmp(r->protocol, "finger") == 0) {
 					r->port = 79;
+				}else if(strcmp(r->protocol, "nex") == 0) {
+					r->port = 1900;
 				}
+
 			}
 			r->host = __W3_Strdup(url + start + (atmark == 0 ? 0 : (atmark - 1)));
 			char* str = malloc(strlen(r->host) + 64);
