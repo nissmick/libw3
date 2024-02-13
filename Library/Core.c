@@ -58,7 +58,9 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port) {
 	bool ssl = false;
 	if(strcmp(protocol, "https") == 0) {
 		ssl = true;
-	}else if(strcmp(protocol, "gemini") == 0) {
+	} else if(strcmp(protocol, "gemini") == 0) {
+		ssl = true;
+	} else if(strcmp(protocol, "gophers") == 0) {
 		ssl = true;
 	}
 	w3->props = NULL;
@@ -82,6 +84,7 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port) {
 		} else if(strcmp(protocol, "https") == 0) {
 		} else if(strcmp(protocol, "pop3s") == 0) {
 		} else if(strcmp(protocol, "gemini") == 0) {
+		} else if(strcmp(protocol, "gophers") == 0) {
 #endif
 		} else if(strcmp(protocol, "gopher") == 0) {
 		} else if(strcmp(protocol, "pop3") == 0) {
@@ -134,7 +137,11 @@ void W3_Send_Request(struct W3* w3) {
 #endif
 	) {
 		__W3_HTTP_Request(w3);
-	} else if(strcmp(w3->protocol, "gopher") == 0) {
+	} else if(strcmp(w3->protocol, "gopher") == 0
+#ifdef SSL_SUPPORT
+		  || strcmp(w3->protocol, "gophers") == 0
+#endif
+	) {
 		__W3_Gopher_Request(w3);
 	} else if(strcmp(w3->protocol, "pop3") == 0
 #ifdef SSL_SUPPORT

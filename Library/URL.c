@@ -58,7 +58,7 @@ struct W3URL* W3_Parse_URL(const char* _url) {
 					r->port = 80;
 				} else if(strcmp(r->protocol, "https") == 0) {
 					r->port = 443;
-				} else if(strcmp(r->protocol, "gopher") == 0) {
+				} else if(strcmp(r->protocol, "gopher") == 0 || strcmp(r->protocol, "gophers") == 0) {
 					r->port = 70;
 				} else if(strcmp(r->protocol, "gemini") == 0) {
 					r->port = 1965;

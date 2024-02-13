@@ -4,9 +4,9 @@
 #include "W3Util.h"
 
 #include <stdbool.h>
-#include <string.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 void __W3_Gemini_Request(struct W3* w3) {
 	__W3_Debug("LibW3-Gemini", "Sending the request");
@@ -29,20 +29,20 @@ void __W3_Gemini_Request(struct W3* w3) {
 		int len = __W3_Auto_Read(w3, buf, w3->readsize);
 		if(len <= 0) break;
 		int i = 0;
-		if(status){
-			for(i = 0; i < len; i++){
-				if(buf[i] == '\n'){
+		if(status) {
+			for(i = 0; i < len; i++) {
+				if(buf[i] == '\n') {
 					status = false;
 					break;
-				}else if(buf[i] == '\r'){
-					if(!bcode){
-						if(atoi(code) == 20){
+				} else if(buf[i] == '\r') {
+					if(!bcode) {
+						if(atoi(code) == 20) {
 							void* funcptr = __W3_Get_Event(w3, "header");
 							if(funcptr != NULL) {
 								void (*func)(struct W3*, char*, char*) = (void (*)(struct W3*, char*, char*))funcptr;
 								func(w3, "Content-Type", meta);
 							}
-						}else if(atoi(code) >= 30 && atoi(code) < 40){
+						} else if(atoi(code) >= 30 && atoi(code) < 40) {
 							void* funcptr = __W3_Get_Event(w3, "header");
 							if(funcptr != NULL) {
 								void (*func)(struct W3*, char*, char*) = (void (*)(struct W3*, char*, char*))funcptr;
@@ -50,7 +50,7 @@ void __W3_Gemini_Request(struct W3* w3) {
 							}
 						}
 					}
-				}else if(!bcode){
+				} else if(!bcode) {
 					char* tmp = meta;
 					char* cbuf = malloc(2);
 					cbuf[0] = buf[i];
@@ -58,15 +58,15 @@ void __W3_Gemini_Request(struct W3* w3) {
 					meta = __W3_Concat(tmp, cbuf);
 					free(tmp);
 					free(cbuf);
-				}else if(bcode){
-					if(buf[i] == ' '){
+				} else if(bcode) {
+					if(buf[i] == ' ') {
 						bcode = false;
 						void* funcptr = __W3_Get_Event(w3, "status");
 						if(funcptr != NULL) {
 							void (*func)(struct W3*, int) = (void (*)(struct W3*, int))funcptr;
 							func(w3, atoi(code));
 						}
-					}else{
+					} else {
 						char* tmp = code;
 						char* cbuf = malloc(2);
 						cbuf[0] = buf[i];
