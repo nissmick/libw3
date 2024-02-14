@@ -134,9 +134,9 @@ void __W3_FTP_Request(struct W3* w3) {
 								}
 							}
 							free(numbuf);
-							pasvsock = __W3_DNS_Connect(addr, false, port,
+							pasvsock = __W3_DNS_Connect(addr, false, port
 #ifdef SSL_SUPPORT
-										    NULL, NULL
+	    								,NULL, NULL
 #endif
 							);
 							free(addr);
