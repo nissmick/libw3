@@ -128,6 +128,8 @@ struct W3URL* W3_Parse_URL(const char* _url) {
 					r->port = 1900;
 				} else if(strcmp(r->protocol, "ftp") == 0) {
 					r->port = 21;
+				} else if(strcmp(r->protocol, "nntp") == 0) {
+					r->port = 119;
 				}
 			}
 			r->host = __W3_Strdup(url + start + (atmark == 0 ? 0 : (atmark - 1)));

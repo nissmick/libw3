@@ -22,11 +22,7 @@ struct W3URL* w3url;
 void resp_handler(struct W3* w3, int status, char* data) {
 	printf("%d\n%s\n", status, data);
 	if(status == 230) {
-		W3_Set_Method(w3, "CWD");
-		W3_Set_Path(w3, w3url->path);
-		W3_FTP_Send_Request(w3);
 		W3_Set_Method(w3, "LIST");
-		W3_Set_Path(w3, "/");
 		W3_FTP_Send_Request(w3);
 	} else if(status == 226) {
 		W3_FTP_Disconnect(w3);
@@ -43,22 +39,7 @@ int main(int argc, char** argv) {
 	W3_Library_Init();
 	w3url = W3_Parse_URL(argv[1]);
 	if(w3url != NULL) {
-		bool err = false;
-		if(w3url->username == NULL) {
-			err = true;
-			fprintf(stderr, "%s: missing username\n", argv[0]);
-		}
-		if(w3url->password == NULL) {
-			err = true;
-			fprintf(stderr, "%s: missing password\n", argv[0]);
-		}
-		if(err) {
-			W3_Free_URL(w3url);
-			return 1;
-		}
-		struct W3* w3 = W3_Create("ftp", w3url->host, w3url->port);
-		W3_FTP_Set_Username(w3, w3url->username);
-		W3_FTP_Set_Password(w3, w3url->password);
+		struct W3* w3 = W3_Create("nntp", w3url->host, w3url->port);
 		W3_On(w3, "ftpresp", resp_handler);
 		W3_On(w3, "data", data_handler);
 		W3_Send_Request(w3);
