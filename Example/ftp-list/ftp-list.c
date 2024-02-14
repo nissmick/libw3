@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * Lists the FTP files 
+ * Lists the FTP files
  */
 
 #include <W3Core.h>
@@ -17,20 +17,23 @@
 #include <string.h>
 #include <unistd.h>
 
-void resp_handler(struct W3* w3, int status, char* data){
+struct W3URL* w3url;
+
+void resp_handler(struct W3* w3, int status, char* data) {
 	printf("%d\n%s\n", status, data);
-	if(status == 230){
+	if(status == 230) {
+		W3_Set_Method(w3, "CWD");
+		W3_Set_Path(w3, w3url->path);
+		W3_FTP_Send_Request(w3);
 		W3_Set_Method(w3, "LIST");
 		W3_Set_Path(w3, "/");
 		W3_FTP_Send_Request(w3);
-	}else if(status == 226){
+	} else if(status == 226) {
 		W3_FTP_Disconnect(w3);
 	}
 }
 
-void data_handler(struct W3* w3, char* data, size_t size){
-	write(1, data, size);
-}
+void data_handler(struct W3* w3, char* data, size_t size) { write(1, data, size); }
 
 int main(int argc, char** argv) {
 	if(argc < 2) {
@@ -38,18 +41,18 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 	W3_Library_Init();
-	struct W3URL* w3url = W3_Parse_URL(argv[1]);
-	if(w3url != NULL){
+	w3url = W3_Parse_URL(argv[1]);
+	if(w3url != NULL) {
 		bool err = false;
-		if(w3url->username == NULL){
+		if(w3url->username == NULL) {
 			err = true;
 			fprintf(stderr, "%s: missing username\n", argv[0]);
 		}
-		if(w3url->password == NULL){
+		if(w3url->password == NULL) {
 			err = true;
 			fprintf(stderr, "%s: missing password\n", argv[0]);
 		}
-		if(err){
+		if(err) {
 			W3_Free_URL(w3url);
 			return 1;
 		}
@@ -60,7 +63,7 @@ int main(int argc, char** argv) {
 		W3_On(w3, "data", data_handler);
 		W3_Send_Request(w3);
 		W3_Free_URL(w3url);
-	}else{
+	} else {
 		return 1;
 	}
 }

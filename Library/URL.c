@@ -84,13 +84,13 @@ struct W3URL* W3_Parse_URL(const char* _url) {
 					}
 				}
 				free(cbuf);
-				if(r->username != NULL){
+				if(r->username != NULL) {
 					char* str = malloc(64 + strlen(r->username));
 					sprintf(str, "Username is %s", r->username);
 					__W3_Debug("URL", str);
 					free(str);
 				}
-				if(r->password != NULL){
+				if(r->password != NULL) {
 					char* str = malloc(64 + strlen(r->password));
 					sprintf(str, "Password is %s", r->password);
 					__W3_Debug("URL", str);
@@ -124,13 +124,11 @@ struct W3URL* W3_Parse_URL(const char* _url) {
 					r->port = 1965;
 				} else if(strcmp(r->protocol, "finger") == 0) {
 					r->port = 79;
-				}else if(strcmp(r->protocol, "nex") == 0) {
+				} else if(strcmp(r->protocol, "nex") == 0) {
 					r->port = 1900;
-				}else if(strcmp(r->protocol, "ftp") == 0) {
+				} else if(strcmp(r->protocol, "ftp") == 0) {
 					r->port = 21;
 				}
-
-
 			}
 			r->host = __W3_Strdup(url + start + (atmark == 0 ? 0 : (atmark - 1)));
 			char* str = malloc(strlen(r->host) + 64);
