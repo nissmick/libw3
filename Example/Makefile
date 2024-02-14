@@ -11,6 +11,7 @@ examples:
 	$(MAKE) -C ./pop3-list CC=$(CC) SUFFIX=$(SUFFIX)
 	$(MAKE) -C ./w3b CC=$(CC) SUFFIX=$(SUFFIX)
 	$(MAKE) -C ./ftp-list CC=$(CC) SUFFIX=$(SUFFIX)
+	$(MAKE) -C ./nntp-list CC=$(CC) SUFFIX=$(SUFFIX)
 ifeq ($(TCL),YES)
 	$(MAKE) -C ./tclw3 CC=$(CC) TCL_LIBS="$(TCL_LIBS)" TCL_CFLAGS="$(TCL_CFLAGS)" SUFFIX=$(SUFFIX)
 endif
@@ -21,6 +22,7 @@ install:
 	$(MAKE) -C ./pop3-list CC=$(CC) PREFIX=$(PREFIX) SUFFIX=$(SUFFIX) install
 	$(MAKE) -C ./w3b CC=$(CC) PREFIX=$(PREFIX) SUFFIX=$(SUFFIX) install
 	$(MAKE) -C ./ftp-list CC=$(CC) PREFIX=$(PREFIX) SUFFIX=$(SUFFIX) install
+	$(MAKE) -C ./nntp-list CC=$(CC) PREFIX=$(PREFIX) SUFFIX=$(SUFFIX) install
 ifeq ($(TCL),YES)
 	$(MAKE) -C ./tclw3 CC=$(CC) PREFIX=$(PREFIX) SUFFIX=$(SUFFIX) install
 endif
@@ -32,6 +34,7 @@ clean:
 	$(MAKE) -C ./pop3-list SUFFIX=$(SUFFIX) clean
 	$(MAKE) -C ./w3b SUFFIX=$(SUFFIX) clean
 	$(MAKE) -C ./ftp-list SUFFIX=$(SUFFIX) clean
+	$(MAKE) -c ./nntp-list SUFFIX=$(SUFFIX) clean
 ifeq ($(TCL),YES)
 	$(MAKE) -C ./tclw3 CC=$(CC) SUFFIX=$(SUFFIX) clean
 endif
