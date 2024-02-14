@@ -10,6 +10,7 @@
 #include "W3Finger.h"
 #include "W3Gopher.h"
 #include "W3HTTP.h"
+#include "W3NNTP.h"
 #include "W3Nex.h"
 #include "W3POP3.h"
 #ifdef SSL_SUPPORT
@@ -94,6 +95,7 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port) {
 		} else if(strcmp(protocol, "gopher") == 0) {
 		} else if(strcmp(protocol, "pop3") == 0) {
 		} else if(strcmp(protocol, "ftp") == 0) {
+		} else if(strcmp(protocol, "nntp") == 0) {
 		} else {
 			__W3_Debug("Protocol", "Not suppported");
 			W3_Free(w3);
@@ -165,6 +167,8 @@ void W3_Send_Request(struct W3* w3) {
 		__W3_Nex_Request(w3);
 	} else if(strcmp(w3->protocol, "ftp") == 0) {
 		__W3_FTP_Request(w3);
+	} else if(strcmp(w3->protocol, "nntp") == 0) {
+		__W3_NNTP_Request(w3);
 	} else if(strcmp(w3->protocol, "file") == 0) {
 		__W3_File_Request(w3);
 	}

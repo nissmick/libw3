@@ -1,7 +1,7 @@
 # $Id$
 .PHONY: clean install
 
-OBJS = ./Core.o ./Util.o ./DNS.o ./HTTP.o ./Gopher.o ./POP3.o ./Finger.o ./File.o ./Nex.o ./FTP.o ./URL.o ./Tag.o
+OBJS = ./Core.o ./Util.o ./DNS.o ./HTTP.o ./Gopher.o ./POP3.o ./Finger.o ./File.o ./Nex.o ./FTP.o ./NNTP.o ./URL.o ./Tag.o
 
 ifeq ($(TCL),YES)
 OBJS += ./Tcl.o
