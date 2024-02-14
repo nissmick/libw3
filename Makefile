@@ -146,6 +146,7 @@ ifeq ($(TCL),YES)
 	mkdir -p w3-$(VERSION)/Example/tclw3/bin
 	mkdir -p w3-$(VERSION)/Example/tclw3/lib
 endif
+	mkdir -p w3-$(VERSION)/Example/ftp-list
 	mkdir -p w3-$(VERSION)/Example/pop3-list
 	mkdir -p w3-$(VERSION)/Example/interactive
 	mkdir -p w3-$(VERSION)/Example/fetch
@@ -157,6 +158,7 @@ ifeq ($(WINDOWS),YES)
 	cp ./Example/interactive/interactive.exe w3-$(VERSION)/Example/interactive/
 	cp ./Example/pop3-list/pop3-list.exe w3-$(VERSION)/Example/pop3-list/
 	cp ./Example/w3b/w3b.exe w3-$(VERSION)/Example/w3b/
+	cp ./Example/ftp-list/ftp-list.exe w3-$(VERSION)/Example/ftp-list/
 ifeq ($(TCL),YES)
 	cp ./Example/tclw3/tclw3.exe w3-$(VERSION)/Example/tclw3/bin/
 	cp /usr/$(MINGW)/sys-root/mingw/bin/tcl86.dll w3-$(VERSION)/Example/tclw3/bin/
@@ -171,6 +173,7 @@ else
 	cp ./Example/interactive/interactive w3-$(VERSION)/Example/interactive/
 	cp ./Example/pop3-list/pop3-list w3-$(VERSION)/Example/pop3-list/
 	cp ./Example/w3b/w3b w3-$(VERSION)/Example/w3b/
+	cp ./Example/ftp-list/ftp-list w3-$(VERSION)/Example/ftp-list/
 ifeq ($(TCL),YES)
 	cp ./Example/tclw3/tclw3 w3-$(VERSION)/Example/tclw3/bin/
 endif
