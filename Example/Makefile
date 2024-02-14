@@ -34,7 +34,7 @@ clean:
 	$(MAKE) -C ./pop3-list SUFFIX=$(SUFFIX) clean
 	$(MAKE) -C ./w3b SUFFIX=$(SUFFIX) clean
 	$(MAKE) -C ./ftp-list SUFFIX=$(SUFFIX) clean
-	$(MAKE) -c ./nntp-list SUFFIX=$(SUFFIX) clean
+	$(MAKE) -C ./nntp-list SUFFIX=$(SUFFIX) clean
 ifeq ($(TCL),YES)
 	$(MAKE) -C ./tclw3 CC=$(CC) SUFFIX=$(SUFFIX) clean
 endif
