@@ -24,6 +24,18 @@ void resp_handler(struct W3* w3, int status, char* data) {
 	if(status == 200) {
 		W3_Set_Method(w3, "LIST");
 		W3_NNTP_Send_Request(w3);
+	}else if(status == 215){
+		W3_Set_Method(w3, "GROUP");
+		W3_Set_Path(w3, w3url->path + 1);
+		W3_NNTP_Send_Request(w3);
+	}else if(status == 211){
+		W3_Set_Method(w3, "HEAD");
+		W3_NNTP_Send_Request(w3);
+	}else if(status == 221){
+		W3_Set_Method(w3, "BODY");
+		W3_NNTP_Send_Request(w3);
+	}else if(status == 222){
+		W3_NNTP_Disconnect(w3);
 	}
 }
 
