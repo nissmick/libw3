@@ -40,7 +40,7 @@ int main(int argc, char** argv) {
 	w3url = W3_Parse_URL(argv[1]);
 	if(w3url != NULL) {
 		struct W3* w3 = W3_Create("nntp", w3url->host, w3url->port);
-		W3_On(w3, "ftpresp", resp_handler);
+		W3_On(w3, "nntpresp", resp_handler);
 		W3_On(w3, "data", data_handler);
 		W3_Send_Request(w3);
 		W3_Free_URL(w3url);
