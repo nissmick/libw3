@@ -77,6 +77,10 @@ ifneq ($(NEX),NO)
 FLAGS += -DNEX_SUPPORT
 endif
 
+ifneq ($(NNTP),NO)
+FLAGS += -DNNTP_SUPPORT
+endif
+
 ifneq ($(FTP),NO)
 FLAGS += -DFTP_SUPPORT
 endif

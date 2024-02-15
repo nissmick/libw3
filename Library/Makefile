@@ -1,7 +1,7 @@
 # $Id$
 .PHONY: clean install
 
-OBJS = ./Core.o ./Util.o ./DNS.o ./NNTP.o ./URL.o ./Tag.o
+OBJS = ./Core.o ./Util.o ./DNS.o ./URL.o ./Tag.o
 
 include ./protocol.mk
 
@@ -40,6 +40,10 @@ endif
 
 ifneq ($(FTP),NO)
 OBJS += ./FTP.o
+endif
+
+ifneq ($(NNTP),NO)
+OBJS += ./NNTP.o
 endif
 
 ifeq ($(WINDOWS),YES)
