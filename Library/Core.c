@@ -5,15 +5,39 @@
 #include "W3Util.h"
 #include "W3Version.h"
 
+#ifdef FTP_SUPPORT
 #include "W3FTP.h"
+#endif
+
+#ifdef FILE_SUPPORT
 #include "W3File.h"
+#endif
+
+#ifdef FINGER_SUPPORT
 #include "W3Finger.h"
+#endif
+
+#ifdef GOPHER_SUPPORT
 #include "W3Gopher.h"
+#endif
+
+#ifdef HTTP_SUPPORT
 #include "W3HTTP.h"
+#endif
+
+#ifdef NNTP_SUPPORT
 #include "W3NNTP.h"
+#endif
+
+#ifdef NEX_SUPPORT
 #include "W3Nex.h"
+#endif
+
+#ifdef POP3_SUPPORT
 #include "W3POP3.h"
-#ifdef SSL_SUPPORT
+#endif
+
+#ifdef GEMINI_SUPPORT
 #include "W3Gemini.h"
 #endif
 
@@ -85,17 +109,37 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port) {
 	if(strcmp(protocol, "file") != 0) {
 		if(strcmp(protocol, "http") == 0) {
 #ifdef SSL_SUPPORT
+#ifdef HTTP_SUPPORT
 		} else if(strcmp(protocol, "https") == 0) {
+#endif
+#ifdef POP3_SUPPORT
 		} else if(strcmp(protocol, "pop3s") == 0) {
+#endif
+#ifdef GEMINI_SUPPORT
 		} else if(strcmp(protocol, "gemini") == 0) {
+#endif
+#ifdef GOPHER_SUPPORT
 		} else if(strcmp(protocol, "gophers") == 0) {
 #endif
+#endif
+#ifdef NEX_SUPPORT
 		} else if(strcmp(protocol, "nex") == 0) {
+#endif
+#ifdef FINGER_SUPPORT
 		} else if(strcmp(protocol, "finger") == 0) {
+#endif
+#ifdef GOPHER_SUPPORT
 		} else if(strcmp(protocol, "gopher") == 0) {
+#endif
+#ifdef POP3_SUPPORT
 		} else if(strcmp(protocol, "pop3") == 0) {
+#endif
+#ifdef FTP_SUPPORT
 		} else if(strcmp(protocol, "ftp") == 0) {
+#endif
+#ifdef NNTP_SUPPORT
 		} else if(strcmp(protocol, "nntp") == 0) {
+#endif
 		} else {
 			__W3_Debug("Protocol", "Not suppported");
 			W3_Free(w3);
@@ -115,6 +159,14 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port) {
 			w3 = NULL;
 		}
 	}
+#ifndef FILE_SUPPORT
+	else {
+		__W3_Debug("Protocol", "Not suppported");
+		W3_Free(w3);
+		w3 = NULL;
+		return w3;
+	}
+#endif
 	return w3;
 }
 
@@ -139,38 +191,57 @@ void W3_Set_Path(struct W3* w3, const char* path) {
 }
 
 void W3_Send_Request(struct W3* w3) {
-	if(strcmp(w3->protocol, "http") == 0
+	if(0){
+#ifdef HTTP_SUPPORT
+	}else if(strcmp(w3->protocol, "http") == 0
 #ifdef SSL_SUPPORT
 	   || strcmp(w3->protocol, "https") == 0
 #endif
 	) {
 		__W3_HTTP_Request(w3);
+#endif
+#ifdef GOPHER_SUPPORT
 	} else if(strcmp(w3->protocol, "gopher") == 0
 #ifdef SSL_SUPPORT
 		  || strcmp(w3->protocol, "gophers") == 0
 #endif
 	) {
 		__W3_Gopher_Request(w3);
+#endif
+#ifdef POP3_SUPPORT
 	} else if(strcmp(w3->protocol, "pop3") == 0
 #ifdef SSL_SUPPORT
 		  || strcmp(w3->protocol, "pop3s") == 0
 #endif
 	) {
 		__W3_POP3_Request(w3);
+#endif
+#ifdef GEMINI_SUPPORT
 #ifdef SSL_SUPPORT
 	} else if(strcmp(w3->protocol, "gemini") == 0) {
 		__W3_Gemini_Request(w3);
 #endif
+#endif
+#ifdef FINGER_SUPPORT
 	} else if(strcmp(w3->protocol, "finger") == 0) {
 		__W3_Finger_Request(w3);
+#endif
+#ifdef NEX_SUPPORT
 	} else if(strcmp(w3->protocol, "nex") == 0) {
 		__W3_Nex_Request(w3);
+#endif
+#ifdef FTP_SUPPORT
 	} else if(strcmp(w3->protocol, "ftp") == 0) {
 		__W3_FTP_Request(w3);
+#endif
+#ifdef NNTP_SUPPORT
 	} else if(strcmp(w3->protocol, "nntp") == 0) {
 		__W3_NNTP_Request(w3);
+#endif
+#ifdef FILE_SUPPORT
 	} else if(strcmp(w3->protocol, "file") == 0) {
 		__W3_File_Request(w3);
+#endif
 	}
 }
 
