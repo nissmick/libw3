@@ -163,6 +163,7 @@ void __W3_FTP_Request(struct W3* w3) {
 					}
 					void* funcptr = __W3_Get_Event(w3, "ftpresp");
 					if(funcptr != NULL) {
+						if(buffer[strlen(buffer) - 1] == '\n') buffer[strlen(buffer) - 1] = 0;
 						void (*func)(struct W3*, int, char*) = (void (*)(struct W3*, int, char*))funcptr;
 						func(w3, status, buffer);
 					}

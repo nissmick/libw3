@@ -1,11 +1,11 @@
 /*
  * $Id$
  *
- * Lists the FTP files
+ * Lists the NNTP files
  */
 
 #include <W3Core.h>
-#include <W3FTP.h>
+#include <W3NNTP.h>
 
 #include <W3URL.h>
 #include <W3Util.h> /* It has some useful functions, you know */
@@ -20,12 +20,10 @@
 struct W3URL* w3url;
 
 void resp_handler(struct W3* w3, int status, char* data) {
-	printf("%d\n%s\n", status, data);
-	if(status == 230) {
+	printf("%d %s\n", status, data);
+	if(status == 200) {
 		W3_Set_Method(w3, "LIST");
-		W3_FTP_Send_Request(w3);
-	} else if(status == 226) {
-		W3_FTP_Disconnect(w3);
+		W3_NNTP_Send_Request(w3);
 	}
 }
 
