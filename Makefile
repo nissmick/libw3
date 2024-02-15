@@ -19,6 +19,8 @@ else
 include cache.mk
 endif
 
+include ./Library/protocol.mk
+
 ifeq ($(shell uname -s),SunOS)
 GREP = ggrep
 else
@@ -44,6 +46,42 @@ ifeq ($(SSL),YES)
 CFLAGS += -DSSL_SUPPORT
 LIBS += -lssl -lcrypto
 endif
+
+ifeq ($(SSL),YES)
+ifneq ($(GEMINI),NO)
+FLAGS += -DGEMINI_SUPPORT
+endif
+endif
+
+ifneq ($(HTTP),NO)
+FLAGS += -DHTTP_SUPPORT
+endif
+
+ifneq ($(GOPHER),NO)
+FLAGS += -DGOPHER_SUPPORT
+endif
+
+ifneq ($(POP3),NO)
+FLAGS += -DPOP3_SUPPORT
+endif
+
+ifneq ($(FINGER),NO)
+FLAGS += -DFINGER_SUPPORT
+endif
+
+ifneq ($(FILE),NO)
+FLAGS += -DFILE_SUPPORT
+endif
+
+ifneq ($(NEX),NO)
+FLAGS += -DNEX_SUPPORT
+endif
+
+ifneq ($(FTP),NO)
+FLAGS += -DFTP_SUPPORT
+endif
+
+CFLAGS += $(FLAGS)
 
 ifeq ($(WIN32),YES)
 CC := i686-w64-mingw32-gcc
@@ -91,8 +129,8 @@ all: ./Library/W3Version.h ./w3.pc $(ALL)
 ./Example: ./Library/w3.dll
 	$(MAKE) -C ./Example CC=$(CC) TCL=$(TCL) TCL_LIBS="$(TCL_LIBS)" TCL_CFLAGS="$(TCL_CFLAGS)" examples SUFFIX=.exe
 
-./Library/W3Version.h:
-	m4 -DSUFFIX=\"W\" ./W3Version.h.p > $@
+./Library/W3Version.h: ./W3Version.h.m4
+	m4 -DSUFFIX=\"W\" $(FLAGS) $< > $@
 
 else
 
@@ -111,8 +149,8 @@ all: ./Library/W3Version.h ./w3.pc $(ALL)
 ./Example: ./Library/libw3.so
 	$(MAKE) -C ./Example CC=$(CC) TCL_LIBS="$(TCL_LIBS)" TCL_CFLAGS="$(TCL_CFLAGS)" TCL=$(TCL) examples
 
-./Library/W3Version.h:
-	m4 -DSUFFIX=\"\" ./W3Version.h.p > $@
+./Library/W3Version.h: ./W3Version.h.m4
+	m4 -DSUFFIX=\"\" $(FLAGS) $< > $@
 
 endif
 

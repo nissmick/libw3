@@ -11,43 +11,35 @@ endif
 ifeq ($(SSL),YES)
 ifneq ($(GEMINI),NO)
 OBJS += ./Gemini.o
-FLAGS += -DGEMINI_SUPPORT
 endif
 endif
 
 ifneq ($(HTTP),NO)
 OBJS += ./HTTP.o
-FLAGS += -DHTTP_SUPPORT
 endif
 
 ifneq ($(GOPHER),NO)
 OBJS += ./Gopher.o
-FLAGS += -DGOPHER_SUPPORT
 endif
 
 ifneq ($(POP3),NO)
 OBJS += ./POP3.o
-FLAGS += -DPOP3_SUPPORT
 endif
 
 ifneq ($(FINGER),NO)
 OBJS += ./Finger.o
-FLAGS += -DFINGER_SUPPORT
 endif
 
 ifneq ($(FILE),NO)
 OBJS += ./File.o
-FLAGS += -DFILE_SUPPORT
 endif
 
 ifneq ($(NEX),NO)
 OBJS += ./Nex.o
-FLAGS += -DNEX_SUPPORT
 endif
 
 ifneq ($(FTP),NO)
 OBJS += ./FTP.o
-FLAGS += -DFTP_SUPPORT
 endif
 
 ifeq ($(WINDOWS),YES)
@@ -62,7 +54,7 @@ else
 endif
 
 ./%.o: ./%.c W3%.h
-	$(CC) $(CFLAGS) $(FLAGS) -I../openssl/include -c -o $@ $<
+	$(CC) $(CFLAGS) -I../openssl/include -c -o $@ $<
 
 clean:
 	rm -f *.o *.so *.core *~ *.dll *.lib *.a *.res
