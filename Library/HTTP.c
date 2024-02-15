@@ -12,7 +12,9 @@
 #include <string.h>
 #include <strings.h>
 
+#ifndef __MINGW32__
 extern int strcasecmp(const char* s1, const char* s2);
+#endif
 
 void __W3_HTTP_Request(struct W3* w3) {
 	__W3_Debug("LibW3-HTTP", "Sending the request");

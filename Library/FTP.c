@@ -9,8 +9,8 @@
 #include <string.h>
 
 #ifdef __MINGW32__
-#include <windows.h>
 #include <winsock2.h>
+#include <windows.h>
 #else
 #include <netdb.h>
 #include <netinet/in.h>
@@ -18,7 +18,9 @@
 #include <sys/utsname.h>
 #endif
 
+#ifndef __MINGW32__
 extern int strcasecmp(const char* s1, const char* s2);
+#endif
 
 void __W3_FTP_Start_Passive(struct W3* w3) { __W3_Auto_Write(w3, "PASV\r\n", 6); }
 

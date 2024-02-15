@@ -8,7 +8,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef __MINGW32__
 extern int strcasecmp(const char* s1, const char* s2);
+#endif
 
 void W3_Tag_Parse(char* data, size_t size, void (*tagfunc)(char* tagname, char* attr), void (*textfunc)(char* data)) {
 	int i;

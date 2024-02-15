@@ -9,8 +9,8 @@
 #include <string.h>
 
 #ifdef __MINGW32__
-#include <windows.h>
 #include <winsock2.h>
+#include <windows.h>
 #else
 #include <netdb.h>
 #include <netinet/in.h>

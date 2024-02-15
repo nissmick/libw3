@@ -8,7 +8,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef __MINGW32__
 extern int strcasecmp(const char* s1, const char* s2);
+#endif
 
 void __W3_POP3_Request(struct W3* w3) {
 	if(__W3_Get_Prop(w3, "POP3_USERNAME") == NULL || __W3_Get_Prop(w3, "POP3_PASSWORD") == NULL) {

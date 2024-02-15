@@ -32,7 +32,9 @@ HANDLE winstdout;
 char* allurl = NULL;
 int termw, termh;
 
+#ifndef __MINGW32__
 extern int strcasecmp(const char* s1, const char* s2);
+#endif
 
 void clear_console() {
 #ifdef __MINGW32__
