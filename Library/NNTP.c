@@ -98,6 +98,8 @@ void W3_NNTP_Send_Request(struct W3* w3){
 	}else if(strcasecmp(w3->method, "BODY") == 0){
 		(*(int*)w3->generic) |= 1;
 		__W3_Auto_Write(w3, "BODY\r\n", 6);
+	}else if(strcasecmp(w3->method, "NEXT") == 0){
+		__W3_Auto_Write(w3, "NEXT\r\n", 6);
 	}else if(strcasecmp(w3->method, "GROUP") == 0){
 		__W3_Auto_Write(w3, "GROUP ", 6);
 		__W3_Auto_Write(w3, w3->path, strlen(w3->path));
