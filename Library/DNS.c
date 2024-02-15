@@ -47,7 +47,7 @@ int __W3_DNS_Connect(const char* hostname, bool ssl, uint16_t port
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = 0;
-	hints.ai_protocol = 0;
+	hints.ai_protocol = IPPROTO_TCP;
 	char* strport = malloc(6); /* Enough for 5 digits */
 	memset(strport, 0, 6);
 	sprintf(strport, "%d", port);
