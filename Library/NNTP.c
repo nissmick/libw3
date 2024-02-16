@@ -27,17 +27,17 @@ void __W3_NNTP_Request(struct W3* w3) {
 		int len = __W3_Auto_Read(w3, buf, w3->readsize);
 		if(len <= 0) break;
 		int i;
-		for(i = 0; i < len; i++){
-			if(buf[i] == '\n'){
+		for(i = 0; i < len; i++) {
+			if(buf[i] == '\n') {
 				int sendstatus = -1;
 				char* senddata = NULL;
 				bool freedata = false;
-				if(flag & 1){
-					if(strcmp(line, ".") == 0){
+				if(flag & 1) {
+					if(strcmp(line, ".") == 0) {
 						flag &= ~1;
 						int j;
-						for(j = 0; data[j] != 0; j++){
-							if(data[j] == ' '){
+						for(j = 0; data[j] != 0; j++) {
+							if(data[j] == ' ') {
 								data[j] = 0;
 								sendstatus = atoi(data);
 								senddata = data + j + 1;
@@ -45,15 +45,15 @@ void __W3_NNTP_Request(struct W3* w3) {
 							}
 						}
 						freedata = true;
-					}else{
+					} else {
 						char* tmp = data;
 						data = __W3_Concat3(tmp, strlen(data) != 0 ? "\n" : "", line);
 						free(tmp);
 					}
-				}else{
+				} else {
 					int j;
-					for(j = 0; line[j] != 0; j++){
-						if(line[j] == ' '){
+					for(j = 0; line[j] != 0; j++) {
+						if(line[j] == ' ') {
 							line[j] = 0;
 							sendstatus = atoi(line);
 							senddata = line + j + 1;
@@ -61,14 +61,14 @@ void __W3_NNTP_Request(struct W3* w3) {
 						}
 					}
 				}
-				if(sendstatus != -1){
+				if(sendstatus != -1) {
 					void* funcptr = __W3_Get_Event(w3, "nntpresp");
 					if(funcptr != NULL) {
 						void (*func)(struct W3*, int, char*) = (void (*)(struct W3*, int, char*))funcptr;
 						func(w3, sendstatus, senddata);
 					}
 				}
-				if(freedata){
+				if(freedata) {
 					free(data);
 					data = malloc(1);
 					data[0] = 0;
@@ -76,7 +76,7 @@ void __W3_NNTP_Request(struct W3* w3) {
 				free(line);
 				line = malloc(1);
 				line[0] = 0;
-			}else if(buf[i] != '\r'){
+			} else if(buf[i] != '\r') {
 				cbuf[0] = buf[i];
 				char* tmp = line;
 				line = __W3_Concat(tmp, cbuf);
@@ -90,28 +90,23 @@ void __W3_NNTP_Request(struct W3* w3) {
 	free(buf);
 }
 
-void W3_NNTP_Send_Request(struct W3* w3){
-	if(strcasecmp(w3->method, "LIST") == 0){
+void W3_NNTP_Send_Request(struct W3* w3) {
+	if(strcasecmp(w3->method, "LIST") == 0) {
 		(*(int*)w3->generic) |= 1;
 		__W3_Auto_Write(w3, "LIST\r\n", 6);
-	}else if(strcasecmp(w3->method, "HEAD") == 0){
+	} else if(strcasecmp(w3->method, "HEAD") == 0) {
 		(*(int*)w3->generic) |= 1;
 		__W3_Auto_Write(w3, "HEAD\r\n", 6);
-	}else if(strcasecmp(w3->method, "BODY") == 0){
+	} else if(strcasecmp(w3->method, "BODY") == 0) {
 		(*(int*)w3->generic) |= 1;
 		__W3_Auto_Write(w3, "BODY\r\n", 6);
-	}else if(strcasecmp(w3->method, "NEXT") == 0){
+	} else if(strcasecmp(w3->method, "NEXT") == 0) {
 		__W3_Auto_Write(w3, "NEXT\r\n", 6);
-	}else if(strcasecmp(w3->method, "GROUP") == 0){
+	} else if(strcasecmp(w3->method, "GROUP") == 0) {
 		__W3_Auto_Write(w3, "GROUP ", 6);
 		__W3_Auto_Write(w3, w3->path, strlen(w3->path));
 		__W3_Auto_Write(w3, "\r\n", 2);
 	}
-
-
 }
 
-void W3_NNTP_Disconnect(struct W3* w3){
-	 __W3_Auto_Write(w3, "QUIT\r\n", 6); 
-}
-
+void W3_NNTP_Disconnect(struct W3* w3) { __W3_Auto_Write(w3, "QUIT\r\n", 6); }

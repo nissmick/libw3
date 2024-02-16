@@ -138,7 +138,7 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port) {
 		} else if(strcmp(protocol, "ftp") == 0) {
 #endif
 #ifdef NNTP_SUPPORT
-		} else if(strcmp(protocol, "nntp") == 0) {
+		} else if(strcmp(protocol, "nntp") == 0 || strcmp(protocol, "news") == 0) {
 #endif
 		} else {
 			__W3_Debug("Protocol", "Not suppported");
@@ -191,11 +191,11 @@ void W3_Set_Path(struct W3* w3, const char* path) {
 }
 
 void W3_Send_Request(struct W3* w3) {
-	if(0){
+	if(0) {
 #ifdef HTTP_SUPPORT
-	}else if(strcmp(w3->protocol, "http") == 0
+	} else if(strcmp(w3->protocol, "http") == 0
 #ifdef SSL_SUPPORT
-	   || strcmp(w3->protocol, "https") == 0
+		  || strcmp(w3->protocol, "https") == 0
 #endif
 	) {
 		__W3_HTTP_Request(w3);
@@ -235,7 +235,7 @@ void W3_Send_Request(struct W3* w3) {
 		__W3_FTP_Request(w3);
 #endif
 #ifdef NNTP_SUPPORT
-	} else if(strcmp(w3->protocol, "nntp") == 0) {
+	} else if(strcmp(w3->protocol, "nntp") == 0 || strcmp(w3->protocol, "news") == 0) {
 		__W3_NNTP_Request(w3);
 #endif
 #ifdef FILE_SUPPORT
