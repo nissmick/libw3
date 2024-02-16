@@ -136,8 +136,6 @@ void nntpresp_handler(struct W3* w3, int status, char* data){
 		W3_Set_Method(w3, "HEAD");
 		W3_NNTP_Send_Request(w3);
 	}else if(status == 221){
-		printf("%s\n", data);
-		exit(0);
 		W3_Set_Method(w3, "NEXT");
 		W3_NNTP_Send_Request(w3);
 	}else{
