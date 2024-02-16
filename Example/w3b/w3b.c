@@ -6,6 +6,7 @@
 
 #include <W3Core.h>
 #include <W3HTTP.h>
+#include <W3NNTP.h>
 #include <W3Tag.h>
 
 #include <W3URL.h>
@@ -106,8 +107,47 @@ void data_handler(struct W3* w3, char* data, size_t size) {
 	}
 }
 
+struct W3URL* global_u;
+void nntpresp_handler(struct W3* w3, int status, char* data){
+	if(status == 200){
+		if(databuf == NULL){
+			databuf = malloc(1);
+			databuf[0] = 0;
+		}
+		char* tmp = databuf;
+		char* hyp = malloc(2 + strlen(data) + 3 + 1);
+		hyp[0] = '\n';
+		int i;
+		for(i = 0; data[i] != 0; i++){
+			hyp[i + 1] = '-';
+		}
+		for(i = 0; i < 3; i++) hyp[strlen(data) + i + 1] = '-';
+		hyp[strlen(data) + 3 + 1] = '\n';
+		hyp[strlen(data) + 3 + 2] = 0;
+		databuf = __W3_Concat3(tmp, data, hyp);
+		free(hyp);
+		free(tmp);
+		datalen = strlen(databuf);
+
+		W3_Set_Method(w3, "GROUP");
+		W3_Set_Path(w3, global_u->path + 1);
+		W3_NNTP_Send_Request(w3);
+	}else if(status == 211 || status == 223){
+		W3_Set_Method(w3, "HEAD");
+		W3_NNTP_Send_Request(w3);
+	}else if(status == 221){
+		printf("%s\n", data);
+		exit(0);
+		W3_Set_Method(w3, "NEXT");
+		W3_NNTP_Send_Request(w3);
+	}else{
+		W3_NNTP_Disconnect(w3);
+	}
+}
+
 void access_site(const char* url) {
 	struct W3URL* u = W3_Parse_URL(url);
+	global_u = u;
 	if(u != NULL) {
 		struct W3* w3 = W3_Create(u->protocol, u->host, u->port);
 		if(w3 != NULL) {
@@ -122,6 +162,7 @@ void access_site(const char* url) {
 			W3_HTTP_Enable_Redirect(w3);
 			W3_On(w3, "status", (void*)status_handler);
 			W3_On(w3, "header", (void*)header_handler);
+			W3_On(w3, "nntpresp", (void*)nntpresp_handler);
 			W3_On(w3, "data", (void*)data_handler);
 			if(ctype != NULL) free(ctype);
 			ctype = NULL;
