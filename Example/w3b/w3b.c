@@ -397,6 +397,7 @@ int main(int argc, char** argv) {
 			url = __W3_Strdup(argv[i]);
 		}
 	}
+	W3_Do_Debug(false);
 	W3_Library_Init();
 	int phase = 0;
 	char c = 0;
