@@ -30,6 +30,28 @@ char* badreq;
 char* badreq_header;
 char* notfound;
 char* notfound_header;
+char** types = NULL;
+int ntypes = 0;
+
+void add_type(char* key, char* value){
+	if(types == NULL){
+		types = malloc(sizeof(*types) * 2);
+		types[0] = __W3_Strdup(key);
+		types[1] = __W3_Strdup(value);
+		ntypes = 2;
+	}else{
+		char** oldtypes = types;
+		int i;
+		for(i = 0; i < ntypes; i++){
+			types[i] = oldtypes[i];
+		}
+		types = malloc(sizeof(*types) * (ntypes + 2));
+		types[ntypes] = __W3_Strdup(key);
+		types[ntypes + 1] = __W3_Strdup(value);
+		ntypes += 2;
+		free(oldtypes);
+	}
+}
 
 void http_handler(int sock){
 	char* buf = malloc(BUFFER_SIZE);
@@ -136,7 +158,7 @@ response:
 					free(tmp);
 
 					tmp = html;
-					html = __W3_Concat(tmp, "</h1><hr><table width=\"100%\">");
+					html = __W3_Concat(tmp, "</h1><hr><table width=\"100%\"><th width=\"20%\">Name</th><th>Size</th>");
 					free(tmp);
 
 					struct dirent** namelist;
@@ -164,8 +186,45 @@ rep:;
 									free(tmp);
 	
 									tmp = html;
-									html = __W3_Concat3(tmp, dir ? "/" : "", "</a></td></tr>");
+									html = __W3_Concat3(tmp, dir ? "/" : "", "</a></td>");
 									free(tmp);
+
+									char* bytes = malloc(2049);
+									char* suffix = __W3_Strdup(" B");
+
+									double bsize = s2.st_size;
+
+									if(S_ISDIR(s2.st_mode)){
+										sprintf(bytes, "&lt;Directory&gt;");
+										free(suffix);
+										suffix = __W3_Strdup("");
+									}else{
+										if(s2.st_size > 1024 * 1024 * 1024){
+											free(suffix);
+											suffix = __W3_Strdup(" GB");
+											bsize /= 1024 * 1024 * 1024;
+										}else if(s2.st_size > 1024 * 1024){
+											free(suffix);
+											suffix = __W3_Strdup(" MB");
+											bsize /= 1024 * 1024;
+										}else if(s2.st_size > 1024){
+											free(suffix);
+											suffix = __W3_Strdup(" KB");
+											bsize /= 1024;
+										}
+										sprintf(bytes, "%.2f", bsize);
+									}
+
+									tmp = html;
+									html = __W3_Concat3(tmp, "<td>", bytes);
+									free(tmp);
+
+									tmp = html;
+									html = __W3_Concat3(tmp, suffix, "</td>");
+									free(tmp);
+
+									free(bytes);
+									free(suffix);
 								}
 							}
 							if(!dir) free(namelist[i]);
@@ -202,6 +261,34 @@ rep:;
 					send(sock, "\r\n", 2, 0);
 				}
 			}else{
+				send(sock, "HTTP/1.1 200 OK\r\n", 17, 0);
+				send(sock, "Connection: close\r\n", 19, 0);
+				char* length = malloc(1025);
+				sprintf(length, "%d", s.st_size);
+				send(sock, "Content-Type: ", 14, 0);
+				if(types == NULL){
+					send(sock, "application/octet-stream", 24, 0);
+				}else{
+					int i;
+					for(i = 0; i < ntypes; i += 2){
+						printf("%s\n", types[i]);
+					}
+				}
+				send(sock, "\r\n", 2, 0);
+				send(sock, "Content-Length: ", 16, 0);
+				send(sock, length, strlen(length), 0);
+				free(length);
+				send(sock, "\r\n", 2, 0);
+				send(sock, "\r\n", 2, 0);
+				FILE* f = fopen(realpath, "r");
+				char* buf = malloc(BUFFER_SIZE);
+				while(true){
+					int len = fread(buf, 1, BUFFER_SIZE, f);
+					if(len <= 0) break;
+					send(sock, buf, len, 0);
+				}
+				fclose(f);
+				free(buf);
 			}
 		}else{
 			send(sock, notfound_header, strlen(notfound_header), 0);
@@ -302,6 +389,12 @@ int main(int argc, char** argv) {
 						}
 						if(root != NULL) free(root);
 						root = __W3_Strdup(line + j + 1);
+					}else if(strcasecmp(line, "MIME") == 0){
+						if(!hasparam){
+							fprintf(stderr, "%s: config line %d, directive needs a parameter\n", argv[0], linenum);
+							err++;
+						}
+						add_type("txt", "text/plain");
 					}else{
 						fprintf(stderr, "%s: config line %d, unknown directive\n", argv[0], linenum);
 						err++;
