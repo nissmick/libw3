@@ -17,6 +17,12 @@
 
 #include <ls_server.h>
 
+char* root = NULL;
+
+#ifndef __MINGW32__
+extern int strcasecmp(const char* s1, const char* s2);
+#endif
+
 #define BUFFER_SIZE 512
 
 char* badreq;
@@ -92,7 +98,7 @@ void http_handler(int sock){
 					line = malloc(1);
 					line[0] = 0;
 					if(phase == 4){
-						if(strcmp(method, "GET") == 0) goto response;
+						if(strcasecmp(method, "GET") == 0) goto response;
 					}
 				}else if(buf[i] != '\r'){
 					cbuf[0] = buf[i];
@@ -104,9 +110,11 @@ void http_handler(int sock){
 			}
 		}
 	}
+	goto quit;
 response:
 	{
 		/* Using goto is not a good idea! but it works. */
+		char* realpath = __W3_Concat3(root, "/", path);
 	}
 quit:;
 	free(line);
@@ -161,8 +169,11 @@ int main(int argc, char** argv) {
 		line[0] = 0;
 		char* cbuf = malloc(2);
 		cbuf[1] = 0;
+		int linenum = 0;
+		int err = 0;
 		for(i = 0;; i++){
 			if(buf[i] == '\n' || buf[i] == 0){
+				linenum++;
 				if(line[0] != '#' && strcmp(line, "") != 0){
 					int j;
 					bool hasparam = false;
@@ -172,6 +183,17 @@ int main(int argc, char** argv) {
 							hasparam = true;
 							break;
 						}
+					}
+					if(strcasecmp(line, "Root") == 0){
+						if(!hasparam){
+							fprintf(stderr, "%s: config line %d, directive needs a parameter\n", argv[0], linenum);
+							err++;
+						}
+						if(root != NULL) free(root);
+						root = __W3_Strdup(line + j + 1);
+					}else{
+						fprintf(stderr, "%s: config line %d, unknown directive\n", argv[0], linenum);
+						err++;
 					}
 				}
 				free(line);
@@ -191,6 +213,16 @@ int main(int argc, char** argv) {
 
 		free(buf);
 		fclose(f);
+		if(root == NULL){
+			fprintf(stderr, "%s: config has no root directive\n", argv[0]);
+			err++;
+		}
+		if(err > 0){
+			fprintf(stderr, "%s: config has %d errors\n", argv[0], err);
+			free(badreq_header);
+			free(badreq);
+			return 1;
+		}
 	}else{
 		free(badreq_header);
 		free(badreq);
