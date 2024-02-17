@@ -42,10 +42,10 @@ void add_type(char* key, char* value){
 	}else{
 		char** oldtypes = types;
 		int i;
+		types = malloc(sizeof(*types) * (ntypes + 2));
 		for(i = 0; i < ntypes; i++){
 			types[i] = oldtypes[i];
 		}
-		types = malloc(sizeof(*types) * (ntypes + 2));
 		types[ntypes] = __W3_Strdup(key);
 		types[ntypes + 1] = __W3_Strdup(value);
 		ntypes += 2;
@@ -270,9 +270,32 @@ rep:;
 					send(sock, "application/octet-stream", 24, 0);
 				}else{
 					int i;
-					for(i = 0; i < ntypes; i += 2){
-						printf("%s\n", types[i]);
+					char* fpath = __W3_Strdup(path);
+					bool found = false;
+					for(i = strlen(fpath) - 1; i >= 0; i--){
+						if(fpath[i] == '.'){
+							fpath[i] = 0;
+							found = true;
+							break;
+						}
 					}
+					if(found){
+						found = false;
+						int start = i + 1;
+						for(i = 0; i < ntypes; i += 2){
+							if(strcasecmp(types[i], fpath + start) == 0){
+								found = true;
+								send(sock, types[i + 1], strlen(types[i + 1]), 0);
+								break;
+							}
+						}
+						if(!found){
+							send(sock, "application/octet-stream", 24, 0);
+						}
+					}else{
+						send(sock, "application/octet-stream", 24, 0);
+					}
+					free(fpath);
 				}
 				send(sock, "\r\n", 2, 0);
 				send(sock, "Content-Length: ", 16, 0);
@@ -394,7 +417,15 @@ int main(int argc, char** argv) {
 							fprintf(stderr, "%s: config line %d, directive needs a parameter\n", argv[0], linenum);
 							err++;
 						}
-						add_type("txt", "text/plain");
+						int k;
+						char* param = line + j + 1;
+						for(k = 0; param[k] != 0; k++){
+							if(param[k] == ' '){
+								param[k] = 0;
+								add_type(param, param + k + 1);
+								break;
+							}
+						}
 					}else{
 						fprintf(stderr, "%s: config line %d, unknown directive\n", argv[0], linenum);
 						err++;
