@@ -108,9 +108,9 @@ void data_handler(struct W3* w3, char* data, size_t size) {
 }
 
 struct W3URL* global_u;
-void nntpresp_handler(struct W3* w3, int status, char* data){
-	if(status == 200){
-		if(databuf == NULL){
+void nntpresp_handler(struct W3* w3, int status, char* data) {
+	if(status == 200) {
+		if(databuf == NULL) {
 			databuf = malloc(1);
 			databuf[0] = 0;
 		}
@@ -118,7 +118,7 @@ void nntpresp_handler(struct W3* w3, int status, char* data){
 		char* hyp = malloc(2 + strlen(data) + 3 + 1);
 		hyp[0] = '\n';
 		int i;
-		for(i = 0; data[i] != 0; i++){
+		for(i = 0; data[i] != 0; i++) {
 			hyp[i + 1] = '-';
 		}
 		for(i = 0; i < 3; i++) hyp[strlen(data) + i + 1] = '-';
@@ -132,13 +132,13 @@ void nntpresp_handler(struct W3* w3, int status, char* data){
 		W3_Set_Method(w3, "GROUP");
 		W3_Set_Path(w3, global_u->path + 1);
 		W3_NNTP_Send_Request(w3);
-	}else if(status == 211 || status == 223){
+	} else if(status == 211 || status == 223) {
 		W3_Set_Method(w3, "HEAD");
 		W3_NNTP_Send_Request(w3);
-	}else if(status == 221){
+	} else if(status == 221) {
 		W3_Set_Method(w3, "NEXT");
 		W3_NNTP_Send_Request(w3);
-	}else{
+	} else {
 		W3_NNTP_Disconnect(w3);
 	}
 }

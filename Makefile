@@ -114,6 +114,8 @@ endif
 ifeq ($(shell uname -s),Haiku)
 LIBS += -lnetwork
 endif
+HTTPD := YES
+# HTTPd uses fork() - this means you cannot build it for Windows. Sorry.
 endif
 
 ifeq ($(DEBUG),YES)
@@ -131,7 +133,7 @@ all: ./Library/W3Version.h ./w3.pc $(ALL)
 	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" WINDOWS=YES WINARCH=$(WINARCH) TCL=$(TCL) SSL=$(SSL)
 
 ./Example: ./Library/w3.dll
-	$(MAKE) -C ./Example CC=$(CC) TCL=$(TCL) TCL_LIBS="$(TCL_LIBS)" TCL_CFLAGS="$(TCL_CFLAGS)" examples SUFFIX=.exe
+	$(MAKE) -C ./Example CC=$(CC) TCL=$(TCL) TCL_LIBS="$(TCL_LIBS)" TCL_CFLAGS="$(TCL_CFLAGS)" HTTPD=$(HTTPD) examples SUFFIX=.exe
 
 ./Library/W3Version.h: ./W3Version.h.m4
 	m4 -DSUFFIX=\"W\" $(FLAGS) $< > $@
@@ -151,7 +153,7 @@ all: ./Library/W3Version.h ./w3.pc $(ALL)
 	$(MAKE) -C ./Library CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LIBS)" TCL=$(TCL) SSL=$(SSL) ./libw3.a
 
 ./Example: ./Library/libw3.so
-	$(MAKE) -C ./Example CC=$(CC) TCL_LIBS="$(TCL_LIBS)" TCL_CFLAGS="$(TCL_CFLAGS)" TCL=$(TCL) examples
+	$(MAKE) -C ./Example CC=$(CC) TCL_LIBS="$(TCL_LIBS)" TCL_CFLAGS="$(TCL_CFLAGS)" TCL=$(TCL) HTTPD=$(HTTPD) examples
 
 ./Library/W3Version.h: ./W3Version.h.m4
 	m4 -DSUFFIX=\"\" $(FLAGS) $< > $@
@@ -212,6 +214,7 @@ ifeq ($(TCL),YES)
 	cp -rf /usr/$(MINGW)/sys-root/mingw/share/tcl8.6 w3-$(VERSION)/Example/tclw3/lib/tcl8.6
 endif
 else
+	mkdir -p w3-$(VERSION)/Example/httpd
 	cp ./Library/*.so w3-$(VERSION)/Library/
 	cp ./Example/fetch/fetch w3-$(VERSION)/Example/fetch/
 	cp ./Example/interactive/interactive w3-$(VERSION)/Example/interactive/
@@ -219,6 +222,7 @@ else
 	cp ./Example/w3b/w3b w3-$(VERSION)/Example/w3b/
 	cp ./Example/ftp-list/ftp-list w3-$(VERSION)/Example/ftp-list/
 	cp ./Example/nntp-list/nntp-list w3-$(VERSION)/Example/nntp-list/
+	cp ./Example/httpd/httpd w3-$(VERSION)/Example/httpd/
 ifeq ($(TCL),YES)
 	cp ./Example/tclw3/tclw3 w3-$(VERSION)/Example/tclw3/bin/
 endif

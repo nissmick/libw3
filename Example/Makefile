@@ -15,6 +15,9 @@ examples:
 ifeq ($(TCL),YES)
 	$(MAKE) -C ./tclw3 CC=$(CC) TCL_LIBS="$(TCL_LIBS)" TCL_CFLAGS="$(TCL_CFLAGS)" SUFFIX=$(SUFFIX)
 endif
+ifeq ($(HTTPD),YES)
+	$(MAKE) -C ./httpd CC=$(CC) SUFFIX=$(SUFFIX)
+endif
 
 install:
 	$(MAKE) -C ./fetch CC=$(CC) PREFIX=$(PREFIX) SUFFIX=$(SUFFIX) install
@@ -26,6 +29,9 @@ install:
 ifeq ($(TCL),YES)
 	$(MAKE) -C ./tclw3 CC=$(CC) PREFIX=$(PREFIX) SUFFIX=$(SUFFIX) install
 endif
+ifeq ($(HTTPD),YES)
+	$(MAKE) -C ./httpd CC=$(CC) PREFIX=$(PREFIX) SUFFIX=$(SUFFIX) install
+endif
 
 clean:
 	rm -f *.o *.so *.core *~ *.exe *.res
@@ -36,5 +42,8 @@ clean:
 	$(MAKE) -C ./ftp-list SUFFIX=$(SUFFIX) clean
 	$(MAKE) -C ./nntp-list SUFFIX=$(SUFFIX) clean
 ifeq ($(TCL),YES)
-	$(MAKE) -C ./tclw3 CC=$(CC) SUFFIX=$(SUFFIX) clean
+	$(MAKE) -C ./tclw3 SUFFIX=$(SUFFIX) clean
+endif
+ifeq ($(HTTPD),YES)
+	$(MAKE) -C ./httpd SUFFIX=$(SUFFIX) clean
 endif
