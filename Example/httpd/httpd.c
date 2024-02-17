@@ -54,6 +54,7 @@ void add_type(char* key, char* value){
 }
 
 void http_handler(int sock){
+	__W3_Debug("HTTPd", "Got a connection");
 	char* buf = malloc(BUFFER_SIZE);
 	int phase = 0;
 	/*	0: Method
@@ -123,7 +124,7 @@ void http_handler(int sock){
 					line = malloc(1);
 					line[0] = 0;
 					if(phase == 4){
-						if(strcasecmp(method, "GET") == 0) goto response;
+						if(strcasecmp(method, "GET") == 0 || strcasecmp(method, "HEAD") == 0) goto response;
 					}
 				}else if(buf[i] != '\r'){
 					cbuf[0] = buf[i];
@@ -254,7 +255,7 @@ rep:;
 					send(sock, length, strlen(length), 0);
 					send(sock, "\r\n", 2, 0);
 					send(sock, "\r\n", 2, 0);
-					send(sock, html, strlen(html), 0);
+					if(strcasecmp(method, "HEAD") != 0) send(sock, html, strlen(html), 0);
 					free(html);
 				}else{
 					send(sock, "HTTP/1.1 308 Permanent Redirect\r\n", 33, 0);
@@ -318,15 +319,17 @@ rep:;
 				send(sock, ")", 1, 0);
 				send(sock, "\r\n", 2, 0);
 				send(sock, "\r\n", 2, 0);
-				FILE* f = fopen(realpath, "r");
-				char* buf = malloc(BUFFER_SIZE);
-				while(true){
-					int len = fread(buf, 1, BUFFER_SIZE, f);
-					if(len <= 0) break;
-					send(sock, buf, len, 0);
+				if(strcasecmp(method, "HEAD") != 0){
+					FILE* f = fopen(realpath, "r");
+					char* buf = malloc(BUFFER_SIZE);
+					while(true){
+						int len = fread(buf, 1, BUFFER_SIZE, f);
+						if(len <= 0) break;
+						send(sock, buf, len, 0);
+					}
+					fclose(f);
+					free(buf);
 				}
-				fclose(f);
-				free(buf);
 			}
 		}else{
 			send(sock, notfound_header, strlen(notfound_header), 0);
@@ -481,6 +484,7 @@ int main(int argc, char** argv) {
 	}
 
 	W3_Library_Init();
+	__W3_Debug("HTTPd", "Ready");
 	int st = ls_start_server(portstr == NULL ? 80 : atoi(portstr), http_handler);
 	if(st == -1){
 		fprintf(stderr, "%s: failed to start the server\n", argv[0]);

@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 
-#define LIBW3_VERSION "2.16H" \
+#define LIBW3_VERSION "2.16I" \
 SUFFIX
 
 ifdef(`HTTP_SUPPORT', `#define LIBW3_HTTP_SUPPORT', `')
