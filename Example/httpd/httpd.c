@@ -14,6 +14,7 @@
 #include <stdbool.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
+#include <dirent.h>
 
 #include <ls_server.h>
 
@@ -27,6 +28,8 @@ extern int strcasecmp(const char* s1, const char* s2);
 
 char* badreq;
 char* badreq_header;
+char* notfound;
+char* notfound_header;
 
 void http_handler(int sock){
 	char* buf = malloc(BUFFER_SIZE);
@@ -113,8 +116,99 @@ void http_handler(int sock){
 	goto quit;
 response:
 	{
-		/* Using goto is not a good idea! but it works. */
+		/* Using goto is not a good idea! but hey, it works. */
 		char* realpath = __W3_Concat3(root, "/", path);
+
+		struct stat s;
+		if(stat(realpath, &s) == 0){
+			if(S_ISDIR(s.st_mode)){
+				if(path[strlen(path) - 1] == '/'){
+					char* html = malloc(1);
+					html[0] = 0;
+					char* tmp;
+
+					tmp = html;
+					html = __W3_Concat3(tmp, "<html><head><meta charset=\"UTF-8\"><title>Index of ", path);
+					free(tmp);
+
+					tmp = html;
+					html = __W3_Concat3(tmp, "</title></head><body><h1>Index of ", path);
+					free(tmp);
+
+					tmp = html;
+					html = __W3_Concat(tmp, "</h1><hr><table width=\"100%\">");
+					free(tmp);
+
+					struct dirent** namelist;
+					int n = scandir(realpath, &namelist, NULL, alphasort);
+					
+					if(n >= 0){
+						int i;
+						bool dir = true;
+rep:;
+						for(i = 0; i < n; i++){
+							char* fpath = __W3_Concat3(realpath, "/", namelist[i]->d_name);
+							struct stat s2;
+							if(stat(fpath, &s2) == 0){
+								if((dir ? S_ISDIR(s2.st_mode) : !S_ISDIR(s2.st_mode)) && strcmp(namelist[i]->d_name, ".") != 0){
+									tmp = html;
+									html = __W3_Concat3(tmp, "<tr><td><a href=\"", namelist[i]->d_name);
+									free(tmp);
+
+									tmp = html;
+									html = __W3_Concat(tmp, "\">");
+									free(tmp);
+	
+									tmp = html;
+									html = __W3_Concat(tmp, namelist[i]->d_name);
+									free(tmp);
+	
+									tmp = html;
+									html = __W3_Concat3(tmp, dir ? "/" : "", "</a></td></tr>");
+									free(tmp);
+								}
+							}
+							if(!dir) free(namelist[i]);
+						}
+						if(!dir) free(namelist);
+						if(dir){
+							dir = false;
+							goto rep;
+						}
+					}
+
+					tmp = html;
+					html = __W3_Concat(tmp, "</table><hr><i>LibW3-HTTPd (LibW3/" LIBW3_VERSION ")</i></body></html>");
+					free(tmp);
+
+					send(sock, "HTTP/1.1 200 OK\r\n", 17, 0);
+					send(sock, "Connection: close\r\n", 19, 0);
+					send(sock, "Content-Type: text/html\r\n", 25, 0);
+					char* length = malloc(1025);
+					sprintf(length, "%d", strlen(html));
+					send(sock, "Content-Length: ", 16, 0);
+					send(sock, length, strlen(length), 0);
+					send(sock, "\r\n", 2, 0);
+					send(sock, "\r\n", 2, 0);
+					send(sock, html, strlen(html), 0);
+					free(html);
+				}else{
+					send(sock, "HTTP/1.1 308 Permanent Redirect\r\n", 33, 0);
+					send(sock, "Connection: close\r\n", 19, 0);
+					send(sock, "Location: ", 10, 0);
+					send(sock, path, strlen(path), 0);
+					send(sock, "/", 1, 0);
+					send(sock, "\r\n", 2, 0);
+					send(sock, "\r\n", 2, 0);
+				}
+			}else{
+			}
+		}else{
+			send(sock, notfound_header, strlen(notfound_header), 0);
+			send(sock, notfound, strlen(notfound), 0);
+		}
+
+		free(realpath);
 	}
 quit:;
 	free(line);
@@ -141,6 +235,7 @@ int main(int argc, char** argv) {
 			return 1;
 		}
 	}
+
 	badreq = __W3_Strdup(
 "<html>" \
 "	<head>" \
@@ -149,12 +244,28 @@ int main(int argc, char** argv) {
 "	<body>" \
 "		<h1>Bad request</h1>" \
 "		<hr>" \
-"		<i>LibW3/" LIBW3_VERSION "</i>" \
+"		<i>LibW3-HTTPd (LibW3/" LIBW3_VERSION ")</i>" \
 "	</body>" \
 "</html>"
 );
 	badreq_header = malloc(2048);
-	sprintf(badreq_header, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\n\r\n", strlen(badreq));
+	sprintf(badreq_header, "HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\nContent-Length: %d\r\nConnection: close\r\n\r\n", strlen(badreq));
+
+
+	notfound = __W3_Strdup(
+"<html>" \
+"	<head>" \
+"		<meta charset=\"UTF-8\">" \
+"	</head>" \
+"	<body>" \
+"		<h1>Not Found</h1>" \
+"		<hr>" \
+"		<i>LibW3-HTTPd (LibW3/" LIBW3_VERSION ")</i>" \
+"	</body>" \
+"</html>"
+);
+	notfound_header = malloc(2048);
+	sprintf(notfound_header, "HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\nContent-Length: %d\r\nConnection: close\r\n\r\n", strlen(notfound));
 
 	FILE* f = fopen(configfile, "r");
 	if(f != NULL){
