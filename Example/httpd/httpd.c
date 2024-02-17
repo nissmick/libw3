@@ -92,7 +92,7 @@ void http_handler(int sock){
 					line = malloc(1);
 					line[0] = 0;
 					if(phase == 4){
-						if(strcmp(method, "GET") == 0) goto quit;
+						if(strcmp(method, "GET") == 0) goto response;
 					}
 				}else if(buf[i] != '\r'){
 					cbuf[0] = buf[i];
@@ -103,6 +103,10 @@ void http_handler(int sock){
 			}else if(phase == 4){
 			}
 		}
+	}
+response:
+	{
+		/* Using goto is not a good idea! but it works. */
 	}
 quit:;
 	free(line);
