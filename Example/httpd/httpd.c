@@ -242,6 +242,11 @@ rep:;
 
 					send(sock, "HTTP/1.1 200 OK\r\n", 17, 0);
 					send(sock, "Connection: close\r\n", 19, 0);
+					send(sock, "Server: ", 8, 0);
+					send(sock, "LibW3-HTTPd (LibW3/", 19, 0);
+					send(sock, LIBW3_VERSION, strlen(LIBW3_VERSION), 0);
+					send(sock, ")", 1, 0);
+					send(sock, "\r\n", 2, 0);
 					send(sock, "Content-Type: text/html\r\n", 25, 0);
 					char* length = malloc(1025);
 					sprintf(length, "%d", strlen(html));
@@ -254,6 +259,11 @@ rep:;
 				}else{
 					send(sock, "HTTP/1.1 308 Permanent Redirect\r\n", 33, 0);
 					send(sock, "Connection: close\r\n", 19, 0);
+					send(sock, "Server: ", 8, 0);
+					send(sock, "LibW3-HTTPd (LibW3/", 19, 0);
+					send(sock, LIBW3_VERSION, strlen(LIBW3_VERSION), 0);
+					send(sock, ")", 1, 0);
+					send(sock, "\r\n", 2, 0);
 					send(sock, "Location: ", 10, 0);
 					send(sock, path, strlen(path), 0);
 					send(sock, "/", 1, 0);
@@ -301,6 +311,11 @@ rep:;
 				send(sock, "Content-Length: ", 16, 0);
 				send(sock, length, strlen(length), 0);
 				free(length);
+				send(sock, "\r\n", 2, 0);
+				send(sock, "Server: ", 8, 0);
+				send(sock, "LibW3-HTTPd (LibW3/", 19, 0);
+				send(sock, LIBW3_VERSION, strlen(LIBW3_VERSION), 0);
+				send(sock, ")", 1, 0);
 				send(sock, "\r\n", 2, 0);
 				send(sock, "\r\n", 2, 0);
 				FILE* f = fopen(realpath, "r");
@@ -359,7 +374,7 @@ int main(int argc, char** argv) {
 "</html>"
 );
 	badreq_header = malloc(2048);
-	sprintf(badreq_header, "HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\nContent-Length: %d\r\nConnection: close\r\n\r\n", strlen(badreq));
+	sprintf(badreq_header, "HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\nContent-Length: %d\r\nServer: LibW3-HTTPd (LibW3/" LIBW3_VERSION ")\r\nConnection: close\r\n\r\n", strlen(badreq));
 
 
 	notfound = __W3_Strdup(
@@ -375,7 +390,7 @@ int main(int argc, char** argv) {
 "</html>"
 );
 	notfound_header = malloc(2048);
-	sprintf(notfound_header, "HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\nContent-Length: %d\r\nConnection: close\r\n\r\n", strlen(notfound));
+	sprintf(notfound_header, "HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\nContent-Length: %d\r\nServer: LibW3-HTTPd (LibW3/" LIBW3_VERSION ")\r\nConnection: close\r\n\r\n", strlen(notfound));
 
 	FILE* f = fopen(configfile, "r");
 	if(f != NULL){
