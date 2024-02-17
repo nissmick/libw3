@@ -2,7 +2,7 @@
 .PHONY: clean install
 
 ./httpd$(SUFFIX): ./httpd.c $(RESFILE)
-	$(CC) -g -o $@ -I ../../Library -L ../../Library $^ -lw3
+	$(CC) -g -o $@ -I ../../Library -L ../../Library $^ -lw3 -lserver
 
 ../libw3.res:
 	$(MAKE) -C .. ./libw3.res WINDRES=$(WINDRES)
