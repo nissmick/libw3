@@ -152,13 +152,44 @@ int main(int argc, char** argv) {
 	if(f != NULL){
 		struct stat s;
 		stat(configfile, &s);
-		char* file = malloc(s.st_size + 1);
-		file[s.st_size] = 0;
-		fread(file, s.st_size, 1, f);
+		char* buf = malloc(s.st_size + 1);
+		buf[s.st_size] = 0;
+		fread(buf, s.st_size, 1, f);
 
 		/* TODO: Parse the config file */
+		char* line = malloc(1);
+		line[0] = 0;
+		char* cbuf = malloc(2);
+		cbuf[1] = 0;
+		for(i = 0;; i++){
+			if(buf[i] == '\n' || buf[i] == 0){
+				if(line[0] != '#' && strcmp(line, "") != 0){
+					int j;
+					bool hasparam = false;
+					for(j = 0; line[j] != 0; j++){
+						if(line[j] == ' '){
+							line[j] = 0;
+							hasparam = true;
+							break;
+						}
+					}
+				}
+				free(line);
+				line = malloc(1);
+				line[0] = 0;
+				if(buf[i] == 0) break;
+			}else if(buf[i] != '\r'){
+				/* Rejecting \r is a good idea for the time when I add the Windows support. */
+				cbuf[0] = buf[i];
+				char* tmp = line;
+				line = __W3_Concat(tmp, cbuf);
+				free(tmp);
+			}
+		}
+		free(cbuf);
+		free(line);
 
-		free(file);
+		free(buf);
 		fclose(f);
 	}else{
 		free(badreq_header);
