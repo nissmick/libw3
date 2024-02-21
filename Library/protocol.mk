@@ -8,3 +8,4 @@
 #NEX=NO
 #FILE=NO
 #NNTP=NO
+#IRC=NO

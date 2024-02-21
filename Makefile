@@ -85,6 +85,10 @@ ifneq ($(FTP),NO)
 FLAGS += -DFTP_SUPPORT
 endif
 
+ifneq ($(IRC),NO)
+FLAGS += -DIRC_SUPPORT
+endif
+
 CFLAGS += $(FLAGS)
 
 ifeq ($(WIN32),YES)

@@ -46,6 +46,10 @@ ifneq ($(NNTP),NO)
 OBJS += ./NNTP.o
 endif
 
+ifneq ($(IRC),NO)
+OBJS += ./IRC.o
+endif
+
 ifeq ($(WINDOWS),YES)
 ./w3.dll: $(OBJS)
 	$(CC) $(LDFLAGS) -fstack-protector -L../openssl/lib/mingw/$(WINARCH) -L . -shared -Wl,--out-implib,./w3.lib -o $@ $^ $(LIBS)
