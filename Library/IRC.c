@@ -22,6 +22,9 @@ void __W3_IRC_Request(struct W3* w3) {
 		}
 		return;
 	}
+	if(__W3_Get_Prop(w3, "IRC_VERSION") == NULL){
+		__W3_Add_Prop(w3, "IRC_VERSION", "LibW3 " LIBW3_VERSION);
+	}
 	char* username = __W3_Get_Prop(w3, "IRC_USERNAME");
 	char* nickname = __W3_Get_Prop(w3, "IRC_NICKNAME");
 	char* realname = __W3_Get_Prop(w3, "IRC_REALNAME");
@@ -71,6 +74,7 @@ void __W3_IRC_Request(struct W3* w3) {
 	params[0] = 0;
 	char* cbuf = malloc(2);
 	cbuf[1] = 0;
+	bool colon = false;
 	while(true){
 		int len = __W3_Auto_Read(w3, buf, w3->readsize);
 		if(len <= 0) break;
@@ -79,6 +83,12 @@ void __W3_IRC_Request(struct W3* w3) {
 			if(phase == 0){
 				if(buf[i] == ':'){
 					phase = 1;
+				}else{
+					phase = 2;
+					cbuf[0] = buf[i];
+					char* tmp = command;
+					command = __W3_Concat(tmp, cbuf);
+					free(tmp);
 				}
 			}else if(phase == 1){
 				if(buf[i] == ' '){
@@ -109,18 +119,50 @@ void __W3_IRC_Request(struct W3* w3) {
 						char* username = NULL;
 						char* content = NULL;
 						for(j = 0; params[j] != 0; j++){
-							if(params[j] == ':'){
+							if(params[j] == ' '){
+								params[j] = 0;
 								username = params;
 								content = params + j + 1;
 								break;
-							}else if(params[j] == ' '){
-								params[j] = 0;
 							}
 						}
 						if(username != NULL && content != NULL){
 							if(content[0] == 1 && content[strlen(content) - 1] == 1){
+								char* sentfrom = __W3_Strdup(prefix);
+								int j;
+								for(j = 0; sentfrom[j] != 0; j++){
+									if(sentfrom[j] == '!'){
+										sentfrom[j] = 0;
+										break;
+									}
+								}
 								/* CTCP Request */
+								if(strcasecmp(content, "\x01" "VERSION" "\x01") == 0){
+									__W3_Auto_Write(w3, "NOTICE ", 7);
+									__W3_Auto_Write(w3, prefix, strlen(prefix));
+									__W3_Auto_Write(w3, " :", 2);
+									__W3_Auto_Write(w3, __W3_Get_Prop(w3, "IRC_VERSION"), strlen(__W3_Get_Prop(w3, "IRC_VERSION")));
+									__W3_Auto_Write(w3, "\r\n", 2);
+								}else{
+									/* client is sending the non-standard CTCP ... */
+								}
+								free(sentfrom);
 							}
+							void* funcptr = __W3_Get_Event(w3, "message");
+							if(funcptr != NULL){
+								void(*func)(struct W3* w3, char* on, char* message) = (void(*)(struct W3* w3, char* from, char* message))funcptr;
+								func(w3, username[0] == '#' ? username : prefix, content);
+							}
+						}
+					}else if(strcasecmp(command, "PING") == 0){
+						__W3_Auto_Write(w3, "PONG ", 5);
+						__W3_Auto_Write(w3, params, strlen(params));
+						__W3_Auto_Write(w3, "\r\n", 2);
+					}else{
+						void* funcptr = __W3_Get_Event(w3, "unknown");
+						if(funcptr != NULL){
+							void(*func)(struct W3* w3, char* prefix, char* command, char* data) = (void(*)(struct W3* w3, char* prefix, char* command, char* data))funcptr;
+							func(w3, prefix, command, params);
 						}
 					}
 
@@ -132,11 +174,16 @@ void __W3_IRC_Request(struct W3* w3) {
 					params[0] = 0;
 					cbuf = malloc(2);
 					cbuf[1] = 0;
+					colon = false;
 				}else if(buf[i] != '\r'){
 					cbuf[0] = buf[i];
-					char* tmp = params;
-					params = __W3_Concat(tmp, cbuf);
-					free(tmp);
+					if(cbuf[0] != ':' || colon){
+						char* tmp = params;
+						params = __W3_Concat(tmp, cbuf);
+						free(tmp);
+					}else if(cbuf[0] == ':'){
+						colon = true;
+					}
 				}
 			}
 		}
@@ -166,4 +213,11 @@ void W3_IRC_Set_Servername(struct W3* w3, const char* servername){
 
 void W3_IRC_Set_Nickname(struct W3* w3, const char* nickname){
 	__W3_Add_Prop(w3, "IRC_NICKNAME", nickname);
+}
+
+void W3_IRC_Send_Request(struct W3* w3){
+	__W3_Auto_Write(w3, w3->method, strlen(w3->method));
+	__W3_Auto_Write(w3, " ", 1);
+	__W3_Auto_Write(w3, w3->path, strlen(w3->path));
+	__W3_Auto_Write(w3, "\r\n", 2);
 }
