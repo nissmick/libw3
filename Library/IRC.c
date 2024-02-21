@@ -45,6 +45,11 @@ void __W3_IRC_Request(struct W3* w3) {
 	__W3_Auto_Write(w3, "NICK ", 5);
 	__W3_Auto_Write(w3, nickname, strlen(nickname));
 	__W3_Auto_Write(w3, "\r\n", 2);
+	if(__W3_Get_Prop(w3, "IRC_PASSWORD") != NULL){
+		__W3_Auto_Write(w3, "PASS :", 6);
+		__W3_Auto_Write(w3, __W3_Get_Prop(w3, "IRC_PASSWORD"), strlen(__W3_Get_Prop(w3, "IRC_PASSWORD")));
+		__W3_Auto_Write(w3, "\r\n", 2);
+	}
 	char* buf = malloc(w3->readsize);
 	int phase = 0;	/* 0: before the prefix
 			 * 1: prefix
@@ -213,6 +218,10 @@ void W3_IRC_Set_Servername(struct W3* w3, const char* servername){
 
 void W3_IRC_Set_Nickname(struct W3* w3, const char* nickname){
 	__W3_Add_Prop(w3, "IRC_NICKNAME", nickname);
+}
+
+void W3_IRC_Set_Password(struct W3* w3, const char* password){
+	__W3_Add_Prop(w3, "IRC_PASSWORD", password);
 }
 
 void W3_IRC_Send_Request(struct W3* w3){
