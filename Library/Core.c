@@ -41,6 +41,10 @@
 #include "W3Gemini.h"
 #endif
 
+#ifdef IRC_SUPPORT
+#include "W3IRC.h"
+#endif
+
 #include <ctype.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -107,7 +111,10 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port) {
 	w3->ssl_ctx = NULL;
 #endif
 	if(strcmp(protocol, "file") != 0) {
-		if(strcmp(protocol, "http") == 0) {
+		if(0) {
+#ifdef HTTP_SUPPORT
+		} else if(strcmp(protocol, "http") == 0) {
+#endif
 #ifdef SSL_SUPPORT
 #ifdef HTTP_SUPPORT
 		} else if(strcmp(protocol, "https") == 0) {
@@ -120,6 +127,9 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port) {
 #endif
 #ifdef GOPHER_SUPPORT
 		} else if(strcmp(protocol, "gophers") == 0) {
+#endif
+#ifdef IRC_SUPPORT
+		} else if(strcmp(protocol, "ircs") == 0) {
 #endif
 #endif
 #ifdef NEX_SUPPORT
@@ -139,6 +149,9 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port) {
 #endif
 #ifdef NNTP_SUPPORT
 		} else if(strcmp(protocol, "nntp") == 0 || strcmp(protocol, "news") == 0) {
+#endif
+#ifdef IRC_SUPPORT
+		} else if(strcmp(protocol, "irc") == 0) {
 #endif
 		} else {
 			__W3_Debug("Protocol", "Not suppported");
@@ -241,6 +254,14 @@ void W3_Send_Request(struct W3* w3) {
 #ifdef FILE_SUPPORT
 	} else if(strcmp(w3->protocol, "file") == 0) {
 		__W3_File_Request(w3);
+#endif
+#ifdef IRC_SUPPORT
+	} else if(strcmp(w3->protocol, "irc") == 0
+#ifdef SSL_SUPPORT
+		  || strcmp(w3->protocol, "ircs") == 0
+#endif
+	) {
+		__W3_IRC_Request(w3);
 #endif
 	}
 }

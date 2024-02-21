@@ -12,6 +12,4 @@
 extern int strcasecmp(const char* s1, const char* s2);
 #endif
 
-void __W3_IRC_Request(struct W3* w3) {
-	__W3_Debug("LibW3-IRC", "Sending the request");
-}
+void __W3_IRC_Request(struct W3* w3) { __W3_Debug("LibW3-IRC", "Sending the request"); }
