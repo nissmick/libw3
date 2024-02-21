@@ -94,6 +94,8 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port) {
 		ssl = true;
 	} else if(strcmp(protocol, "gophers") == 0) {
 		ssl = true;
+	} else if(strcmp(protocol, "ircs") == 0){
+		ssl = true;
 	}
 	w3->props = NULL;
 	w3->method = NULL;
