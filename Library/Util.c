@@ -59,27 +59,39 @@ char* __W3_Strdup(const char* str) {
 }
 
 unsigned long __W3_Auto_Write(struct W3* w3, char* data, unsigned long length) {
+	while(w3->writing)
+		;
+	w3->writing = true;
+	unsigned long code;
 #ifdef SSL_SUPPORT
 	if(w3->ssl != NULL) {
-		return SSL_write(w3->ssl, data, length);
+		code = SSL_write(w3->ssl, data, length);
 	} else {
-		return send(w3->sock, data, length, 0);
+		code = send(w3->sock, data, length, 0);
 	}
 #else
-	return send(w3->sock, data, length, 0);
+	code = send(w3->sock, data, length, 0);
 #endif
+	w3->writing = false;
+	return code;
 }
 
 unsigned long __W3_Auto_Read(struct W3* w3, char* data, unsigned long length) {
+	while(w3->reading)
+		;
+	w3->reading = true;
+	unsigned long code;
 #ifdef SSL_SUPPORT
 	if(w3->ssl != NULL) {
-		return SSL_read(w3->ssl, data, length);
+		code = SSL_read(w3->ssl, data, length);
 	} else {
-		return recv(w3->sock, data, length, 0);
+		code = recv(w3->sock, data, length, 0);
 	}
 #else
-	return recv(w3->sock, data, length, 0);
+	code = recv(w3->sock, data, length, 0);
 #endif
+	w3->reading = false;
+	return code;
 }
 
 void* __W3_Get_Event(struct W3* w3, const char* eventname) {

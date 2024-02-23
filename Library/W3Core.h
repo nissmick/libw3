@@ -32,6 +32,9 @@ struct W3 {
 	void* tcl_in;	  /* Used in Tcl */
 	void* ssl;	  /* Actually SSL*, NULL if no SSL */
 	void* ssl_ctx;	  /* Actually SSL_CTX* */
+
+	bool reading;
+	bool writing;
 };
 
 int W3_Library_Init(void);						    /* Initialize the Library */

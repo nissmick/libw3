@@ -94,7 +94,7 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port) {
 		ssl = true;
 	} else if(strcmp(protocol, "gophers") == 0) {
 		ssl = true;
-	} else if(strcmp(protocol, "ircs") == 0){
+	} else if(strcmp(protocol, "ircs") == 0) {
 		ssl = true;
 	}
 	w3->props = NULL;
@@ -105,6 +105,8 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port) {
 	w3->size = 0;
 	w3->data = NULL;
 	w3->sock = -1;
+	w3->reading = false;
+	w3->writing = false;
 	w3->readsize = 512;
 	w3->port = port;
 	w3->protocol = __W3_Strdup(protocol);
