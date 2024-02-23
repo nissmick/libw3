@@ -214,6 +214,8 @@ void W3_IRC_Set_Nickname(struct W3* w3, const char* nickname) { __W3_Add_Prop(w3
 
 void W3_IRC_Set_Password(struct W3* w3, const char* password) { __W3_Add_Prop(w3, "IRC_PASSWORD", password); }
 
+void W3_IRC_Disconnect(struct W3* w3) { __W3_Auto_Write(w3, "QUIT\r\n", 6); }
+
 void W3_IRC_Send_Request(struct W3* w3) {
 	__W3_Auto_Write(w3, w3->method, strlen(w3->method));
 	__W3_Auto_Write(w3, " ", 1);
