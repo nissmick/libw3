@@ -9,4 +9,10 @@ Mirrors at:
 1. https://github.com/j-eoeo/libw3
    Do not send the pull requests to this! Just send me email.
 
+Example applications:
+1. TkW3. Simple browser written in C and Tcl/Tk.
+   http://sw.nishi.boats/sw/~nishi/tkw3
+2. nirc. Simple IRC client writtein C.
+   http://sw.nishi.boats/sw/~nishi/nirc
+
 See http://nishi.boats/libw3/guide for the reference.
