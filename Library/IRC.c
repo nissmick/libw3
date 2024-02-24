@@ -146,7 +146,7 @@ void __W3_IRC_Request(struct W3* w3) {
 										       "VERSION"
 										       "\x01") == 0) {
 									__W3_Auto_Write(w3, "NOTICE ", 7);
-									__W3_Auto_Write(w3, prefix, strlen(prefix));
+									__W3_Auto_Write(w3, sentfrom, strlen(sentfrom));
 									__W3_Auto_Write(w3, " :", 2);
 									__W3_Auto_Write(w3, __W3_Get_Prop(w3, "IRC_VERSION"), strlen(__W3_Get_Prop(w3, "IRC_VERSION")));
 									__W3_Auto_Write(w3, "\r\n", 2);
@@ -157,7 +157,7 @@ void __W3_IRC_Request(struct W3* w3) {
 							}
 							void* funcptr = __W3_Get_Event(w3, "message");
 							if(funcptr != NULL) {
-								void (*func)(struct W3 * w3, char* on, char* message) = (void (*)(struct W3 * w3, char* from, char* message)) funcptr;
+								void (*func)(struct W3* w3, char* on, char* message) = (void (*)(struct W3* w3, char* from, char* message))funcptr;
 								func(w3, username[0] == '#' ? username : prefix, content);
 							}
 						}
@@ -168,7 +168,7 @@ void __W3_IRC_Request(struct W3* w3) {
 					} else {
 						void* funcptr = __W3_Get_Event(w3, "unknown");
 						if(funcptr != NULL) {
-							void (*func)(struct W3 * w3, char* prefix, char* command, char* data) = (void (*)(struct W3 * w3, char* prefix, char* command, char* data)) funcptr;
+							void (*func)(struct W3* w3, char* prefix, char* command, char* data) = (void (*)(struct W3* w3, char* prefix, char* command, char* data))funcptr;
 							func(w3, prefix, command, params);
 						}
 					}
