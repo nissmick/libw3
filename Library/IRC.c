@@ -116,6 +116,11 @@ void __W3_IRC_Request(struct W3* w3) {
 			} else if(phase == 3) {
 				if(buf[i] == '\n') {
 					phase = 0;
+					void* funcptr = __W3_Get_Event(w3, "all");
+					if(funcptr != NULL) {
+						void (*func)(struct W3* w3, char* prefix, char* command, char* data) = (void (*)(struct W3* w3, char* prefix, char* command, char* data))funcptr;
+						func(w3, prefix, command, params);
+					}
 
 					/* Parse commands here */
 					if(strcasecmp(command, "PRIVMSG") == 0) {
