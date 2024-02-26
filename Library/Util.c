@@ -54,7 +54,8 @@ char* __W3_Concat3(const char* str1, const char* str2, const char* str3) {
 
 char* __W3_Strdup(const char* str) {
 	char* result = malloc(strlen(str) + 1);
-	memcpy(result, str, strlen(str) + 1);
+	memcpy(result, str, strlen(str));
+	result[strlen(str)] = 0;
 	return result;
 }
 
