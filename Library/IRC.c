@@ -165,6 +165,11 @@ void __W3_IRC_Request(struct W3* w3) {
 								void (*func)(struct W3 * w3, char* on, char* message) = (void (*)(struct W3 * w3, char* from, char* message)) funcptr;
 								func(w3, username[0] == '#' ? username : prefix, content);
 							}
+							funcptr = __W3_Get_Event(w3, "message2");
+							if(funcptr != NULL) {
+								void (*func)(struct W3 * w3, char* username, char* prefix, char* message) = (void (*)(struct W3 * w3, char* username, char* prefix, char* message)) funcptr;
+								func(w3, username, prefix, content);
+							}
 						}
 					} else if(strcasecmp(command, "PING") == 0) {
 						__W3_Auto_Write(w3, "PONG ", 5);
