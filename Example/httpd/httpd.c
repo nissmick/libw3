@@ -148,6 +148,75 @@ response : {
 	if(stat(realpath, &s) == 0) {
 		if(S_ISDIR(s.st_mode)) {
 			if(path[strlen(path) - 1] == '/') {
+				struct stat old_s = s;
+				char* index = __W3_Concat(path, "index.html");
+				if(stat(index, &s)){
+					send(sock, "HTTP/1.1 200 OK\r\n", 17, 0);
+					send(sock, "Connection: close\r\n", 19, 0);
+					char* length = malloc(1025);
+					sprintf(length, "%d", s.st_size);
+					send(sock, "Content-Type: ", 14, 0);
+					if(types == NULL) {
+						send(sock, "application/octet-stream", 24, 0);
+					} else {
+						int i;
+						char* fpath = __W3_Strdup(index);
+						bool found = false;
+						for(i = strlen(fpath) - 1; i >= 0; i--) {
+							if(fpath[i] == '.') {
+								fpath[i] = 0;
+								found = true;
+								break;
+							}
+						}
+						if(found) {
+							found = false;
+							int start = i + 1;
+							for(i = 0; i < ntypes; i += 2) {
+								if(strcasecmp(types[i], fpath + start) == 0) {
+									found = true;
+									send(sock, types[i + 1], strlen(types[i + 1]), 0);
+									break;
+								}
+							}
+							if(!found) {
+								send(sock, "application/octet-stream", 24, 0);
+							}
+						} else {
+							send(sock, "application/octet-stream", 24, 0);
+						}
+						free(fpath);
+					}
+					send(sock, "\r\n", 2, 0);
+					send(sock, "Content-Length: ", 16, 0);
+					send(sock, length, strlen(length), 0);
+					free(length);
+					send(sock, "\r\n", 2, 0);
+					send(sock, "Server: ", 8, 0);
+					send(sock, "LibW3-HTTPd (LibW3/", 19, 0);
+					send(sock, LIBW3_VERSION, strlen(LIBW3_VERSION), 0);
+					send(sock, ")", 1, 0);
+					send(sock, "\r\n", 2, 0);
+					send(sock, "\r\n", 2, 0);
+					if(strcasecmp(method, "HEAD") != 0) {
+						char* realpath_index = __W3_Concat3(root, "/", index);
+						FILE* f = fopen(realpath_index, "r");
+						free(realpath_index);
+						char* buf = malloc(BUFFER_SIZE);
+						while(true) {
+							int len = fread(buf, 1, BUFFER_SIZE, f);
+							if(len <= 0) break;
+							send(sock, buf, len, 0);
+						}
+						fclose(f);
+						free(buf);
+					}
+					free(index);
+					goto out;
+				}
+				s = old_s;
+				free(index);
+
 				char* html = malloc(1);
 				html[0] = 0;
 				char* tmp;
@@ -259,6 +328,7 @@ response : {
 				send(sock, "\r\n", 2, 0);
 				if(strcasecmp(method, "HEAD") != 0) send(sock, html, strlen(html), 0);
 				free(html);
+out:;
 			} else {
 				send(sock, "HTTP/1.1 308 Permanent Redirect\r\n", 33, 0);
 				send(sock, "Connection: close\r\n", 19, 0);
@@ -427,6 +497,13 @@ int main(int argc, char** argv) {
 						}
 						if(root != NULL) free(root);
 						root = __W3_Strdup(line + j + 1);
+					}else if(strcasecmp(line, "Port") == 0) {
+						if(!hasparam) {
+							fprintf(stderr, "%s: config line %d, directive needs a parameter\n", argv[0], linenum);
+							err++;
+						}
+						if(portstr != NULL) free(portstr);
+						portstr = __W3_Strdup(line + j + 1);
 					} else if(strcasecmp(line, "MIME") == 0) {
 						if(!hasparam) {
 							fprintf(stderr, "%s: config line %d, directive needs a parameter\n", argv[0], linenum);
