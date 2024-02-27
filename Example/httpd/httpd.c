@@ -15,8 +15,11 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
-
-#include <ls_server.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <netinet/tcp.h>
+#include <signal.h>
 
 char* root = NULL;
 
@@ -478,10 +481,60 @@ int main(int argc, char** argv) {
 	}
 
 	W3_Library_Init();
+	int exitcode = 0;
+	int port = atoi(portstr);
+	int server_socket;
+	if((server_socket = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP)) < 0){
+		return -1;goto exitnow;
+	}
+	struct sockaddr_in6 server_address;
+	if((server_socket = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP)) < 0){
+		return -1;goto exitnow;
+	}
+	int yes = 1;
+	if(setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) < 0){
+		close(server_socket);
+		return -1;goto exitnow;
+	}
+	if(setsockopt(server_socket, IPPROTO_TCP, TCP_NODELAY, &yes, sizeof(yes)) < 0){
+		close(server_socket);
+		return 1;goto exitnow;
+	}
+	int no = 0;
+	if(setsockopt(server_socket, IPPROTO_IPV6, IPV6_V6ONLY, &no, sizeof(no)) < 0){
+		close(server_socket);
+		return 1;goto exitnow;
+	}
+	memset(&server_address, 0, sizeof(server_address));
+	server_address.sin6_family = AF_INET6;
+	server_address.sin6_addr = in6addr_any;
+	server_address.sin6_port = htons(port);
+	if(bind(server_socket, (struct sockaddr*)&server_address, sizeof(server_address)) < 0){
+		close(server_socket);
+		return -1;goto exitnow;
+	}
+	if(listen(server_socket, 128) < 0){
+		close(server_socket);
+		return -1;goto exitnow;
+	}
+	signal(SIGCHLD, SIG_IGN);
 	__W3_Debug("HTTPd", "Ready");
-	int st = ls_start_server(portstr == NULL ? 80 : atoi(portstr), http_handler);
-	if(st == -1) {
+	while(1){
+		struct sockaddr_in claddr;
+		int clen = sizeof(claddr);
+		int sock = accept(server_socket, (struct sockaddr*)&claddr, &clen);
+		pid_t p = fork();
+		if(p == 0){
+			http_handler(sock);
+			_exit(-1);
+		}else{
+			close(sock);
+		}
+	}
+exitnow:
+	if(exitcode != 0) {
 		fprintf(stderr, "%s: failed to start the server\n", argv[0]);
 		return 1;
 	}
+	return exitcode;
 }
