@@ -8,18 +8,18 @@
 #include <W3HTTP.h>
 #include <W3Util.h>
 
+#include <arpa/inet.h>
 #include <dirent.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <signal.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include <unistd.h>
-#include <netinet/tcp.h>
-#include <signal.h>
 
 char* root = NULL;
 
@@ -150,7 +150,7 @@ response : {
 			if(path[strlen(path) - 1] == '/') {
 				struct stat old_s = s;
 				char* index = __W3_Concat(path, "index.html");
-				if(stat(index, &s)){
+				if(stat(index, &s)) {
 					send(sock, "HTTP/1.1 200 OK\r\n", 17, 0);
 					send(sock, "Connection: close\r\n", 19, 0);
 					char* length = malloc(1025);
@@ -328,7 +328,7 @@ response : {
 				send(sock, "\r\n", 2, 0);
 				if(strcasecmp(method, "HEAD") != 0) send(sock, html, strlen(html), 0);
 				free(html);
-out:;
+			out:;
 			} else {
 				send(sock, "HTTP/1.1 308 Permanent Redirect\r\n", 33, 0);
 				send(sock, "Connection: close\r\n", 19, 0);
@@ -497,7 +497,7 @@ int main(int argc, char** argv) {
 						}
 						if(root != NULL) free(root);
 						root = __W3_Strdup(line + j + 1);
-					}else if(strcasecmp(line, "Port") == 0) {
+					} else if(strcasecmp(line, "Port") == 0) {
 						if(!hasparam) {
 							fprintf(stderr, "%s: config line %d, directive needs a parameter\n", argv[0], linenum);
 							err++;
@@ -561,50 +561,57 @@ int main(int argc, char** argv) {
 	int exitcode = 0;
 	int port = atoi(portstr);
 	int server_socket;
-	if((server_socket = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP)) < 0){
-		return -1;goto exitnow;
+	if((server_socket = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP)) < 0) {
+		return -1;
+		goto exitnow;
 	}
 	struct sockaddr_in6 server_address;
-	if((server_socket = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP)) < 0){
-		return -1;goto exitnow;
+	if((server_socket = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP)) < 0) {
+		return -1;
+		goto exitnow;
 	}
 	int yes = 1;
-	if(setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) < 0){
+	if(setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) < 0) {
 		close(server_socket);
-		return -1;goto exitnow;
+		return -1;
+		goto exitnow;
 	}
-	if(setsockopt(server_socket, IPPROTO_TCP, TCP_NODELAY, &yes, sizeof(yes)) < 0){
+	if(setsockopt(server_socket, IPPROTO_TCP, TCP_NODELAY, &yes, sizeof(yes)) < 0) {
 		close(server_socket);
-		return 1;goto exitnow;
+		return 1;
+		goto exitnow;
 	}
 	int no = 0;
-	if(setsockopt(server_socket, IPPROTO_IPV6, IPV6_V6ONLY, &no, sizeof(no)) < 0){
+	if(setsockopt(server_socket, IPPROTO_IPV6, IPV6_V6ONLY, &no, sizeof(no)) < 0) {
 		close(server_socket);
-		return 1;goto exitnow;
+		return 1;
+		goto exitnow;
 	}
 	memset(&server_address, 0, sizeof(server_address));
 	server_address.sin6_family = AF_INET6;
 	server_address.sin6_addr = in6addr_any;
 	server_address.sin6_port = htons(port);
-	if(bind(server_socket, (struct sockaddr*)&server_address, sizeof(server_address)) < 0){
+	if(bind(server_socket, (struct sockaddr*)&server_address, sizeof(server_address)) < 0) {
 		close(server_socket);
-		return -1;goto exitnow;
+		return -1;
+		goto exitnow;
 	}
-	if(listen(server_socket, 128) < 0){
+	if(listen(server_socket, 128) < 0) {
 		close(server_socket);
-		return -1;goto exitnow;
+		return -1;
+		goto exitnow;
 	}
 	signal(SIGCHLD, SIG_IGN);
 	__W3_Debug("HTTPd", "Ready");
-	while(1){
+	while(1) {
 		struct sockaddr_in claddr;
 		int clen = sizeof(claddr);
 		int sock = accept(server_socket, (struct sockaddr*)&claddr, &clen);
 		pid_t p = fork();
-		if(p == 0){
+		if(p == 0) {
 			http_handler(sock);
 			_exit(-1);
-		}else{
+		} else {
 			close(sock);
 		}
 	}
