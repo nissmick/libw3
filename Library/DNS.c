@@ -88,6 +88,7 @@ int __W3_DNS_Connect(const char* hostname, bool ssl, uint16_t port
 		*o_ctx = SSL_CTX_new(method);
 		*o_ssl = SSL_new(*o_ctx);
 		SSL_set_fd(*o_ssl, sock);
+		SSL_set_tlsext_host_name(*o_ssl, hostname);
 		if(SSL_connect(*o_ssl) != 1) {
 			SSL_CTX_free(*o_ctx);
 			SSL_free(*o_ssl);
