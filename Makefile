@@ -179,7 +179,7 @@ endif
 clean:
 	-rm -f ./w3.pc w3-*.zip w3-*.tar.gz w3-*.lzh ./Library/W3Version.h *~ cache.mk
 	$(MAKE) -C ./Library clean
-	$(MAKE) -C ./Example clean
+	$(MAKE) -C ./Example clean HTTPD=$(HTTPD) TCL=$(TCL)
 
 install: ./w3.pc
 	$(MAKE) -C ./Library install PREFIX=$(PREFIX) CC=$(CC)
