@@ -183,7 +183,7 @@ clean:
 
 install: ./w3.pc
 	$(MAKE) -C ./Library install PREFIX=$(PREFIX) CC=$(CC)
-	$(MAKE) -C ./Example install PREFIX=$(PREFIX) CC=$(CC) TCL=$(TCL)
+	$(MAKE) -C ./Example install PREFIX=$(PREFIX) CC=$(CC) TCL=$(TCL) HTTPD=$(HTTPD)
 	mkdir -p $(PREFIX)/lib/pkgconfig
 	cp ./w3.pc $(PREFIX)/lib/pkgconfig/
 
