@@ -31,6 +31,10 @@
 #define ADDRINFO struct addrinfo
 #endif
 
+#ifdef __FreeBSD__
+#include <netinet/in.h>
+#endif
+
 int __W3_DNS_Connect(const char* hostname, bool ssl, uint16_t port
 #ifdef SSL_SUPPORT
 		     ,
