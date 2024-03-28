@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 
-#define LIBW3_VERSION "2.20G" \
+#define LIBW3_VERSION "2.21" \
 SUFFIX
 
 ifdef(`HTTP_SUPPORT', `#define LIBW3_HTTP_SUPPORT', `')
@@ -18,6 +18,7 @@ ifdef(`NEX_SUPPORT', `#define LIBW3_NEX_SUPPORT', `')
 ifdef(`FILE_SUPPORT', `#define LIBW3_FILE_SUPPORT', `')
 ifdef(`IRC_SUPPORT', `#define LIBW3_IRC_SUPPORT', `')
 ifdef(`NNTP_SUPPORT', `#define LIBW3_NNTP_SUPPORT', `')
+ifdef(`SPARTAN_SUPPORT', `#define LIBW3_SPARTAN_SUPPORT', `')
 
 #ifdef __cplusplus
 }

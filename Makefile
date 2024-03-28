@@ -89,6 +89,10 @@ ifneq ($(IRC),NO)
 FLAGS += -DIRC_SUPPORT
 endif
 
+ifneq ($(SPARTAN),NO)
+FLAGS += -DSPARTAN_SUPPORT
+endif
+
 CFLAGS += $(FLAGS)
 
 ifeq ($(WIN32),YES)

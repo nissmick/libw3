@@ -45,6 +45,10 @@
 #include "W3IRC.h"
 #endif
 
+#ifdef SPARTAN_SUPPORT
+#include "W3Spartan.h"
+#endif
+
 #include <ctype.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -157,6 +161,9 @@ struct W3* W3_Create(const char* protocol, const char* hostname, int port) {
 #ifdef IRC_SUPPORT
 		} else if(strcmp(protocol, "irc") == 0) {
 #endif
+#ifdef SPARTAN_SUPPORT
+		} else if(strcmp(protocol, "spartan") == 0) {
+#endif
 		} else {
 			__W3_Debug("Protocol", "Not suppported");
 			W3_Free(w3);
@@ -258,6 +265,10 @@ void W3_Send_Request(struct W3* w3) {
 #ifdef FILE_SUPPORT
 	} else if(strcmp(w3->protocol, "file") == 0) {
 		__W3_File_Request(w3);
+#endif
+#ifdef SPARTAN_SUPPORT
+	} else if(strcmp(w3->protocol, "spartan") == 0) {
+		__W3_Spartan_Request(w3);
 #endif
 #ifdef IRC_SUPPORT
 	} else if(strcmp(w3->protocol, "irc") == 0
